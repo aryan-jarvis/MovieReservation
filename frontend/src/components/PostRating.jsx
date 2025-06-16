@@ -5,11 +5,39 @@ function ReviewForm({ onSubmit, onClose }) {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit({ comment, rating });
-    setComment("");
-    setRating(0);
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("You must be logged in to submit a review.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/review", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+        body: JSON.stringify({ comment, rating }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        onSubmit({ comment, rating });
+        setComment("");
+        setRating(0);
+        onClose(); // close form
+      } else {
+        alert(data.error || "Failed to submit review.");
+      }
+    } catch (err) {
+      console.error("Error submitting review:", err);
+      alert("An error occurred.");
+    }
   };
 
   return (
@@ -48,8 +76,7 @@ function PostRating() {
   const [isOpen, setIsOpen] = useState(true);
 
   const handleReviewSubmit = (newReview) => {
-    setReviews([...reviews, newReview]);
-    setIsOpen(false);
+    setReviews((prev) => [...prev, newReview]);
   };
 
   return (
@@ -63,11 +90,12 @@ function PostRating() {
           />
         </div>
       )}
-      {/* <div style={styles.reviewsList}>
-        {reviews.map((review, index) => (
-          <ReviewItem key={index} review={review} />
+      {/* Display reviews (just local for now) */}
+      <div style={styles.reviewsList}>
+        {reviews.map((review, idx) => (
+          <ReviewItem key={idx} review={review} />
         ))}
-      </div> */}
+      </div>
     </>
   );
 }
@@ -142,7 +170,7 @@ const styles = {
     color: "#555",
   },
   reviewsList: {
-    marginTop: 10,
+    marginTop: "25rem",
     padding: "1rem 2rem",
   },
 };

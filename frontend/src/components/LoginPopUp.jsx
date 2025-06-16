@@ -16,6 +16,48 @@ export default function LoginPopUp() {
 
   const [isRegister, setIsRegister] = useState(true);
 
+  // const handleRegister = async () => {
+  //   try {
+  //     const res = await axios.post(`${API}/register`, {
+  //       name,
+  //       email,
+  //       password,
+  //     });
+  //     setToken(res.data.token);
+  //     localStorage.setItem("username", name);
+  //     localStorage.setItem("loginPopupClosed", "true");
+  //     window.location.href = `http://localhost:5173/?user=${encodeURIComponent(
+  //       name
+  //     )}`;
+
+  //     setIsOpen(false);
+  //   } catch (error) {
+  //     console.error(
+  //       "Registration failed:",
+  //       error.response?.data?.error || error.message
+  //     );
+  //   }
+  // };
+
+  // const handleLogin = async () => {
+  //   try {
+  //     const res = await axios.post(`${API}/login`, { email, password });
+  //     setToken(res.data.token);
+  //     localStorage.setItem("username", res.data.name);
+  //     localStorage.setItem("loginPopupClosed", "true");
+  //     window.location.href = `http://localhost:5173/?user=${encodeURIComponent(
+  //       email
+  //     )}`;
+
+  //     setIsOpen(false);
+  //   } catch (error) {
+  //     console.error(
+  //       "Login failed:",
+  //       error.response?.data?.error || error.message
+  //     );
+  //   }
+  // };
+
   const handleRegister = async () => {
     try {
       const res = await axios.post(`${API}/register`, {
@@ -23,13 +65,15 @@ export default function LoginPopUp() {
         email,
         password,
       });
+
       setToken(res.data.token);
-      localStorage.setItem("username", name);
+      localStorage.setItem("token", res.data.token); // ✅ Save JWT token
+      localStorage.setItem("username", name); // Optional
       localStorage.setItem("loginPopupClosed", "true");
+
       window.location.href = `http://localhost:5173/?user=${encodeURIComponent(
         name
       )}`;
-
       setIsOpen(false);
     } catch (error) {
       console.error(
@@ -42,13 +86,15 @@ export default function LoginPopUp() {
   const handleLogin = async () => {
     try {
       const res = await axios.post(`${API}/login`, { email, password });
+
       setToken(res.data.token);
-      localStorage.setItem("username", res.data.name);
+      localStorage.setItem("token", res.data.token); // ✅ Save JWT token
+      localStorage.setItem("username", res.data.name); // Optional
       localStorage.setItem("loginPopupClosed", "true");
+
       window.location.href = `http://localhost:5173/?user=${encodeURIComponent(
         email
       )}`;
-
       setIsOpen(false);
     } catch (error) {
       console.error(

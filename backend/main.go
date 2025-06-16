@@ -13,7 +13,14 @@ func main() {
 	models.ConnectDatabase()
 
 	router := gin.Default()
-	router.Use(cors.Default())
+	// router.Use(cors.Default())
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 	setupRoutes(router)
 
 	router.Run("localhost:8080")
@@ -33,4 +40,5 @@ func setupRoutes(router *gin.Engine) {
 	protected := router.Group("/")
 	protected.Use(middlewares.JWTAuth())
 	protected.GET("/profile", controllers.Profile)
+	protected.POST("/review", controllers.PostReview)
 }
