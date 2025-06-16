@@ -27,6 +27,9 @@ func setupRoutes(router *gin.Engine) {
 	router.GET("/users/:id", controllers.GetUserByID)
 	router.POST("/users", controllers.PostUsers)
 
+	router.GET("/movies", controllers.GetMovies)
+	router.GET("/shows", controllers.GetShows)
+
 	protected := router.Group("/")
 	protected.Use(middlewares.JWTAuth())
 	protected.GET("/profile", controllers.Profile)

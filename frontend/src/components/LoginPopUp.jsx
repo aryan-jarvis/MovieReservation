@@ -8,7 +8,12 @@ export default function LoginPopUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
-  const [isOpen, setIsOpen] = useState(true);
+  // const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(() => {
+    const saved = localStorage.getItem("loginPopupClosed");
+    return saved !== "true"; // show popup only if not closed
+  });
+
   const [isRegister, setIsRegister] = useState(true);
 
   const handleRegister = async () => {
@@ -20,7 +25,8 @@ export default function LoginPopUp() {
       });
       setToken(res.data.token);
       localStorage.setItem("username", name);
-      window.location.href = `http://localhost:5173/movies/?user=${encodeURIComponent(
+      localStorage.setItem("loginPopupClosed", "true");
+      window.location.href = `http://localhost:5173/?user=${encodeURIComponent(
         name
       )}`;
 
@@ -37,8 +43,9 @@ export default function LoginPopUp() {
     try {
       const res = await axios.post(`${API}/login`, { email, password });
       setToken(res.data.token);
-      localStorage.setItem("username", email);
-      window.location.href = `http://localhost:5173/movies/?user=${encodeURIComponent(
+      localStorage.setItem("username", res.data.name);
+      localStorage.setItem("loginPopupClosed", "true");
+      window.location.href = `http://localhost:5173/?user=${encodeURIComponent(
         email
       )}`;
 

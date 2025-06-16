@@ -1,6 +1,23 @@
+import { useState, useEffect } from "react";
 import SearchDropDown from "./SearchDropDown";
 
 export default function HeadProfile() {
+  const [username, setUsername] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("username");
+    if (storedUser) {
+      setUsername(storedUser);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("username");
+    localStorage.removeItem("loginPopupClosed");
+    setUsername(null);
+    window.location.href = "http://localhost:5173/";
+  };
+
   return (
     <div
       className="Header Profile Section"
@@ -34,7 +51,21 @@ export default function HeadProfile() {
           src="../src/assets/images/user_logo.png"
           alt="User Profile Logo"
         />
-        <p>Hi, Guest</p>
+        {username && (
+          <button
+            onClick={handleLogout}
+            style={{
+              padding: "6px 12px",
+              backgroundColor: "#FF5295",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+          >
+            Logout
+          </button>
+        )}
       </div>
     </div>
   );

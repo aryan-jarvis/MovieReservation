@@ -90,7 +90,11 @@ func Login(c *gin.Context) {
 	}
 
 	token := utils.GenerateJWT(user.Email)
-	c.JSON(http.StatusOK, gin.H{"token": token})
+	c.JSON(http.StatusOK, gin.H{
+		"token": token,
+		"name":  user.Name,
+	})
+
 }
 
 func Profile(c *gin.Context) {
