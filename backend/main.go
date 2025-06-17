@@ -37,8 +37,11 @@ func setupRoutes(router *gin.Engine) {
 	router.GET("/movies", controllers.GetMovies)
 	router.GET("/shows", controllers.GetShows)
 
+	router.POST("/seat", middlewares.JWTAuth(), controllers.PostSeatSelection)
+
 	protected := router.Group("/")
 	protected.Use(middlewares.JWTAuth())
 	protected.GET("/profile", controllers.Profile)
 	protected.POST("/review", controllers.PostReview)
+
 }

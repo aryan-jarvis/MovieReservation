@@ -1,6 +1,4 @@
 import React, { Component } from "react";
-import "./seats.css";
-// import post from "./post.json";
 
 class Seatbooking extends Component {
   constructor() {
@@ -50,7 +48,44 @@ class Seatbooking extends Component {
 
   isSeatClickable = (seat) => !this.state.seatSelected.includes(seat);
 
-  handleSubmited = () => {
+  handleSubmited = async () => {
+    console.log("Confirm Booking clicked");
+
+    const token = localStorage.getItem("token");
+    console.log("Token sent:", token);
+
+    for (const seat of this.state.seatReserved) {
+      const payload = {
+        theatre: "Inox",
+        seat: seat,
+        date: "2025-06-18",
+        price: "250",
+        movie: "Inside Out 2",
+        show_time: "7:30 PM",
+        barcode_id: `${seat}-${Date.now()}`,
+      };
+
+      try {
+        const response = await fetch("http://localhost:8080/seat", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const result = await response.json();
+          throw new Error(result.error || "Booking failed");
+        }
+
+        console.log(`Seat ${seat} booked successfully.`);
+      } catch (error) {
+        console.error(`Error booking seat ${seat}:`, error.message);
+      }
+    }
+
     this.setState((prevState) => ({
       seatSelected: [...prevState.seatSelected, ...prevState.seatReserved],
       seatReserved: [],
@@ -72,15 +107,73 @@ class Seatbooking extends Component {
 
     return (
       <div>
+        <style>{`
+          .grid {
+            background-color: #f9f9f9;
+            margin: 1rem auto;
+            border-collapse: separate;
+            border-spacing: 1.5rem;
+          }
+
+          .grid td {
+            width: 40px;
+            height: 40px;
+            vertical-align: middle;
+            cursor: pointer;
+            border-radius: 0.6rem;
+            text-align: center;
+          }
+
+          .available {
+            background-color: #ffffff;
+            border: 1px solid #59b200;
+            color: #59b200;
+          }
+
+          .selected {
+            background-color: #59b200;
+            color: #ffffff;
+          }
+
+          .reserved {
+            background-color: #d6d6d6;
+            border: 1px solid #d6d6d6;
+            color: white;
+            cursor: not-allowed;
+          }
+
+          .btn-success {
+            font-size: 1rem;
+            text-align: center;
+            vertical-align: center;
+            border-radius: 0.8rem;
+            border: #d6d6d6;
+            font-weight: bold;
+            background-color: #59b200;
+            color: white;
+            height: 5rem;
+            width: 12rem;
+            position: absolute;
+          }
+
+          .btnmargin {
+            margin-left: 49rem;
+          }
+
+          .screen-side {
+            text-align: center;
+            margin-top: 2rem;
+          }
+
+          .seats-table {
+            margin-top: 2rem;
+          }
+        `}</style>
+
         <div
           className="seat-booking-container"
           style={{ textAlign: "center", backgroundColor: "#f9f9f9" }}
         >
-          {/*
-          <div className="heading">
-            <h1>Seat Reservation System</h1>
-          </div>
-          */}
           <div className="seats-table">
             <table className="grid">
               <tbody>
@@ -110,21 +203,24 @@ class Seatbooking extends Component {
               </tbody>
             </table>
           </div>
+
           <div className="screen-side">
-            <img src="../src/assets/images/screen.png" alt="Screen" />
+            <img
+              src="../src/assets/images/screen.png"
+              alt="Screen"
+              style={{ maxWidth: "400px", width: "100%" }}
+            />
             <h1 style={{ color: "#a4a4a4" }}>Screen</h1>
           </div>
         </div>
+
         <div className="confirm-button" style={{ backgroundColor: "#f9f9f9" }}>
-          <a href="http://localhost:5173/payment">
-            <button
-              className="btn-success btnmargin"
-              onClick={this.handleSubmited}
-              style={{ marginLeft: "49rem" }}
-            >
-              Confirm Booking
-            </button>
-          </a>
+          <button
+            className="btn-success btnmargin"
+            onClick={this.handleSubmited}
+          >
+            Confirm Booking
+          </button>
         </div>
       </div>
     );

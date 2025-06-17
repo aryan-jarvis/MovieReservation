@@ -1,5 +1,5 @@
 import HeadProfile from "./HeadProfile";
-import Seatbooking from "./seat_booking/Seatbooking";
+import Seatbooking from "./Seatbooking";
 import AzaadPvr from "./AzaadPvr";
 
 export default function ShowBooking_Page() {

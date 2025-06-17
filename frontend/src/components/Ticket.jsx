@@ -1,11 +1,26 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Barcode from "react-barcode";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Ticket() {
+  const genVal = () => {
+    const characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    for (let i = 0; i < 20; i++) {
+      result += characters.charAt(
+        Math.floor(Math.random() * characters.length)
+      );
+    }
+    return result;
+  };
+
+  const barcodeValue = useMemo(() => genVal(), []);
+  // const barcodeValue = useMemo(() => uuidv4(), []);
+
   return (
     <div style={{ display: "flex", padding: "5rem", border: "1px solid" }}>
       <div style={{ transform: "rotate(270deg)" }}>
-        <Barcode value="w37b12tsrqr64nptm12" format="CODE128" height={50} />;
+        <Barcode value={barcodeValue} format="CODE128" height={50} />
       </div>
       <div style={{ display: "flex", gap: "15rem" }}>
         <div style={{ textAlign: "center" }}>
@@ -41,7 +56,7 @@ export default function Ticket() {
           <p>3D</p>
           <p>THEATRE: 03</p>
           <p>SEAT : B7, B8</p>
-          <Barcode value="w37b12tsrqr64nptm12" format="CODE128" height={100} />
+          <Barcode value={barcodeValue} format="CODE128" height={100} />
           <p>DATE : 10/07/2025</p>
           <p>TIME : 11:45 PM</p>
         </div>
