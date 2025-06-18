@@ -50,3 +50,19 @@ func PostSeatSelection(c *gin.Context) {
 		"data":    input,
 	})
 }
+
+func GetBookedSeats(c *gin.Context) {
+	var seats []models.SeatSelection
+
+	if err := models.DB.Find(&seats).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "could not fetch booked seats"})
+		return
+	}
+
+	bookedSeats := []string{}
+	for _, seat := range seats {
+		bookedSeats = append(bookedSeats, seat.Seat)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"bookedSeats": bookedSeats})
+}

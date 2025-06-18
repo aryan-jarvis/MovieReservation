@@ -39,6 +39,8 @@ func setupRoutes(router *gin.Engine) {
 
 	router.POST("/seat", middlewares.JWTAuth(), controllers.PostSeatSelection)
 
+	router.GET("/seats", controllers.GetBookedSeats)
+
 	protected := router.Group("/")
 	protected.Use(middlewares.JWTAuth())
 	protected.GET("/profile", controllers.Profile)
