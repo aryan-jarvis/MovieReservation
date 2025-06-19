@@ -22,8 +22,6 @@ export default function Movie_Description_Page() {
       </div>
       <Azaad />
       <PostRating />
-      <h2>Ratings and Reviews</h2>
-      <AzaadReviews />
       <h2>You might also like</h2>
       <MovieCollection />
       <Footer />

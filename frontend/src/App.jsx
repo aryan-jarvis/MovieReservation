@@ -9,6 +9,10 @@ import Theatre_Selection_Page from "./components/Theatre_Selection_Page";
 import ShowBooking_Page from "./components/ShowBooking_Page";
 import Ticket from "./components/Ticket";
 import Login from "./components/login";
+import PaymentSuccess from "./components/PaymentSuccess";
+import PaymentFailure from "./components/PaymentFailure";
+import PayUResponseHandler from "./components/PayUResponseHandler";
+import PaymentResponse from "./components/PaymentReponse";
 
 export default function App() {
   return (
@@ -25,6 +29,10 @@ export default function App() {
         <Route path="/no_history" element={<NoHistory />} />
         <Route path="/ticket" element={<Ticket />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/payment-response" element={<PayUResponseHandler />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/payment-failure" element={<PaymentFailure />} />
+        <Route path="/payment-response" element={<PaymentResponse />} />
       </Routes>
     </div>
   );

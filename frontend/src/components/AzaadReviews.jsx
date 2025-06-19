@@ -1,13 +1,13 @@
 export default function AzaadReviews() {
   return (
-    <div style={{ backgroundColor: "#f7f7f7" }}>
+    <div>
       <div
         className="rating and button"
         style={{ display: "flex", gap: "92rem" }}
       >
-        <div>
+        {/* <div>
           <h2>4.2 ★★★★☆</h2>
-        </div>
+        </div> */}
         <div>
           <button
             style={{
@@ -24,7 +24,7 @@ export default function AzaadReviews() {
           </button>
         </div>
       </div>
-      <div className="reviews collection" style={{ display: "flex" }}>
+      {/* <div className="reviews collection" style={{ display: "flex" }}>
         <div
           style={{
             width: "15rem",
@@ -90,7 +90,7 @@ export default function AzaadReviews() {
           <hr />
           <div>Great Movie, absoultely loved it.</div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
