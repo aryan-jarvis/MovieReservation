@@ -5,34 +5,58 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import { Link } from "react-router-dom";
+import movieImg from "../assets/images/movie_img.png";
 
 export default function MovieCard() {
   return (
-    <Card sx={{ maxWidth: 250 }} style={{ borderRadius: "0.5rem" }}>
+    <Card
+      sx={{
+        maxWidth: 250,
+        borderRadius: 2,
+        boxShadow: 3,
+        transition: "transform 0.3s",
+        "&:hover": {
+          transform: "scale(1.03)",
+          boxShadow: 6,
+        },
+      }}
+    >
       <CardMedia
         component="img"
-        alt="green iguana"
-        image="../src/assets/images/movie_img.png"
+        height="350"
+        image={movieImg}
+        alt="Alice in Wonderland"
+        sx={{ objectFit: "cover" }}
       />
       <CardContent>
-        <Typography>Alice in Wonderland</Typography>
-        <Typography variant="body2" sx={{ color: "text.secondary" }}>
+        <Typography variant="h6" component="div" fontWeight={600}>
+          Alice in Wonderland
+        </Typography>
+        <Typography variant="body2" color="text.secondary" mb={1}>
           Adventure | UA13+ | English, Hindi
         </Typography>
-        <Typography>4.5 ★★★★☆</Typography>
+        <Typography variant="body2" fontWeight={500} color="primary">
+          4.5 ★★★★☆
+        </Typography>
       </CardContent>
       <CardActions>
-        <a href="http://localhost:5173/description">
+        <Link to="/description" style={{ textDecoration: "none" }}>
           <Button
-            size="small"
-            style={{
-              backgroundColor: "red",
-              color: "white",
+            fullWidth
+            variant="contained"
+            sx={{
+              backgroundColor: "#FF5295",
+              color: "#fff",
+              "&:hover": {
+                backgroundColor: "#FF5295",
+              },
             }}
           >
             Book Now
           </Button>
-        </a>
+        </Link>
       </CardActions>
     </Card>
   );

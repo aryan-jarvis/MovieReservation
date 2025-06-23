@@ -13,6 +13,12 @@ import PaymentSuccess from "./components/PaymentSuccess";
 import PaymentFailure from "./components/PaymentFailure";
 import PayUResponseHandler from "./components/PayUResponseHandler";
 import PaymentResponse from "./components/PaymentReponse";
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
+import ListMovie from "./pages/ListMovie";
+import ListShow from "./pages/ListShow";
+import ListTheatre from "./pages/ListTheatre";
+import AuthPopUp from "./pages/AuthPopUp";
 
 export default function App() {
   return (
@@ -33,6 +39,12 @@ export default function App() {
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-failure" element={<PaymentFailure />} />
         <Route path="/payment-response" element={<PaymentResponse />} />
+        <Route path="/auth" element={<LoginPage />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/listM" element={<ListMovie />} />
+        <Route path="/listS" element={<ListShow />} />
+        <Route path="/listT" element={<ListTheatre />} />
+        <Route path="/authP" element={<AuthPopUp />} />
       </Routes>
     </div>
   );

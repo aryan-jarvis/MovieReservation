@@ -46,25 +46,31 @@ export default function HeadProfile() {
         <div>
           <SearchDropDown />
         </div>
-        <img
-          className="logo"
-          src="../src/assets/images/user_logo.png"
-          alt="User Profile Logo"
-        />
         {username && (
-          <button
-            onClick={handleLogout}
-            style={{
-              padding: "6px 12px",
-              backgroundColor: "#FF5295",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            Logout
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <span style={{ fontWeight: "bold", fontSize: "16px" }}>
+              Welcome, {username}
+            </span>
+            <img
+              className="logo"
+              src="../src/assets/images/user_logo.png"
+              alt="User Profile Logo"
+              style={{ width: "40px", height: "40px", borderRadius: "50%" }}
+            />
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: "6px 12px",
+                backgroundColor: "#FF5295",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Logout
+            </button>
+          </div>
         )}
       </div>
     </div>
