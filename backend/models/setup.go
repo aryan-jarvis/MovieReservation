@@ -15,7 +15,7 @@ func ConnectDatabase() {
 	if err != nil {
 		log.Fatal("Failed to connect to database:", err)
 	}
-	database.AutoMigrate(&User{}, &Movie{}, &Show{}, &Review{}, &SeatSelection{}, &Booking{})
+	database.AutoMigrate(&User{}, &Movie{}, &Show{}, &Review{}, &SeatSelection{}, &Booking{}, &Cinema{}, &Theatre{}, &Show_Admin{})
 	DB = database
 
 	SeedData()

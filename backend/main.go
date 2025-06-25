@@ -61,6 +61,15 @@ func setupRoutes(router *gin.Engine) {
 
 	router.POST("/api/payment/initiate", middlewares.JWTAuth(), controllers.InitiatePayment)
 
+	router.POST("/cinemas", controllers.PostCinema)
+	router.GET("/cinemas", controllers.GetCinemas)
+
+	router.POST("/theatres", controllers.PostTheatre)
+	router.GET("/theatres", controllers.GetTheatres)
+
+	router.POST("/showAdmin", controllers.PostShowAdmin)
+	router.GET("/showAdmin", controllers.GetShowAdmin)
+
 	protected := router.Group("/")
 	protected.Use(middlewares.JWTAuth())
 	protected.GET("/profile", controllers.Profile)
