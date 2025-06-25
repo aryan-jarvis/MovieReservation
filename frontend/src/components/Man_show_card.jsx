@@ -1,34 +1,28 @@
 import React, { useState } from "react";
 
-export default function Man_show_card() {
+export default function Man_show_card({ show }) {
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const toggleDropdown = () => {
-    setShowDropdown((prev) => !prev);
-  };
+  const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
   return (
     <div style={styles.cardContainer}>
       <div style={styles.card}>
         <div style={styles.imageWrapper}>
-          <img
-            src="../src/assets/images/inception.png"
-            alt="Movie Poster"
-            style={styles.image}
-          />
+          <img src={show.poster} alt="Movie Poster" style={styles.image} />
         </div>
         <div style={styles.content}>
           <div style={styles.details}>
-            <p style={styles.title}>Harry Potter</p>
-            <p style={styles.genre}>Cinepolis | Bandra, Mumbai</p>
+            <p style={styles.title}>{show.name}</p>
+            <p style={styles.genre}>{show.theatre}</p>
             <div style={styles.languageTags}>
-              <span style={styles.languageTag}>12:00 PM - 03:00 PM</span>
-              <span style={styles.languageTag}>03:00 PM - 06:00 PM</span>
-              <span style={styles.languageTag}>06:00 PM - 09:00 PM</span>
+              {show.timings.map((t, i) => (
+                <span key={i} style={styles.languageTag}>
+                  {t}
+                </span>
+              ))}
             </div>
-            <p style={styles.genre}>
-              Hindi, English, Spanish, German, Sanskrit
-            </p>
+            <p style={styles.genre}>{show.languages.join(", ")}</p>
           </div>
 
           <div style={styles.menuWrapper}>
@@ -71,117 +65,6 @@ export default function Man_show_card() {
   );
 }
 
-// const styles = {
-//   cardContainer: {
-//     padding: "1rem",
-//     margin: "0 auto",
-//   },
-//   card: {
-//     display: "flex",
-//     backgroundColor: "#fff",
-//     borderRadius: "1rem",
-//     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
-//     transition: "0.3s ease",
-//     overflow: "hidden",
-//     maxHeight: "9rem",
-//   },
-//   imageWrapper: {
-//     flexShrink: 0,
-//     width: "9rem",
-//     height: "9rem",
-//     display: "flex",
-//     alignItems: "center",
-//     justifyContent: "center",
-//     overflow: "hidden",
-//   },
-//   image: {
-//     width: "100%",
-//     height: "100%",
-//     objectFit: "cover",
-//     borderRadius: "1rem 0 0 1rem",
-//   },
-//   content: {
-//     display: "flex",
-//     justifyContent: "space-between",
-//     alignItems: "flex-start",
-//     flex: 1,
-//     padding: "0.2rem",
-//     marginLeft: "2rem",
-//     gap: "1rem",
-//   },
-//   details: {
-//     display: "flex",
-//     flexDirection: "column",
-//     gap: "0.4rem",
-//     flex: 1,
-//   },
-//   title: {
-//     fontSize: "1.25rem",
-//     fontWeight: 700,
-//     color: "#111827",
-//     margin: 0,
-//   },
-//   genre: {
-//     fontSize: "0.9rem",
-//     color: "#6b7280",
-//     marginTop: "0.2rem",
-//     fontWeight: 500,
-//   },
-//   languageTags: {
-//     display: "flex",
-//     gap: "0.5rem",
-//     flexWrap: "wrap",
-//     margin: "0.4rem 0",
-//   },
-//   languageTag: {
-//     backgroundColor: "#e5e7eb",
-//     color: "#374151",
-//     fontSize: "0.75rem",
-//     padding: "0.35rem 0.6rem",
-//     borderRadius: "0.5rem",
-//     fontWeight: 500,
-//   },
-//   menuWrapper: {
-//     position: "relative",
-//     cursor: "pointer",
-//   },
-//   dotIcon: {
-//     width: "1.5rem",
-//     height: "1.5rem",
-//     opacity: 0.6,
-//     transition: "opacity 0.2s ease",
-//   },
-//   dropdown: {
-//     position: "absolute",
-//     top: "2.5rem",
-//     right: 0,
-//     backgroundColor: "#ffffff",
-//     borderRadius: "0.75rem",
-//     boxShadow: "0 6px 16px rgba(0, 0, 0, 0.1)",
-//     padding: "0.5rem 0",
-//     width: "10rem",
-//     zIndex: 10,
-//   },
-//   dropdownItem: {
-//     display: "flex",
-//     alignItems: "center",
-//     padding: "0.6rem 1rem",
-//     borderRadius: "0.5rem",
-//     cursor: "pointer",
-//     transition: "background-color 0.2s ease",
-//   },
-//   dropdownIcon: {
-//     width: "1rem",
-//     height: "1rem",
-//     marginRight: "0.75rem",
-//   },
-//   dropdownText: {
-//     fontSize: "0.95rem",
-//     color: "#374151",
-//     fontWeight: 500,
-//   },
-// };
-
 const styles = {
   cardContainer: {
     border: "#E0DFDF solid 0.05rem",
@@ -217,28 +100,6 @@ const styles = {
     gap: "0.4rem",
     flex: 1,
   },
-  tagsRow: {
-    display: "flex",
-    gap: "0.4rem",
-  },
-  // nowShowing: {
-  //   backgroundColor: "#BCFFCB",
-  //   color: "black",
-  //   padding: "0.4rem",
-  //   borderRadius: "1rem",
-  //   border: "0.05rem black solid",
-  //   fontSize: "0.7rem",
-  //   fontWeight: 600,
-  // },
-  // showAdded: {
-  //   backgroundColor: "white",
-  //   color: "black",
-  //   padding: "0.4rem",
-  //   borderRadius: "1rem",
-  //   border: "0.01px #E7E6EA solid",
-  //   fontSize: "0.7rem",
-  //   fontWeight: 600,
-  // },
   title: {
     fontSize: "1.3rem",
     fontWeight: 700,

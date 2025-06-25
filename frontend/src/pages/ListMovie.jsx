@@ -1,9 +1,17 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Head2 from "../components/Head2";
 import Man_movie_card from "../components/Man_movie_card";
 
 export default function ListMovie() {
   const navigate = useNavigate();
+  const [movies, setMovies] = useState([]);
+
+  useEffect(() => {
+    const storedMovies = JSON.parse(localStorage.getItem("movies") || "[]");
+    setMovies(storedMovies);
+  }, []);
+
   const handleAddMovieClick = () => {
     navigate("/addM");
   };
@@ -11,13 +19,8 @@ export default function ListMovie() {
   return (
     <div>
       <Head2 />
-      <div style={{ marginLeft: "2rem", marginRight: "2rem" }}>
-        <div
-          style={{
-            display: "flex",
-            gap: "0.5rem",
-          }}
-        >
+      <div style={{ margin: "2rem" }}>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
           <a href="/home" style={{ color: "grey", textDecoration: "none" }}>
             <p>Home</p>
           </a>
@@ -52,10 +55,21 @@ export default function ListMovie() {
           </button>
         </div>
 
-        <Man_movie_card />
-        <Man_movie_card />
-        <Man_movie_card />
-        <Man_movie_card />
+        {movies.length === 0 ? (
+          <p>No movies found.</p>
+        ) : (
+          movies.map((movie, index) => (
+            <Man_movie_card
+              key={index}
+              title={movie.title}
+              status={movie.status}
+              languages={movie.languages}
+              genre={movie.genre}
+              description={movie.description}
+              posterImage={movie.posterImage}
+            />
+          ))
+        )}
       </div>
     </div>
   );

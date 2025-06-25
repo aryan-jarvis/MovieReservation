@@ -1,9 +1,18 @@
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import Head2 from "../components/Head2";
 import Man_show_card from "../components/Man_show_card";
 
-export default function ListMovie() {
+export default function ListShow() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [shows, setShows] = useState([]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("shows");
+    if (stored) setShows(JSON.parse(stored));
+  }, [location]);
+
   const handleAddShowClick = () => {
     navigate("/addS");
   };
@@ -47,10 +56,9 @@ export default function ListMovie() {
           </button>
         </div>
 
-        <Man_show_card />
-        <Man_show_card />
-        <Man_show_card />
-        <Man_show_card />
+        {shows.map((s, i) => (
+          <Man_show_card key={i} show={s} />
+        ))}
       </div>
     </div>
   );

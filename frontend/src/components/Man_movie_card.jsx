@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 
-export default function Man_movie_card() {
+export default function Man_movie_card({
+  title,
+  status,
+  languages,
+  genre,
+  description,
+  posterImage,
+}) {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const toggleDropdown = () => {
@@ -12,7 +19,7 @@ export default function Man_movie_card() {
       <div style={styles.card}>
         <div style={styles.imageWrapper}>
           <img
-            src="../src/assets/images/inception.png"
+            src={posterImage || "../src/assets/images/inception.png"}
             alt="Movie Poster"
             style={styles.image}
           />
@@ -20,15 +27,18 @@ export default function Man_movie_card() {
         <div style={styles.content}>
           <div style={styles.details}>
             <div style={styles.tagsRow}>
-              <span style={styles.nowShowing}>Now Showing</span>
+              <span style={styles.nowShowing}>{status}</span>
               <span style={styles.showAdded}>Show Added</span>
             </div>
-            <p style={styles.title}>Inception</p>
+            <p style={styles.title}>{title}</p>
             <div style={styles.languageTags}>
-              <span style={styles.languageTag}>English</span>
-              <span style={styles.languageTag}>Hindi</span>
+              {languages?.map((lang, idx) => (
+                <span key={idx} style={styles.languageTag}>
+                  {lang}
+                </span>
+              ))}
             </div>
-            <p style={styles.genre}>Sci-Fi, Action</p>
+            <p style={styles.genre}>{genre}</p>
           </div>
 
           <div style={styles.menuWrapper}>
@@ -108,7 +118,6 @@ const styles = {
     color: "black",
     padding: "0.4rem",
     borderRadius: "1rem",
-    // border: "0.05rem black solid",
     fontSize: "0.7rem",
     fontWeight: 600,
   },

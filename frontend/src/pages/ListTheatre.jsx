@@ -1,9 +1,18 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Head2 from "../components/Head2";
 import Man_theatre_card from "../components/Man_theatre_card";
 
 export default function ListTheatre() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [theatres, setTheatres] = useState([]);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("theatres");
+    if (stored) setTheatres(JSON.parse(stored));
+  }, [location]);
+
   const handleAddTheatreClick = () => {
     navigate("/addT");
   };
@@ -27,6 +36,7 @@ export default function ListTheatre() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            marginBottom: "1rem",
           }}
         >
           <h1 style={{ fontSize: "2rem", fontWeight: "bold" }}>
@@ -47,10 +57,13 @@ export default function ListTheatre() {
           </button>
         </div>
 
-        <Man_theatre_card />
-        <Man_theatre_card />
-        <Man_theatre_card />
-        <Man_theatre_card />
+        {theatres.length === 0 ? (
+          <p>No theatres added yet.</p>
+        ) : (
+          theatres.map((theatre, index) => (
+            <Man_theatre_card key={index} theatre={theatre} />
+          ))
+        )}
       </div>
     </div>
   );
