@@ -61,9 +61,6 @@ func setupRoutes(router *gin.Engine) {
 
 	router.POST("/api/payment/initiate", middlewares.JWTAuth(), controllers.InitiatePayment)
 
-	router.POST("/api/payment/success", controllers.PaymentSuccess)
-	router.POST("/api/payment/failure", controllers.PaymentFailure)
-
 	protected := router.Group("/")
 	protected.Use(middlewares.JWTAuth())
 	protected.GET("/profile", controllers.Profile)

@@ -19,6 +19,10 @@ import ListMovie from "./pages/ListMovie";
 import ListShow from "./pages/ListShow";
 import ListTheatre from "./pages/ListTheatre";
 import AuthPopUp from "./pages/AuthPopUp";
+import AddMovie from "./pages/AddMovie";
+import AddShow from "./pages/AddShow";
+import AddTheatre from "./pages/AddTheatre";
+import Head2 from "./components/Head2";
 
 export default function App() {
   return (
@@ -45,6 +49,10 @@ export default function App() {
         <Route path="/listS" element={<ListShow />} />
         <Route path="/listT" element={<ListTheatre />} />
         <Route path="/authP" element={<AuthPopUp />} />
+        <Route path="/addM" element={<AddMovie />} />
+        <Route path="/addS" element={<AddShow />} />
+        <Route path="/addT" element={<AddTheatre />} />
+        <Route path="/h2" element={<Head2 />} />
       </Routes>
     </div>
   );

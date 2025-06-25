@@ -9,6 +9,7 @@ import (
 
 func JWTAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// extract jwt from authorization header
 		token := c.GetHeader("Authorization")
 		if token == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token required"})
@@ -21,6 +22,7 @@ func JWTAuth() gin.HandlerFunc {
 			return
 		}
 
+		// save username to gin context
 		c.Set("username", username)
 		c.Next()
 	}

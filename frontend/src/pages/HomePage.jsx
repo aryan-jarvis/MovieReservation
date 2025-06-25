@@ -1,23 +1,31 @@
-import HeadProfile from "../components/HeadProfile";
+import Head2 from "../components/Head2";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const [hoveredCardIndex, setHoveredCardIndex] = useState(null);
+
+  const handleMouseEnter = (index) => {
+    setHoveredCardIndex(index);
+  };
+
+  const handleMouseExit = () => {
+    setHoveredCardIndex(null);
+  };
 
   const styles = {
     cardCollection: {
       display: "flex",
       justifyContent: "center",
       gap: "5rem",
-      padding: "5rem",
-      flexWrap: "wrap",
+      marginTop: "8rem",
     },
     card: {
       border: "1px solid #B1B1B166",
       borderRadius: "1rem",
-      padding: "2.25rem",
-      width: "27rem",
-      backgroundColor: "white",
+      padding: "2rem",
+      width: "25rem",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
@@ -28,7 +36,7 @@ export default function HomePage() {
       flexDirection: "column",
       alignItems: "center",
       flexGrow: 1,
-      width: "100%",
+      width: "20rem",
     },
     image: {
       maxWidth: "100%",
@@ -96,13 +104,21 @@ export default function HomePage() {
 
   return (
     <div>
-      <HeadProfile />
+      <Head2 />
       <div style={styles.cardCollection}>
         {cardData.map((card, idx) => (
-          <div key={idx} style={styles.card}>
+          <div
+            key={idx}
+            style={{
+              ...styles.card,
+              backgroundColor: hoveredCardIndex === idx ? "#FFEFF5" : "#fff",
+            }}
+            onMouseEnter={() => handleMouseEnter(idx)}
+            onMouseLeave={handleMouseExit}
+          >
             <div style={styles.contentWrapper}>
               <img src={card.img} alt={card.alt} style={styles.image} />
-              <div style={styles.spacer}></div>{" "}
+              <div style={styles.spacer}></div>
               <h3 style={styles.heading}>{card.title}</h3>
               <p style={styles.paragraph}>{card.desc}</p>
             </div>

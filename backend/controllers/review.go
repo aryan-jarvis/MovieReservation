@@ -13,12 +13,14 @@ func PostReview(c *gin.Context) {
 		Comment string `json:"comment" binding:"required"`
 	}
 
+	// parse input and validate
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid input"})
 		return
 	}
 
-	username := c.MustGet("username").(string) // from middleware
+	// retrieves username from gin context after maybe decoding the jwt
+	username := c.MustGet("username").(string)
 
 	review := models.Review{
 		User:    username,
@@ -26,6 +28,7 @@ func PostReview(c *gin.Context) {
 		Comment: input.Comment,
 	}
 
+	// save review into the db
 	if err := models.DB.Create(&review).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save review"})
 		return

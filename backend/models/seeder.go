@@ -1,7 +1,6 @@
 package models
 
 import (
-	"log"
 	"time"
 )
 
@@ -40,8 +39,6 @@ func SeedData() {
 	for i := range movies {
 		DB.Create(&movies[i])
 	}
-
-	log.Println("Seeded movies")
 
 	shows := []Show{
 		{
@@ -220,6 +217,4 @@ func SeedData() {
 	for _, show := range shows {
 		DB.Create(&show)
 	}
-
-	log.Println("Seeded shows")
 }

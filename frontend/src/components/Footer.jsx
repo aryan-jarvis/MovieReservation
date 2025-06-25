@@ -3,7 +3,7 @@ export default function Footer() {
     <div
       style={{
         display: "flex",
-        gap: "13rem",
+        gap: "11rem",
         alignItems: "center",
         justifyContent: "center",
         padding: "5rem",

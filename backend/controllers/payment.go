@@ -31,7 +31,7 @@ func GenerateHash(data string) string {
 }
 
 func InitiatePayment(c *gin.Context) {
-	// Get username from JWT context
+	// get username from gin context
 	usernameRaw, exists := c.Get("username")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
@@ -39,21 +39,21 @@ func InitiatePayment(c *gin.Context) {
 	}
 	username := usernameRaw.(string)
 
-	// Find user by email (as username is email in token)
+	// find user by email
 	var user models.User
 	if err := models.DB.Where("email = ?", username).First(&user).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
 		return
 	}
 
-	// Bind JSON request
+	// bind json payload to payment struct and validate
 	var request PaymentRequest
 	if err := c.BindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
 		return
 	}
 
-	// Load PayU config from environment
+	// payu config from .env
 	merchantKey := os.Getenv("PAYU_MERCHANT_KEY")
 	merchantSalt := os.Getenv("PAYU_MERCHANT_SALT")
 	payuBaseURL := os.Getenv("PAYU_BASE_URL")
@@ -63,7 +63,6 @@ func InitiatePayment(c *gin.Context) {
 		return
 	}
 
-	// Generate transaction ID
 	transactionID := GenerateTransactionID()
 	amountStr := fmt.Sprintf("%.2f", request.Amount)
 	productInfo := "MovieTickets"
@@ -73,7 +72,7 @@ func InitiatePayment(c *gin.Context) {
 	successURL := "http://localhost:5173/payment-success"
 	failureURL := "http://localhost:5173/payment-failure"
 
-	// Create hash string as per PayU format
+	// payu compatible hash
 	hashString := fmt.Sprintf("%s|%s|%s|%s|%s|%s|||||||||||%s",
 		merchantKey,
 		transactionID,
@@ -83,9 +82,10 @@ func InitiatePayment(c *gin.Context) {
 		email,
 		merchantSalt,
 	)
+
+	// compute SHA-512 hash of the constructed string
 	hash := GenerateHash(hashString)
 
-	// ✅ Save booking to DB with status "pending"
 	booking := models.Booking{
 		UserID: user.ID,
 		TxnID:  transactionID,
@@ -95,12 +95,13 @@ func InitiatePayment(c *gin.Context) {
 		ShowID: uint(request.ShowID),
 	}
 
+	// save booking with status pending
 	if err := models.DB.Create(&booking).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create booking"})
 		return
 	}
 
-	// Create PayU payment form and auto-submit
+	// autosubmit payu form
 	payuForm := fmt.Sprintf(`
 		<form id="payuForm" method="post" action="%s/_payment">
 			<input type="hidden" name="key" value="%s" />
@@ -119,30 +120,6 @@ func InitiatePayment(c *gin.Context) {
 		</script>
 	`, payuBaseURL, merchantKey, transactionID, amountStr, productInfo, firstName, email, phone, successURL, failureURL, hash)
 
-	// Respond with HTML form that auto-submits
+	// send auto submitting form back to the browser
 	c.Data(http.StatusOK, "text/html; charset=utf-8", []byte(payuForm))
-}
-
-func PaymentSuccess(c *gin.Context) {
-	txnid := c.PostForm("txnid")
-
-	if err := models.DB.Model(&models.Booking{}).Where("txn_id = ?", txnid).
-		Update("status", "success").Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update booking"})
-		return
-	}
-
-	c.Redirect(http.StatusSeeOther, "http://localhost:5173/success")
-}
-
-func PaymentFailure(c *gin.Context) {
-	txnid := c.PostForm("txnid")
-
-	if err := models.DB.Model(&models.Booking{}).Where("txn_id = ?", txnid).
-		Update("status", "failure").Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update booking"})
-		return
-	}
-
-	c.Redirect(http.StatusSeeOther, "http://localhost:5173/failure")
 }
