@@ -1,6 +1,22 @@
+import { useEffect, useState } from "react";
 import SearchDropDown from "./SearchDropDown";
 
 export default function Head2() {
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("username");
+    setUsername("");
+    window.location.href = "/auth";
+  };
+
   const styles = {
     header: {
       display: "flex",
@@ -49,6 +65,15 @@ export default function Head2() {
       fontWeight: 500,
       color: "#333",
     },
+    logoutButton: {
+      padding: "0.5rem 1rem",
+      fontSize: "0.9rem",
+      borderRadius: "0.5rem",
+      border: "1px solid white",
+      cursor: "pointer",
+      backgroundColor: "#FF5295",
+      color: "white",
+    },
   };
 
   return (
@@ -81,7 +106,10 @@ export default function Head2() {
           src="../src/assets/images/user_logo.png"
           alt="User Profile Logo"
         />
-        <p style={styles.greeting}>Hi, Rahul</p>
+        <p style={styles.greeting}>Hi, {username || "Guest"}</p>
+        <button onClick={handleLogout} style={styles.logoutButton}>
+          Logout
+        </button>
       </div>
     </div>
   );

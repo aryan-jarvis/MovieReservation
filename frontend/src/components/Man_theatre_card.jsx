@@ -1,15 +1,35 @@
 import { useState } from "react";
 
-export default function Man_theatre_card({ theatre }) {
+export default function Man_theatre_card({ theatre, getTheatresList }) {
   const [showDropdown, setShowDropdown] = useState(false);
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8080/theatres/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete theatre");
+      } else {
+        getTheatresList();
+      }
+
+      if (onDelete) {
+        onDelete(id);
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+    }
+  };
 
   return (
     <div style={styles.cardContainer}>
       <div style={styles.card}>
         <div style={styles.imageWrapper}>
-          {theatre.posterUrl ? (
+          {theatre.theatreIcon ? (
             <img
-              src={theatre.posterUrl}
+              src={theatre.theatreIcon}
               alt="Theatre Poster"
               style={styles.image}
             />
@@ -39,7 +59,19 @@ export default function Man_theatre_card({ theatre }) {
             </p>
             <div style={styles.tagsRow}>
               <div style={styles.nowShowing}>{theatre.status}</div>
-              <div style={styles.showAdded}>{theatre.movies} Movies</div>
+              <div style={styles.showAdded}>
+                {Array.isArray(theatre.movies) && theatre.movies.length > 0 ? (
+                  theatre.movies.map((movie, index) => (
+                    <span key={index}>
+                      {movie}
+                      {index !== theatre.movies.length - 1 && ", "}
+                    </span>
+                  ))
+                ) : (
+                  <span>No Movies</span>
+                )}
+              </div>
+
               <div style={styles.showAdded}>{theatre.screens} Screens</div>
             </div>
           </div>
@@ -55,7 +87,12 @@ export default function Man_theatre_card({ theatre }) {
                   <span style={styles.dropdownText}>Edit</span>
                 </div>
                 <div style={styles.dropdownItem}>
-                  <span style={styles.dropdownText}>Delete</span>
+                  <span
+                    style={styles.dropdownText}
+                    onClick={() => handleDelete(theatre?.ID)}
+                  >
+                    Delete
+                  </span>
                 </div>
               </div>
             )}

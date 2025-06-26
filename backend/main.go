@@ -76,6 +76,8 @@ func setupRoutes(router *gin.Engine) {
 	router.PUT("/showAdmin/:id", controllers.UpdateShowAdmin)
 	router.DELETE("/showAdmin/:id", controllers.DeleteShowAdmin)
 
+	router.GET("/review", controllers.GetReview)
+
 	protected := router.Group("/")
 	protected.Use(middlewares.JWTAuth())
 	protected.GET("/profile", controllers.Profile)

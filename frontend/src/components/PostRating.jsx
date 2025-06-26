@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Rating } from "react-simple-star-rating";
+import React, { useState, useEffect } from "react";
 
 function ReviewForm({ onSubmit, onClose }) {
   const [comment, setComment] = useState("");
@@ -40,14 +39,28 @@ function ReviewForm({ onSubmit, onClose }) {
     }
   };
 
+  const renderStars = () => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <span
+        key={i}
+        onClick={() => setRating(i + 1)}
+        style={{
+          cursor: "pointer",
+          color: i < rating ? "#f39c12" : "#ccc",
+          fontSize: 25,
+        }}
+      >
+        ★
+      </span>
+    ));
+  };
+
   return (
     <form onSubmit={handleSubmit} style={styles.form}>
       <button onClick={onClose} type="button" style={closeButtonStyle}>
         &times;
       </button>
-      <div style={styles.ratingContainer}>
-        <Rating onClick={setRating} ratingValue={rating} />
-      </div>
+      <div style={styles.ratingContainer}>{renderStars()}</div>
       <textarea
         placeholder="Write your review..."
         value={comment}
@@ -63,9 +76,23 @@ function ReviewForm({ onSubmit, onClose }) {
 }
 
 function ReviewItem({ review }) {
+  const renderStars = () => {
+    return Array.from({ length: 5 }, (_, i) => (
+      <span
+        key={i}
+        style={{
+          color: i < review.rating ? "#f39c12" : "#ccc",
+          fontSize: 20,
+        }}
+      >
+        ★
+      </span>
+    ));
+  };
+
   return (
     <div style={styles.reviewItem}>
-      <Rating ratingValue={review.rating} readonly={true} />
+      <div>{renderStars()}</div>
       <p style={styles.reviewComment}>{review.comment}</p>
     </div>
   );
@@ -74,6 +101,24 @@ function ReviewItem({ review }) {
 function PostRating() {
   const [reviews, setReviews] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch("http://localhost:8080/review");
+        const result = await response.json();
+        if (response.ok) {
+          setReviews(result.data);
+        } else {
+          console.error("Failed to fetch reviews:", result.error);
+        }
+      } catch (err) {
+        console.error("Error fetching reviews:", err);
+      }
+    };
+
+    fetchReviews();
+  }, []);
 
   const handleReviewSubmit = (newReview) => {
     setReviews((prev) => [...prev, newReview]);
@@ -109,11 +154,11 @@ function PostRating() {
         </div>
       )}
 
-      {/* <div style={styles.reviewsList}>
+      <div style={styles.reviewsList}>
         {reviews.map((review, idx) => (
           <ReviewItem key={idx} review={review} />
         ))}
-      </div> */}
+      </div>
     </>
   );
 }
@@ -177,19 +222,34 @@ const styles = {
     alignSelf: "flex-start",
   },
   reviewItem: {
-    padding: 15,
-    marginBottom: 15,
-    border: "1px solid #ddd",
-    backgroundColor: "white",
+    padding: "1.5rem",
+    marginBottom: "1.5rem",
+    borderRadius: "1rem",
+    backgroundColor: "#ffffff",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    width: "18rem",
+    // transition: "transform 0.2s ease",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    cursor: "default",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+    ":hover": {
+      transform: "translateY(-5px)",
+      boxShadow: "0 6px 12px rgba(0, 0, 0, 0.15)",
+    },
   },
   reviewComment: {
-    marginTop: 8,
-    fontSize: 16,
-    color: "#555",
+    marginTop: "1rem",
+    fontSize: "1rem",
+    color: "#333",
+    fontStyle: "italic",
   },
   reviewsList: {
-    // marginTop: "25rem",
-    padding: "1rem 2rem",
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "2rem",
+    marginTop: "2rem",
   },
 };
 

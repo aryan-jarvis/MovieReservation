@@ -36,3 +36,22 @@ func PostReview(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "review submitted successfully"})
 }
+
+func GetReview(c *gin.Context) {
+	var reviews []models.Review
+	if err := models.DB.Find(&reviews).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch reviews: " + err.Error()})
+		return
+	}
+
+	// only rating and comment
+	var response []gin.H
+	for _, r := range reviews {
+		response = append(response, gin.H{
+			"rating":  r.Rating,
+			"comment": r.Comment,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": response})
+}

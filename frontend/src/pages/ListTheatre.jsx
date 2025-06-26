@@ -8,9 +8,18 @@ export default function ListTheatre() {
   const location = useLocation();
   const [theatres, setTheatres] = useState([]);
 
+  const getTheatresList = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/theatres");
+      const data = await response.json();
+      setTheatres(data.data);
+    } catch (error) {
+      console.error("Error fetching theatres:", error);
+    }
+  };
+
   useEffect(() => {
-    const stored = localStorage.getItem("theatres");
-    if (stored) setTheatres(JSON.parse(stored));
+    getTheatresList();
   }, [location]);
 
   const handleAddTheatreClick = () => {
@@ -62,7 +71,11 @@ export default function ListTheatre() {
           <p>No theatres added yet.</p>
         ) : (
           theatres.map((theatre, index) => (
-            <Man_theatre_card key={index} theatre={theatre} />
+            <Man_theatre_card
+              key={index}
+              theatre={theatre}
+              getTheatresList={getTheatresList}
+            />
           ))
         )}
       </div>

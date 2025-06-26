@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Head2 from "../components/Head2";
 import axios from "axios";
+import LanguageDropdown from "../components/LanguageDropdown";
 
 export default function AddShow() {
   const navigate = useNavigate();
@@ -24,12 +25,12 @@ export default function AddShow() {
     setDate("");
   }, []);
 
-  const handleLanguageChange = (e) => {
-    const selected = Array.from(e.target.selectedOptions).map(
-      (opt) => opt.value
-    );
-    setLanguages(selected);
-  };
+  // const handleLanguageChange = (e) => {
+  //   const selected = Array.from(e.target.selectedOptions).map(
+  //     (opt) => opt.value
+  //   );
+  //   setLanguages(selected);
+  // };
 
   const handleTimingAdd = () => {
     if (startTime && endTime) {
@@ -122,10 +123,14 @@ export default function AddShow() {
       borderRadius: "1rem",
       paddingTop: "1rem",
       textAlign: "center",
+      position: "relative",
+      overflow: "hidden",
     },
     posterImage: {
-      marginTop: "0.5rem",
-      width: "100px",
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      borderRadius: "1rem",
     },
     buttonsRow: {
       display: "flex",
@@ -195,7 +200,8 @@ export default function AddShow() {
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
               />
-              <select
+
+              {/* <select
                 multiple
                 value={languages}
                 onChange={handleLanguageChange}
@@ -209,7 +215,11 @@ export default function AddShow() {
                 <option value="Spanish">Spanish</option>
                 <option value="French">French</option>
                 <option value="German">German</option>
-              </select>
+              </select> */}
+              <LanguageDropdown
+                selected={languages}
+                setSelected={setLanguages}
+              />
             </div>
 
             <div style={{ border: "0.01rem black solid", padding: "1rem" }}>
@@ -243,12 +253,119 @@ export default function AddShow() {
                   type="file"
                   accept="image/png"
                   onChange={handlePosterUpload}
+                  style={{
+                    opacity: 0,
+                    position: "absolute",
+                    width: "8rem",
+                    height: "5rem",
+                    cursor: "pointer",
+                  }}
                 />
-                {poster && (
+                {poster ? (
                   <img src={poster} alt="Poster" style={styles.posterImage} />
+                ) : (
+                  <>
+                    <img
+                      src="../src/assets/images/upload.png"
+                      alt="Upload"
+                      style={{ width: "2rem" }}
+                    />
+                    <p style={{ fontSize: "12px", color: "#6B7280" }}>
+                      Upload file here
+                    </p>
+                  </>
                 )}
               </div>
             </div>
+
+            {/* <div>
+              Poster Upload (PNG only):
+              <div
+                style={{
+                  ...styles.posterUpload,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  position: "relative",
+                }}
+              >
+                <input
+                  type="file"
+                  accept="image/png"
+                  onChange={handlePosterUpload}
+                  style={{
+                    opacity: 0,
+                    position: "absolute",
+                    width: "100%",
+                    height: "100%",
+                    cursor: "pointer",
+                  }}
+                />
+                {poster ? (
+                  <img
+                    src={poster}
+                    alt="Poster"
+                    style={{
+                      ...styles.posterImage,
+                      objectFit: "contain",
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                    }}
+                  />
+                ) : (
+                  <>
+                    <img
+                      src="../src/assets/images/upload.png"
+                      alt="Upload"
+                      style={{ width: "3rem", height: "3rem" }}
+                    />
+                    <p
+                      style={{
+                        fontSize: "12px",
+                        color: "#6B7280",
+                        textAlign: "center",
+                      }}
+                    >
+                      Upload file here
+                    </p>
+                  </>
+                )}
+              </div>
+            </div> */}
+
+            {/* <p style={styles.posterSection}>Upload Poster</p>
+            <div style={styles.posterUpload}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePosterUpload}
+                style={{
+                  opacity: 0,
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  cursor: "pointer",
+                }}
+              />
+              {posterImage ? (
+                <img
+                  src={posterImage}
+                  alt="Poster"
+                  style={styles.posterImage}
+                />
+              ) : (
+                <>
+                  <img
+                    src="../src/assets/images/upload.png"
+                    alt="Upload"
+                    style={{ width: "2rem" }}
+                  />
+                  <p style={{ fontSize: "12px", color: "#6B7280" }}>
+                    Upload file here
+                  </p>
+                </>
+              )}
+            </div> */}
 
             <div style={styles.buttonsRow}>
               <button style={styles.addButton} onClick={handleAddShow}>

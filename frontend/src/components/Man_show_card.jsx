@@ -1,9 +1,29 @@
 import React, { useState } from "react";
 
-export default function Man_show_card({ show }) {
+export default function Man_show_card({ show, getShowsList }) {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8080/showAdmin/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete show");
+      } else {
+        getShowsList();
+      }
+
+      if (onDelete) {
+        onDelete(id);
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+    }
+  };
 
   return (
     <div style={styles.cardContainer}>
@@ -34,10 +54,7 @@ export default function Man_show_card({ show }) {
             />
             {showDropdown && (
               <div style={styles.dropdown}>
-                <div
-                  style={styles.dropdownItem}
-                  onClick={() => alert("Edit clicked")}
-                >
+                <div style={styles.dropdownItem}>
                   <img
                     src="../src/assets/images/pencil_icon.png"
                     alt="Edit"
@@ -45,16 +62,18 @@ export default function Man_show_card({ show }) {
                   />
                   <span style={styles.dropdownText}>Edit</span>
                 </div>
-                <div
-                  style={styles.dropdownItem}
-                  onClick={() => alert("Delete clicked")}
-                >
+                <div style={styles.dropdownItem}>
                   <img
                     src="../src/assets/images/delete_icon.png"
                     alt="Delete"
                     style={styles.dropdownIcon}
                   />
-                  <span style={styles.dropdownText}>Delete</span>
+                  <span
+                    style={styles.dropdownText}
+                    onClick={() => handleDelete(show?.ID)}
+                  >
+                    Delete
+                  </span>
                 </div>
               </div>
             )}

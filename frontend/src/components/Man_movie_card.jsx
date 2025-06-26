@@ -1,17 +1,30 @@
 import React, { useState } from "react";
 
-export default function Man_movie_card({
-  title,
-  status,
-  languages,
-  genre,
-  description,
-  posterImage,
-}) {
+export default function Man_movie_card({ movie, getMoviesList }) {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`http://localhost:8080/cinemas/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete cinema");
+      } else {
+        getMoviesList();
+      }
+
+      if (onDelete) {
+        onDelete(id);
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+    }
   };
 
   return (
@@ -19,7 +32,7 @@ export default function Man_movie_card({
       <div style={styles.card}>
         <div style={styles.imageWrapper}>
           <img
-            src={posterImage || "../src/assets/images/inception.png"}
+            src={movie?.posterImage || "../src/assets/images/inception.png"}
             alt="Movie Poster"
             style={styles.image}
           />
@@ -27,18 +40,18 @@ export default function Man_movie_card({
         <div style={styles.content}>
           <div style={styles.details}>
             <div style={styles.tagsRow}>
-              <span style={styles.nowShowing}>{status}</span>
+              <span style={styles.nowShowing}>{movie?.status}</span>
               <span style={styles.showAdded}>Show Added</span>
             </div>
-            <p style={styles.title}>{title}</p>
+            <p style={styles.title}>{movie?.title}</p>
             <div style={styles.languageTags}>
-              {languages?.map((lang, idx) => (
+              {movie?.languages?.map((lang, idx) => (
                 <span key={idx} style={styles.languageTag}>
                   {lang}
                 </span>
               ))}
             </div>
-            <p style={styles.genre}>{genre}</p>
+            <p style={styles.genre}>{movie?.genre}</p>
           </div>
 
           <div style={styles.menuWrapper}>
@@ -63,7 +76,12 @@ export default function Man_movie_card({
                     alt="Delete"
                     style={styles.dropdownIcon}
                   />
-                  <span style={styles.dropdownText}>Delete</span>
+                  <span
+                    style={styles.dropdownText}
+                    onClick={() => handleDelete(movie?.ID)}
+                  >
+                    Delete
+                  </span>
                 </div>
               </div>
             )}

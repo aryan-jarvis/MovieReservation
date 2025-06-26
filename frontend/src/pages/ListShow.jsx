@@ -1,17 +1,41 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Head2 from "../components/Head2";
 import Man_show_card from "../components/Man_show_card";
 
 export default function ListShow() {
   const navigate = useNavigate();
-  const location = useLocation();
   const [shows, setShows] = useState([]);
 
+  const getShowsList = () => {
+    fetch("http://localhost:8080/showAdmin")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch shows");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (data && data.data) {
+          const formattedShows = data.data.map((item) => ({
+            ID: item.ID,
+            name: item.movie,
+            poster: item.posterImage,
+            theatre: item.theatre,
+            timings: [item.showtime],
+            languages: item.languages,
+          }));
+          setShows(formattedShows);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching shows:", error);
+      });
+  };
+
   useEffect(() => {
-    const stored = localStorage.getItem("shows");
-    if (stored) setShows(JSON.parse(stored));
-  }, [location]);
+    getShowsList();
+  }, []);
 
   const handleAddShowClick = () => {
     navigate("/addS");
@@ -61,7 +85,13 @@ export default function ListShow() {
         {shows.length === 0 ? (
           <p>No showtimes scheduled yet.</p>
         ) : (
-          shows.map((show, index) => <Man_show_card key={index} show={show} />)
+          shows.map((show, index) => (
+            <Man_show_card
+              key={index}
+              show={show}
+              getShowsList={getShowsList}
+            />
+          ))
         )}
       </div>
     </div>

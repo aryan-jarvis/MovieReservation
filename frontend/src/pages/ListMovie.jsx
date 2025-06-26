@@ -7,9 +7,23 @@ export default function ListMovie() {
   const navigate = useNavigate();
   const [movies, setMovies] = useState([]);
 
+  const getMoviesList = () => {
+    fetch("http://localhost:8080/cinemas")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch movies");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setMovies(data.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching movies:", error);
+      });
+  };
   useEffect(() => {
-    const storedMovies = JSON.parse(localStorage.getItem("movies") || "[]");
-    setMovies(storedMovies);
+    getMoviesList();
   }, []);
 
   const handleAddMovieClick = () => {
@@ -63,12 +77,8 @@ export default function ListMovie() {
           movies.map((movie, index) => (
             <Man_movie_card
               key={index}
-              title={movie.title}
-              status={movie.status}
-              languages={movie.languages}
-              genre={movie.genre}
-              description={movie.description}
-              posterImage={movie.posterImage}
+              movie={movie}
+              getMoviesList={getMoviesList}
             />
           ))
         )}

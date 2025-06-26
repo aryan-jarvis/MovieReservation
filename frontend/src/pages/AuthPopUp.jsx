@@ -1,7 +1,64 @@
 import { useState } from "react";
+import axios from "axios";
+
+const API = "http://localhost:8080";
 
 export default function AuthPopUp() {
   const [isRegister, setIsRegister] = useState(true);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [token, setToken] = useState("");
+  const [isOpen, setIsOpen] = useState(() => {
+    const saved = localStorage.getItem("loginPopUpClosed");
+    return saved !== "true";
+  });
+
+  const handleRegister = async () => {
+    try {
+      const res = await axios.post(`${API}/register`, {
+        name,
+        email,
+        password,
+      });
+
+      setToken(res.data.token);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("username", name);
+      localStorage.setItem("loginPopUpClosed", "true");
+
+      window.location.href = `http://localhost:5173/home/?user=${encodeURIComponent(
+        name
+      )}`;
+      setIsOpen(false);
+    } catch (error) {
+      console.error(
+        "Registration failed:",
+        error.response?.data?.error || error.message
+      );
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
+      const res = await axios.post(`${API}/login`, { email, password });
+
+      setToken(res.data.token);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("username", res.data.name);
+      localStorage.setItem("loginPopUpClosed", "true");
+
+      window.location.href = `http://localhost:5173/home/?user=${encodeURIComponent(
+        email
+      )}`;
+      setIsOpen(false);
+    } catch (error) {
+      console.error(
+        "Login Failed:",
+        error.response?.data?.error || error.message
+      );
+    }
+  };
 
   const styles = {
     container: {
@@ -57,12 +114,39 @@ export default function AuthPopUp() {
       <h1 style={styles.title}>{isRegister ? "Register" : "Login"} 👋</h1>
 
       {isRegister && (
-        <input placeholder="Name" type="text" style={styles.input} />
+        <input
+          placeholder="Name"
+          type="text"
+          style={styles.input}
+          onChange={(e) => setName(e.target.value)}
+        />
       )}
-      <input placeholder="Email" type="email" style={styles.input} />
-      <input placeholder="Password" type="password" style={styles.input} />
+      <input
+        placeholder="Email"
+        type="email"
+        style={styles.input}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <input
+        placeholder="Password"
+        type="password"
+        style={styles.input}
+        onChange={(e) => setPassword(e.target.value)}
+      />
 
-      <button style={styles.button}>{isRegister ? "Register" : "Login"}</button>
+      {/* <button style={styles.button}>{isRegister ? "Register" : "Login"}</button> */}
+
+      <div style={{ display: "flex" }}>
+        {isRegister ? (
+          <button onClick={handleRegister} style={styles.button}>
+            Register
+          </button>
+        ) : (
+          <button onClick={handleLogin} style={styles.button}>
+            Login
+          </button>
+        )}
+      </div>
 
       <button
         style={styles.toggleButton}
