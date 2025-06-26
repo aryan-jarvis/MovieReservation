@@ -54,6 +54,18 @@ func GetCinemas(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": cinemas})
 }
 
+func GetCinemaByID(c *gin.Context) {
+	id := c.Param("id")
+
+	var cinema models.Cinema
+	if err := models.DB.First(&cinema, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Cinema not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": cinema})
+}
+
 func DeleteCinema(c *gin.Context) {
 	id := c.Param("id")
 

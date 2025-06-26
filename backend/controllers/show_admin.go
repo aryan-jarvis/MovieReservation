@@ -50,6 +50,18 @@ func GetShowAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": shows})
 }
 
+func GetShowAdminByID(c *gin.Context) {
+	id := c.Param("id")
+
+	var show models.Show_Admin
+	if err := models.DB.First(&show, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Show not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"data": show})
+}
+
 func DeleteShowAdmin(c *gin.Context) {
 	id := c.Param("id")
 

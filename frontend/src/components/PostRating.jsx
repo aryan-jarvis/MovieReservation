@@ -108,7 +108,8 @@ function PostRating() {
         const response = await fetch("http://localhost:8080/review");
         const result = await response.json();
         if (response.ok) {
-          setReviews(result.data);
+          const sortedReviews = result.data.sort((a, b) => b.rating - a.rating);
+          setReviews(sortedReviews);
         } else {
           console.error("Failed to fetch reviews:", result.error);
         }
@@ -121,7 +122,9 @@ function PostRating() {
   }, []);
 
   const handleReviewSubmit = (newReview) => {
-    setReviews((prev) => [...prev, newReview]);
+    setReviews((prev) =>
+      [...prev, newReview].sort((a, b) => b.rating - a.rating)
+    );
   };
 
   return (

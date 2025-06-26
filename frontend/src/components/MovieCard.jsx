@@ -1,63 +1,123 @@
-import * as React from "react";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import React from "react";
 import { Link } from "react-router-dom";
-import movieImg from "../assets/images/movie_img.png";
+import PropTypes from "prop-types";
 
-export default function MovieCard() {
+const styles = {
+  card: {
+    width: "250px",
+    borderRadius: "16px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+    overflow: "hidden",
+    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+    backgroundColor: "#fff",
+    fontFamily: "Arial, sans-serif",
+  },
+  image: {
+    width: "100%",
+    height: "350px",
+    objectFit: "cover",
+  },
+  content: {
+    padding: "16px",
+  },
+  title: {
+    fontSize: "18px",
+    fontWeight: "600",
+    marginBottom: "8px",
+  },
+  subtitle: {
+    fontSize: "14px",
+    color: "#777",
+    marginBottom: "8px",
+  },
+  rating: {
+    fontSize: "14px",
+    fontWeight: "500",
+    color: "#1976d2",
+  },
+  actions: {
+    padding: "16px",
+  },
+  link: {
+    textDecoration: "none",
+    display: "block",
+  },
+  button: {
+    width: "100%",
+    padding: "10px 16px",
+    backgroundColor: "#FF5295",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "14px",
+    fontWeight: "600",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+  },
+};
+
+const MovieCard = ({
+  id,
+  title = "Untitled",
+  genre = "Unknown",
+  languages = [],
+  posterImage = "/fallback.jpg",
+  rating = 4.5,
+}) => {
   return (
-    <Card
-      sx={{
-        maxWidth: 250,
-        borderRadius: 2,
-        boxShadow: 3,
-        transition: "transform 0.3s",
-        "&:hover": {
-          transform: "scale(1.03)",
-          boxShadow: 6,
-        },
-      }}
-    >
-      <CardMedia
-        component="img"
-        height="350"
-        image={movieImg}
-        alt="Alice in Wonderland"
-        sx={{ objectFit: "cover" }}
-      />
-      <CardContent>
-        <Typography variant="h6" component="div" fontWeight={600}>
-          Alice in Wonderland
-        </Typography>
-        <Typography variant="body2" color="text.secondary" mb={1}>
-          Adventure | UA13+ | English, Hindi
-        </Typography>
-        <Typography variant="body2" fontWeight={500} color="primary">
-          4.5 ★★★★☆
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Link to="/description" style={{ textDecoration: "none" }}>
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{
-              backgroundColor: "#FF5295",
-              color: "#fff",
-              "&:hover": {
-                backgroundColor: "#FF5295",
-              },
+    <>
+      <div className="movie-card" style={styles.card}>
+        <img
+          src={posterImage}
+          alt={title}
+          style={styles.image}
+          onError={(e) => {
+            e.target.src = "/fallback.jpg"; // fallback image
+          }}
+        />
+        <div style={styles.content}>
+          <h3 style={styles.title}>{title}</h3>
+          <p style={styles.subtitle}>
+            {genre} | {languages.join(", ")}
+          </p>
+          <p style={styles.rating}>{rating} ★★★★☆</p>
+        </div>
+        <div style={styles.actions}>
+          <Link
+            to={`/description/${id}`}
+            state={{
+              movie: { id, title, genre, languages, posterImage, rating },
             }}
+            style={styles.link}
           >
-            Book Now
-          </Button>
-        </Link>
-      </CardActions>
-    </Card>
+            <button className="movie-button" style={styles.button}>
+              Book Now
+            </button>
+          </Link>
+        </div>
+      </div>
+
+      <style>{`
+        .movie-card:hover {
+          transform: scale(1.03);
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .movie-button:hover {
+          background-color: #e74786;
+        }
+      `}</style>
+    </>
   );
-}
+};
+
+MovieCard.propTypes = {
+  id: PropTypes.number.isRequired,
+  title: PropTypes.string,
+  genre: PropTypes.string,
+  languages: PropTypes.arrayOf(PropTypes.string),
+  posterImage: PropTypes.string,
+  rating: PropTypes.number,
+};
+
+export default MovieCard;

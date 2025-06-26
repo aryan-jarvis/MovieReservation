@@ -65,16 +65,19 @@ func setupRoutes(router *gin.Engine) {
 	router.POST("/cinemas", controllers.PostCinema)
 	router.PUT("/cinemas/:id", controllers.UpdateCinema)
 	router.DELETE("/cinemas/:id", controllers.DeleteCinema)
+	router.GET("/cinemas/:id", controllers.GetCinemaByID)
 
 	router.GET("/theatres", controllers.GetTheatres)
 	router.POST("/theatres", controllers.PostTheatre)
 	router.PUT("/theatres/:id", controllers.UpdateTheatre)
 	router.DELETE("/theatres/:id", controllers.DeleteTheatre)
+	router.GET("/theatres/:id", controllers.GetTheatreByID)
 
 	router.GET("/showAdmin", controllers.GetShowAdmin)
 	router.POST("/showAdmin", controllers.PostShowAdmin)
 	router.PUT("/showAdmin/:id", controllers.UpdateShowAdmin)
 	router.DELETE("/showAdmin/:id", controllers.DeleteShowAdmin)
+	router.GET("/showAdmin/:id", controllers.GetShowAdminByID)
 
 	router.GET("/review", controllers.GetReview)
 

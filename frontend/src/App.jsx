@@ -53,6 +53,7 @@ export default function App() {
         <Route path="/addS" element={<AddShow />} />
         <Route path="/addT" element={<AddTheatre />} />
         <Route path="/h2" element={<Head2 />} />
+        <Route path="/description/:id" element={<Movie_Description_Page />} />
       </Routes>
     </div>
   );

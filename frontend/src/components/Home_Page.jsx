@@ -1,14 +1,68 @@
+import React, { useEffect, useState } from "react";
 import BookingSteps from "./BookingSteps";
 import ComingSoon from "./ComingSoon";
 import Footer from "./Footer";
 import HeadProfile from "./HeadProfile";
 import LoginPopUp from "./LoginPopUp";
-import MovieCollection from "./MovieCollection";
 import SalaarSlider from "./SalaarSlider";
-import SearchDropDown from "./SearchDropDown";
-import React from "react";
+import MovieCard from "./MovieCard";
 
 export default function Home_Page() {
+  const [movies, setMovies] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/cinemas")
+      .then((res) => res.json())
+      .then((res) => setMovies(res.data || []))
+      .catch((err) => console.error("Error fetching movies:", err));
+  }, []);
+
+  const latestMovies = movies.slice(0, 6);
+  const nowShowing = movies
+    .filter((m) => m.status === "Now Showing")
+    .slice(0, 6);
+  const bollywoodTrending = movies
+    .filter((m) => m.genre?.toLowerCase().includes("bollywood"))
+    .slice(0, 6);
+
+  const renderSection = (title, data) => (
+    <>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginTop: "2rem",
+        }}
+      >
+        <h2>{title}</h2>
+        <a
+          href="http://localhost:5173/movies"
+          style={{ textDecoration: "none", color: "#FF5295" }}
+        >
+          <p>See All</p>
+        </a>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
+        {data.length > 0 ? (
+          data.map((movie) => (
+            <MovieCard
+              key={movie.ID}
+              id={movie.ID}
+              title={movie.title}
+              genre={movie.genre}
+              languages={movie.languages}
+              posterImage={movie.posterImage}
+              rating={movie.rating || 4.5}
+            />
+          ))
+        ) : (
+          <p>No movies to show.</p>
+        )}
+      </div>
+    </>
+  );
+
   return (
     <div style={{ padding: "1.5rem" }}>
       <HeadProfile />
@@ -16,33 +70,12 @@ export default function Home_Page() {
       <SalaarSlider />
       <br />
       <LoginPopUp />
-      <div style={{ display: "flex", gap: "92rem" }}>
-        <h2>Watch Latest Movie</h2>
-        <a href="http://localhost:5173/movies">
-          <p>See All</p>
-        </a>
-      </div>
-      <MovieCollection />
-      <br />
-      <div style={{ display: "flex", gap: "89rem" }}>
-        <h2>Now Showing in Theatres</h2>
-        <a href="http://localhost:5173/movies">
-          <p>See All</p>
-        </a>
-      </div>
-      <MovieCollection />
-      <br />
+
+      {renderSection("Watch Latest Movie", latestMovies)}
+      {renderSection("Now Showing in Theatres", nowShowing)}
       <BookingSteps />
-      <br />
-      <div style={{ display: "flex", gap: "92rem" }}>
-        <h2>Bollywood Trending</h2>
-        <a href="http://localhost:5173/movies">
-          <p>See All</p>
-        </a>
-      </div>
-      <MovieCollection />
-      <br />
-      <br />
+      {renderSection("Bollywood Trending", bollywoodTrending)}
+
       <ComingSoon />
       <Footer />
     </div>

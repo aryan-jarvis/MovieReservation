@@ -1,7 +1,6 @@
 import BookedForCard from "./BookedForCard";
 import Footer from "./Footer";
 import HeadProfile from "./HeadProfile";
-import MovieCollection from "./MovieCollection";
 import PastMoviesCollection from "./PastMoviesCollection";
 import ProfileHistory from "./ProfileHistory";
 
