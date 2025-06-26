@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Head2 from "../components/Head2";
+import axios from "axios";
 
 export default function AddTheatre() {
   const navigate = useNavigate();
@@ -45,12 +46,38 @@ export default function AddTheatre() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const theatres = JSON.parse(localStorage.getItem("theatres")) || [];
-    theatres.push(form);
-    localStorage.setItem("theatres", JSON.stringify(theatres));
-    navigate("/listT");
+
+    const movieArray = form.movies
+      .split(",")
+      .map((m) => m.trim())
+      .filter((m) => m.length > 0);
+
+    const payload = {
+      name: form.name,
+      address: form.address,
+      city: form.city,
+      state: form.state,
+      status: form.status,
+      screens: parseInt(form.screens, 10),
+      movies: movieArray,
+      theatreIcon: form.posterUrl,
+    };
+
+    try {
+      const res = await axios.post("http://localhost:8080/theatres", payload, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      console.log("Theatre added:", res.data);
+      navigate("/listT");
+    } catch (error) {
+      console.error("Failed to add theatre:", error);
+      alert(error.response?.data?.error || "Something went wrong.");
+    }
   };
 
   const cancelClick = () => {
@@ -228,9 +255,9 @@ export default function AddTheatre() {
               />
             </div>
             <input
-              type="number"
+              type="text"
               name="movies"
-              placeholder="Current Movies"
+              placeholder="Current Movies (comma separated)"
               value={form.movies}
               onChange={handleChange}
               required

@@ -20,8 +20,8 @@ export default function ListTheatre() {
   return (
     <div>
       <Head2 />
-      <div style={{ marginLeft: "2rem", marginRight: "2rem" }}>
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+      <div style={{ margin: "0 2rem" }}>
+        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
           <a href="/home" style={{ color: "grey", textDecoration: "none" }}>
             <p>Home</p>
           </a>
@@ -50,6 +50,7 @@ export default function ListTheatre() {
               border: "2px solid #FF5295",
               borderRadius: "0.4rem",
               fontSize: "1rem",
+              cursor: "pointer",
             }}
             onClick={handleAddTheatreClick}
           >

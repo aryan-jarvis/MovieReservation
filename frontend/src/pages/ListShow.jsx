@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Head2 from "../components/Head2";
 import Man_show_card from "../components/Man_show_card";
 
@@ -20,8 +20,8 @@ export default function ListShow() {
   return (
     <div>
       <Head2 />
-      <div style={{ marginLeft: "2rem", marginRight: "2rem" }}>
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+      <div style={{ margin: "0 2rem" }}>
+        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
           <a href="/home" style={{ color: "grey", textDecoration: "none" }}>
             <p>Home</p>
           </a>
@@ -36,6 +36,7 @@ export default function ListShow() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            marginBottom: "1rem",
           }}
         >
           <h1 style={{ fontSize: "2rem", fontWeight: "bold" }}>
@@ -49,6 +50,7 @@ export default function ListShow() {
               border: "2px solid #FF5295",
               borderRadius: "0.4rem",
               fontSize: "1rem",
+              cursor: "pointer",
             }}
             onClick={handleAddShowClick}
           >
@@ -56,9 +58,11 @@ export default function ListShow() {
           </button>
         </div>
 
-        {shows.map((s, i) => (
-          <Man_show_card key={i} show={s} />
-        ))}
+        {shows.length === 0 ? (
+          <p>No showtimes scheduled yet.</p>
+        ) : (
+          shows.map((show, index) => <Man_show_card key={index} show={show} />)
+        )}
       </div>
     </div>
   );

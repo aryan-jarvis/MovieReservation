@@ -61,14 +61,20 @@ func setupRoutes(router *gin.Engine) {
 
 	router.POST("/api/payment/initiate", middlewares.JWTAuth(), controllers.InitiatePayment)
 
-	router.POST("/cinemas", controllers.PostCinema)
 	router.GET("/cinemas", controllers.GetCinemas)
+	router.POST("/cinemas", controllers.PostCinema)
+	router.PUT("/cinemas/:id", controllers.UpdateCinema)
+	router.DELETE("/cinemas/:id", controllers.DeleteCinema)
 
-	router.POST("/theatres", controllers.PostTheatre)
 	router.GET("/theatres", controllers.GetTheatres)
+	router.POST("/theatres", controllers.PostTheatre)
+	router.PUT("/theatres/:id", controllers.UpdateTheatre)
+	router.DELETE("/theatres/:id", controllers.DeleteTheatre)
 
-	router.POST("/showAdmin", controllers.PostShowAdmin)
 	router.GET("/showAdmin", controllers.GetShowAdmin)
+	router.POST("/showAdmin", controllers.PostShowAdmin)
+	router.PUT("/showAdmin/:id", controllers.UpdateShowAdmin)
+	router.DELETE("/showAdmin/:id", controllers.DeleteShowAdmin)
 
 	protected := router.Group("/")
 	protected.Use(middlewares.JWTAuth())

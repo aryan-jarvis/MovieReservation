@@ -19,8 +19,8 @@ export default function ListMovie() {
   return (
     <div>
       <Head2 />
-      <div style={{ margin: "2rem" }}>
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+      <div style={{ margin: "0 2rem" }}>
+        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
           <a href="/home" style={{ color: "grey", textDecoration: "none" }}>
             <p>Home</p>
           </a>
@@ -35,6 +35,7 @@ export default function ListMovie() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            marginBottom: "1rem",
           }}
         >
           <h1 style={{ fontSize: "2rem", fontWeight: "bold" }}>
@@ -48,6 +49,7 @@ export default function ListMovie() {
               border: "2px solid #FF5295",
               borderRadius: "0.4rem",
               fontSize: "1rem",
+              cursor: "pointer",
             }}
             onClick={handleAddMovieClick}
           >

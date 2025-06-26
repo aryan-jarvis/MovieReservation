@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Head2 from "../components/Head2";
+import axios from "axios";
 
 export default function AddShow() {
   const navigate = useNavigate();
 
   const [movieName, setMovieName] = useState("");
   const [theatreName, setTheatreName] = useState("");
+  const [date, setDate] = useState("");
   const [languages, setLanguages] = useState([]);
   const [timings, setTimings] = useState([]);
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [poster, setPoster] = useState("");
 
   useEffect(() => {
@@ -17,6 +21,7 @@ export default function AddShow() {
     setLanguages([]);
     setTimings([]);
     setPoster("");
+    setDate("");
   }, []);
 
   const handleLanguageChange = (e) => {
@@ -27,9 +32,13 @@ export default function AddShow() {
   };
 
   const handleTimingAdd = () => {
-    const start = prompt("Enter Start Time:");
-    const end = prompt("Enter End Time:");
-    if (start && end) setTimings([...timings, `${start} - ${end}`]);
+    if (startTime && endTime) {
+      setTimings([...timings, `${startTime} - ${endTime}`]);
+      setStartTime("");
+      setEndTime("");
+    } else {
+      alert("Please enter both start and end times.");
+    }
   };
 
   const handlePosterUpload = (e) => {
@@ -41,25 +50,22 @@ export default function AddShow() {
     }
   };
 
-  const handleAddShow = () => {
+  const handleAddShow = async () => {
     const newShow = {
-      name: movieName,
+      movie: movieName,
       theatre: theatreName,
+      date,
       languages,
-      timings,
-      poster,
+      showtime: timings.join(", "),
+      posterImage: poster,
     };
 
-    const existing = JSON.parse(localStorage.getItem("shows") || "[]");
-    localStorage.setItem("shows", JSON.stringify([...existing, newShow]));
-
-    setMovieName("");
-    setTheatreName("");
-    setLanguages([]);
-    setTimings([]);
-    setPoster("");
-
-    navigate("/listS");
+    try {
+      await axios.post("http://localhost:8080/showAdmin", newShow);
+      navigate("/listS");
+    } catch (err) {
+      console.error("Failed to add show:", err);
+    }
   };
 
   const cancelClick = () => navigate("/listS");
@@ -183,7 +189,12 @@ export default function AddShow() {
             />
 
             <div style={styles.selectRow}>
-              <input type="date" style={{ ...styles.input, width: "50%" }} />
+              <input
+                type="date"
+                style={{ ...styles.input, width: "50%" }}
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
               <select
                 multiple
                 value={languages}
@@ -203,7 +214,23 @@ export default function AddShow() {
 
             <div style={{ border: "0.01rem black solid", padding: "1rem" }}>
               <h4>Add showtime</h4>
-              <button onClick={handleTimingAdd}>+ Add Timing</button>
+              <div
+                style={{ display: "flex", gap: "1rem", marginBottom: "0.5rem" }}
+              >
+                <input
+                  type="time"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                  style={styles.input}
+                />
+                <input
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                  style={styles.input}
+                />
+                <button onClick={handleTimingAdd}>+ Add Timing</button>
+              </div>
               {timings.map((t, i) => (
                 <div key={i}>{t}</div>
               ))}

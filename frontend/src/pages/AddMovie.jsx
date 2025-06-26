@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import Head2 from "../components/Head2";
 import LanguageDropdown from "../components/LanguageDropdown";
 
@@ -23,8 +24,9 @@ export default function AddMovie() {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const movie = {
       title,
       description,
@@ -35,10 +37,18 @@ export default function AddMovie() {
       status,
       posterImage,
     };
-    const existingMovies = JSON.parse(localStorage.getItem("movies") || "[]");
-    existingMovies.push(movie);
-    localStorage.setItem("movies", JSON.stringify(existingMovies));
-    navigate("/listM");
+
+    try {
+      await axios.post("http://localhost:8080/cinemas", movie, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      navigate("/listM");
+    } catch (err) {
+      console.error("Failed to submit movie:", err);
+      alert("Failed to submit movie. See console for details.");
+    }
   };
 
   const cancelClick = () => {

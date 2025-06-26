@@ -11,6 +11,6 @@ type Show_Admin struct {
 	Theatre     string         `json:"theatre"`
 	Date        string         `json:"date"`
 	Languages   pq.StringArray `gorm:"type:text[]" json:"languages"`
-	Showtime    pq.StringArray `gorm:"type:text[]" json:"showtime"`
+	Showtime    string         `json:"showtime"`
 	PosterImage string         `json:"posterImage"`
 }

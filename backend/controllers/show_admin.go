@@ -13,11 +13,10 @@ type CreateShowInput struct {
 	Theatre     string   `json:"theatre" binding:"required"`
 	Date        string   `json:"date" binding:"required"`
 	Languages   []string `json:"languages" binding:"required"`
-	Showtime    []string `json:"showtime" binding:"required"`
+	Showtime    string   `json:"showtime" binding:"required"`
 	PosterImage string   `json:"posterImage"`
 }
 
-// POST /shows
 func PostShowAdmin(c *gin.Context) {
 	var input CreateShowInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -42,7 +41,6 @@ func PostShowAdmin(c *gin.Context) {
 	c.JSON(http.StatusOK, show)
 }
 
-// GET /shows
 func GetShowAdmin(c *gin.Context) {
 	var shows []models.Show_Admin
 	if err := models.DB.Find(&shows).Error; err != nil {
@@ -50,4 +48,53 @@ func GetShowAdmin(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": shows})
+}
+
+func DeleteShowAdmin(c *gin.Context) {
+	id := c.Param("id")
+
+	var show models.Show_Admin
+	if err := models.DB.First(&show, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Show not found"})
+		return
+	}
+
+	if err := models.DB.Delete(&show).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete show: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Show deleted successfully"})
+}
+
+func UpdateShowAdmin(c *gin.Context) {
+	id := c.Param("id")
+
+	var show models.Show_Admin
+	if err := models.DB.First(&show, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Show not found"})
+		return
+	}
+
+	var input CreateShowInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	updatedFields := models.Show_Admin{
+		Movie:       input.Movie,
+		Theatre:     input.Theatre,
+		Date:        input.Date,
+		Languages:   input.Languages,
+		Showtime:    input.Showtime,
+		PosterImage: input.PosterImage,
+	}
+
+	if err := models.DB.Model(&show).Updates(updatedFields).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update show: " + err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Show updated successfully", "data": show})
 }
