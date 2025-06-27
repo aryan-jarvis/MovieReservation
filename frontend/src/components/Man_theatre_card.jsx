@@ -119,11 +119,13 @@ const styles = {
     display: "flex",
     alignItems: "center",
     marginLeft: "1rem",
+    width: "5rem",
   },
   image: {
     height: "100%",
     borderTopLeftRadius: "0.6rem",
     borderBottomLeftRadius: "0.6rem",
+    width: "100%",
   },
   content: {
     display: "flex",

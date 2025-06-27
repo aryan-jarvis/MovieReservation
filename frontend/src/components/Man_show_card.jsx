@@ -104,6 +104,7 @@ const styles = {
     height: "100%",
     borderTopLeftRadius: "0.6rem",
     borderBottomLeftRadius: "0.6rem",
+    width: "10rem",
   },
   content: {
     display: "flex",

@@ -43,7 +43,6 @@ export default function Movie_Description_Page() {
         &nbsp;<p>/ {movie.title}</p>
       </div>
 
-      {/* Movie details */}
       <div style={{ display: "flex", gap: "2rem", marginTop: "2rem" }}>
         <img
           src={movie.posterImage}
@@ -72,7 +71,7 @@ export default function Movie_Description_Page() {
           <p>
             <strong>Show Dates:</strong> {movie.startDate} to {movie.endDate}
           </p>
-          <a href="http://localhost:5173/theatre">
+          <a href={`http://localhost:5173/theatre/${movie.ID}`}>
             <button
               style={{
                 marginLeft: "4rem",

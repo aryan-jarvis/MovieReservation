@@ -36,17 +36,19 @@ export default function MovieCard() {
         <p style={{ fontSize: "0.8rem" }}>2 hours ago</p>
       </CardContent>
       <CardActions style={{ marginLeft: "75rem" }}>
-        <Button
-          size="small"
-          style={{
-            backgroundColor: "#ff5295",
-            color: "white",
-            height: "3rem",
-            width: "8.5rem",
-          }}
-        >
-          View Ticket
-        </Button>
+        <a href="http://localhost:5173/ticket">
+          <Button
+            size="small"
+            style={{
+              backgroundColor: "#ff5295",
+              color: "white",
+              height: "3rem",
+              width: "8.5rem",
+            }}
+          >
+            View Ticket
+          </Button>
+        </a>
       </CardActions>
     </Card>
   );

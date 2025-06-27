@@ -23,6 +23,7 @@ import AddMovie from "./pages/AddMovie";
 import AddShow from "./pages/AddShow";
 import AddTheatre from "./pages/AddTheatre";
 import Head2 from "./components/Head2";
+import AzaadDates from "./components/AzaadDates";
 
 export default function App() {
   return (
@@ -54,6 +55,8 @@ export default function App() {
         <Route path="/addT" element={<AddTheatre />} />
         <Route path="/h2" element={<Head2 />} />
         <Route path="/description/:id" element={<Movie_Description_Page />} />
+        <Route path="/theatre/:id" element={<Theatre_Selection_Page />} />
+        <Route path="/movie/:id/dates" element={<AzaadDates />} />
       </Routes>
     </div>
   );

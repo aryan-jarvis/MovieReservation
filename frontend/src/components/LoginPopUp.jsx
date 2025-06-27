@@ -8,11 +8,11 @@ export default function LoginPopUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [isOpen, setIsOpen] = useState(() => {
     const saved = localStorage.getItem("loginPopupClosed");
     return saved !== "true";
   });
-
   const [isRegister, setIsRegister] = useState(true);
 
   const handleRegister = async () => {
@@ -33,16 +33,19 @@ export default function LoginPopUp() {
       )}`;
       setIsOpen(false);
     } catch (error) {
-      console.error(
-        "Registration failed:",
-        error.response?.data?.error || error.message
-      );
+      const message =
+        error.response?.data?.error || "Registration failed. Please try again.";
+      setErrorMessage(message);
+      console.error("Registration failed:", message);
     }
   };
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post(`${API}/login`, { email, password });
+      const res = await axios.post(`${API}/login`, {
+        email,
+        password,
+      });
 
       setToken(res.data.token);
       localStorage.setItem("token", res.data.token);
@@ -54,10 +57,10 @@ export default function LoginPopUp() {
       )}`;
       setIsOpen(false);
     } catch (error) {
-      console.error(
-        "Login failed:",
-        error.response?.data?.error || error.message
-      );
+      const message =
+        error.response?.data?.error || "Login failed. Please try again.";
+      setErrorMessage(message);
+      console.error("Login failed:", message);
     }
   };
 
@@ -85,6 +88,7 @@ export default function LoginPopUp() {
       justifyContent: "center",
       zIndex: 10,
       boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
+      // padding: "2rem",
     },
     closeButton: {
       position: "absolute",
@@ -112,6 +116,15 @@ export default function LoginPopUp() {
       border: "none",
       borderRadius: "4px",
     },
+    errorBox: {
+      color: "red",
+      backgroundColor: "#ffe6e6",
+      padding: "10px",
+      borderRadius: "5px",
+      marginBottom: "15px",
+      width: "80%",
+      textAlign: "center",
+    },
   };
 
   if (!isOpen) return null;
@@ -123,11 +136,14 @@ export default function LoginPopUp() {
         {/* <button onClick={() => setIsOpen(false)} style={styles.closeButton}>
           &times;
         </button> */}
+
         <h1>{isRegister ? "Register" : "Login"} 👋</h1>
+
+        {errorMessage && <div style={styles.errorBox}>{errorMessage}</div>}
 
         {isRegister && (
           <input
-            placeholder="name"
+            placeholder="Name"
             type="text"
             onChange={(e) => setName(e.target.value)}
             style={styles.input}
@@ -135,13 +151,13 @@ export default function LoginPopUp() {
         )}
 
         <input
-          placeholder="email"
+          placeholder="Email"
           type="email"
           onChange={(e) => setEmail(e.target.value)}
           style={styles.input}
         />
         <input
-          placeholder="password"
+          placeholder="Password"
           type="password"
           onChange={(e) => setPassword(e.target.value)}
           style={styles.input}
@@ -161,7 +177,10 @@ export default function LoginPopUp() {
 
         <div>
           <button
-            onClick={() => setIsRegister(!isRegister)}
+            onClick={() => {
+              setIsRegister(!isRegister);
+              setErrorMessage("");
+            }}
             style={styles.button}
           >
             {isRegister

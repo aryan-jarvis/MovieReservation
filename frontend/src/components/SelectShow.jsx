@@ -1,8 +1,8 @@
+import { useEffect, useState } from "react";
+
 const buttonStyle = {
   width: "10.3125rem",
   height: "2.5rem",
-  top: "6.25rem",
-  left: "1.25rem",
   borderRadius: "0.9375rem",
   borderWidth: "0.0625rem",
   borderStyle: "solid",
@@ -14,61 +14,78 @@ const buttonStyle = {
 };
 
 export default function SelectShow() {
+  const [shows, setShows] = useState([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/showAdmin")
+      .then((response) => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+      })
+      .then((data) => {
+        setShows(data.data || []);
+      })
+      .catch((error) => console.error("Error fetching shows:", error));
+  }, []);
+
   return (
     <div>
-      <div
-        className="Theatre Name"
-        style={{ display: "flex", gap: "1rem", padding: "1rem" }}
-      >
-        <div>
-          <img
-            src="../src/assets/images/pvr_logo.png"
-            alt="User Profile Logo"
-          />
+      {shows.map((show) => (
+        <div
+          key={show.ID}
+          style={{
+            display: "flex",
+            gap: "1rem",
+            padding: "1rem",
+            border: "1px solid #ddd",
+            borderRadius: "0.75rem",
+            marginBottom: "1rem",
+          }}
+        >
+          <div>
+            <img
+              src={show.posterImage}
+              alt="Movie Poster"
+              style={{
+                width: "100px",
+                height: "100px",
+                objectFit: "cover",
+                borderRadius: "0.5rem",
+              }}
+            />
+          </div>
+
+          <div style={{ flex: 1 }}>
+            <p style={{ fontWeight: "bold", fontSize: "1.1rem" }}>
+              {show.theatre}
+            </p>
+            <p>{show.movie}</p>
+            <p>{show.date}</p>
+            <p>{show.languages.join(", ")}</p>
+
+            <div
+              style={{
+                marginTop: "0.5rem",
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "0.5rem",
+              }}
+            >
+              {show.showtime.split(",").map((time, index) => (
+                <a
+                  key={index}
+                  href={`http://localhost:5173/seatselect?showId=${
+                    show.ID
+                  }&time=${encodeURIComponent(time.trim())}`}
+                  style={{ textDecoration: "none" }}
+                >
+                  <button style={buttonStyle}>{time.trim()}</button>
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
-        <div>
-          <p>PVR Elan Miracle</p>
-          <p>Sec 84, Gurugram</p>
-        </div>
-      </div>
-      <div className="Booking Buttons" style={{ padding: "1rem" }}>
-        <a href="http://localhost:5173/seatselect">
-          <button style={buttonStyle}>2:40 PM</button>
-        </a>
-        &nbsp;&nbsp;
-        <a href="http://localhost:5173/seatselect">
-          <button style={buttonStyle}>2:40 PM</button>
-        </a>
-        &nbsp;&nbsp;
-        <a href="http://localhost:5173/seatselect">
-          <button style={buttonStyle}>2:40 PM</button>
-        </a>
-        &nbsp;&nbsp;
-        <a href="http://localhost:5173/seatselect">
-          <button style={buttonStyle}>2:40 PM</button>
-        </a>
-        &nbsp;&nbsp;
-        <a href="http://localhost:5173/seatselect">
-          <button style={buttonStyle}>2:40 PM</button>
-        </a>
-        &nbsp;&nbsp;
-        <a href="http://localhost:5173/seatselect">
-          <button style={buttonStyle}>2:40 PM</button>
-        </a>
-        &nbsp;&nbsp;
-        <a href="http://localhost:5173/seatselect">
-          <button style={buttonStyle}>2:40 PM</button>
-        </a>
-        &nbsp;&nbsp;
-        <a href="http://localhost:5173/seatselect">
-          <button style={buttonStyle}>2:40 PM</button>
-        </a>
-        &nbsp;&nbsp;
-        <a href="http://localhost:5173/seatselect">
-          <button style={buttonStyle}>2:40 PM</button>
-        </a>
-        &nbsp;&nbsp;
-      </div>
+      ))}
     </div>
   );
 }

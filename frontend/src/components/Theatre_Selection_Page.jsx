@@ -27,13 +27,6 @@ export default function Theatre_Selection_Page() {
       </div>
       <AzaadDates />
       <SelectShow />
-      <SelectShow />
-      <SelectShow />
-      <SelectShow />
-      <SelectShow />
-      <SelectShow />
-      <SelectShow />
-      <SelectShow />
       <Footer />
     </div>
   );

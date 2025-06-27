@@ -21,9 +21,6 @@ export default function Home_Page() {
   const nowShowing = movies
     .filter((m) => m.status === "Now Showing")
     .slice(0, 6);
-  const bollywoodTrending = movies
-    .filter((m) => m.genre?.toLowerCase().includes("bollywood"))
-    .slice(0, 6);
 
   const renderSection = (title, data) => (
     <>
@@ -74,7 +71,7 @@ export default function Home_Page() {
       {renderSection("Watch Latest Movie", latestMovies)}
       {renderSection("Now Showing in Theatres", nowShowing)}
       <BookingSteps />
-      {renderSection("Bollywood Trending", bollywoodTrending)}
+      {renderSection("Bollywood Trending", latestMovies)}
 
       <ComingSoon />
       <Footer />
