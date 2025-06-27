@@ -31,6 +31,9 @@ func main() {
 
 	router := gin.Default()
 
+	router.POST("/api/payment/success", controllers.PaymentSuccessHandler)
+	router.POST("/api/payment/failure", controllers.PaymentFailureHandler)
+
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},

@@ -24,6 +24,7 @@ import AddShow from "./pages/AddShow";
 import AddTheatre from "./pages/AddTheatre";
 import Head2 from "./components/Head2";
 import AzaadDates from "./components/AzaadDates";
+import ProfilePage from "./components/ProfilePage";
 
 export default function App() {
   return (
@@ -57,6 +58,7 @@ export default function App() {
         <Route path="/description/:id" element={<Movie_Description_Page />} />
         <Route path="/theatre/:id" element={<Theatre_Selection_Page />} />
         <Route path="/movie/:id/dates" element={<AzaadDates />} />
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
     </div>
   );

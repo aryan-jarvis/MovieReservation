@@ -9,6 +9,7 @@ export default function AuthPopUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [isOpen, setIsOpen] = useState(() => {
     const saved = localStorage.getItem("loginPopUpClosed");
     return saved !== "true";
@@ -32,10 +33,14 @@ export default function AuthPopUp() {
       )}`;
       setIsOpen(false);
     } catch (error) {
-      console.error(
-        "Registration failed:",
-        error.response?.data?.error || error.message
-      );
+      // console.error(
+      //   "Registration failed:",
+      //   error.response?.data?.error || error.message
+      // );
+      const message =
+        error.response?.data?.error || "Registration failed. Please try again.";
+      setErrorMessage(message);
+      console.error("Registration failed:", message);
     }
   };
 
@@ -53,10 +58,14 @@ export default function AuthPopUp() {
       )}`;
       setIsOpen(false);
     } catch (error) {
-      console.error(
-        "Login Failed:",
-        error.response?.data?.error || error.message
-      );
+      // console.error(
+      //   "Login Failed:",
+      //   error.response?.data?.error || error.message
+      // );
+      const message =
+        error.response?.data?.error || "Login failed. Please try again.";
+      setErrorMessage(message);
+      console.error("Login failed:", message);
     }
   };
 
@@ -107,11 +116,21 @@ export default function AuthPopUp() {
       borderRadius: "0.375rem",
       cursor: "pointer",
     },
+    errorBox: {
+      color: "red",
+      backgroundColor: "#ffe6e6",
+      padding: "0.6rem",
+      borderRadius: "0.4rem",
+      marginBottom: "1rem",
+      textAlign: "center",
+    },
   };
 
   return (
     <div style={styles.container}>
       <h1 style={styles.title}>{isRegister ? "Register" : "Login"} 👋</h1>
+
+      {errorMessage && <div style={styles.errorBox}>{errorMessage}</div>}
 
       {isRegister && (
         <input
@@ -150,7 +169,10 @@ export default function AuthPopUp() {
 
       <button
         style={styles.toggleButton}
-        onClick={() => setIsRegister((prev) => !prev)}
+        onClick={() => {
+          setIsRegister((prev) => !prev);
+          setErrorMessage("");
+        }}
       >
         {isRegister
           ? "Already have an account? Login"
