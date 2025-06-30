@@ -26,6 +26,7 @@ export default function LoginPopUp() {
       setToken(res.data.token);
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("username", name);
+      localStorage.setItem("email", email);
       localStorage.setItem("loginPopupClosed", "true");
 
       window.location.href = `http://localhost:5173/?user=${encodeURIComponent(
@@ -50,6 +51,7 @@ export default function LoginPopUp() {
       setToken(res.data.token);
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("username", res.data.name);
+      localStorage.setItem("email", email);
       localStorage.setItem("loginPopupClosed", "true");
 
       window.location.href = `http://localhost:5173/?user=${encodeURIComponent(

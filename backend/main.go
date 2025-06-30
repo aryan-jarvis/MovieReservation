@@ -54,6 +54,7 @@ func setupRoutes(router *gin.Engine) {
 	router.GET("/users", controllers.GetUsers)
 	router.GET("/users/:id", controllers.GetUserByID)
 	router.POST("/users", controllers.PostUsers)
+	router.PUT("/users/:name", controllers.UpdateUserByName)
 
 	router.GET("/movies", controllers.GetMovies)
 	router.GET("/shows", controllers.GetShows)

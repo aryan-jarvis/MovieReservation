@@ -13,6 +13,9 @@ export default function Head2() {
 
   const handleLogout = () => {
     localStorage.removeItem("username");
+    localStorage.removeItem("loginPopUpClosed");
+    localStorage.removeItem("email");
+    localStorage.removeItem("token");
     setUsername("");
     window.location.href = "/auth";
   };

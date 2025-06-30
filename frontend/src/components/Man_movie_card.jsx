@@ -1,10 +1,16 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Man_movie_card({ movie, getMoviesList }) {
   const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
+  };
+
+  const handleEdit = () => {
+    navigate("/addM", { state: { movie } });
   };
 
   const handleDelete = async (id) => {
@@ -17,10 +23,6 @@ export default function Man_movie_card({ movie, getMoviesList }) {
         throw new Error("Failed to delete cinema");
       } else {
         getMoviesList();
-      }
-
-      if (onDelete) {
-        onDelete(id);
       }
     } catch (error) {
       console.error("Delete error:", error);
@@ -62,7 +64,7 @@ export default function Man_movie_card({ movie, getMoviesList }) {
             />
             {showDropdown && (
               <div style={styles.dropdown}>
-                <div style={styles.dropdownItem}>
+                <div style={styles.dropdownItem} onClick={handleEdit}>
                   <img
                     src="../src/assets/images/pencil_icon.png"
                     alt="Edit"
@@ -70,18 +72,16 @@ export default function Man_movie_card({ movie, getMoviesList }) {
                   />
                   <span style={styles.dropdownText}>Edit</span>
                 </div>
-                <div style={styles.dropdownItem}>
+                <div
+                  style={styles.dropdownItem}
+                  onClick={() => handleDelete(movie?.ID)}
+                >
                   <img
                     src="../src/assets/images/delete_icon.png"
                     alt="Delete"
                     style={styles.dropdownIcon}
                   />
-                  <span
-                    style={styles.dropdownText}
-                    onClick={() => handleDelete(movie?.ID)}
-                  >
-                    Delete
-                  </span>
+                  <span style={styles.dropdownText}>Delete</span>
                 </div>
               </div>
             )}

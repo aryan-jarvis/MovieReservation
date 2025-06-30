@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import SearchDropDown from "./SearchDropDown";
+import { useNavigate } from "react-router-dom";
 
 export default function HeadProfile() {
   const [username, setUsername] = useState(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("username");
@@ -14,6 +17,9 @@ export default function HeadProfile() {
   const handleLogout = () => {
     localStorage.removeItem("username");
     localStorage.removeItem("loginPopupClosed");
+    localStorage.removeItem("email");
+    localStorage.removeItem("token");
+    // localStorage.clear();
     setUsername(null);
     window.location.href = "http://localhost:5173/";
   };
@@ -55,7 +61,15 @@ export default function HeadProfile() {
               className="logo"
               src="../src/assets/images/user_logo.png"
               alt="User Profile Logo"
-              style={{ width: "40px", height: "40px", borderRadius: "50%" }}
+              style={{
+                width: "40px",
+                height: "40px",
+                borderRadius: "50%",
+                cursor: "pointer",
+              }}
+              onClick={() => {
+                navigate("/profile");
+              }}
             />
             <button
               onClick={handleLogout}

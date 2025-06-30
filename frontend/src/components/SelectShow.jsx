@@ -59,9 +59,9 @@ export default function SelectShow() {
             <p style={{ fontWeight: "bold", fontSize: "1.1rem" }}>
               {show.theatre}
             </p>
-            <p>{show.movie}</p>
-            <p>{show.date}</p>
-            <p>{show.languages.join(", ")}</p>
+            {/* <p>{show.movie}</p> */}
+            {/* <p>{show.date}</p> */}
+            {/* <p>{show.languages.join(", ")}</p> */}
 
             <div
               style={{

@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Head2 from "../components/Head2";
 import axios from "axios";
 
 export default function AddTheatre() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const editingTheatre = location.state?.theatre;
 
   const [form, setForm] = useState({
     name: "",
@@ -18,17 +20,32 @@ export default function AddTheatre() {
   });
 
   useEffect(() => {
-    setForm({
-      name: "",
-      address: "",
-      city: "",
-      state: "",
-      screens: "",
-      movies: "",
-      status: "Active",
-      posterUrl: "",
-    });
-  }, []);
+    if (editingTheatre) {
+      setForm({
+        name: editingTheatre.name || "",
+        address: editingTheatre.address || "",
+        city: editingTheatre.city || "",
+        state: editingTheatre.state || "",
+        screens: editingTheatre.screens?.toString() || "",
+        movies: Array.isArray(editingTheatre.movies)
+          ? editingTheatre.movies.join(", ")
+          : "",
+        status: editingTheatre.status || "Active",
+        posterUrl: editingTheatre.theatreIcon || "",
+      });
+    } else {
+      setForm({
+        name: "",
+        address: "",
+        city: "",
+        state: "",
+        screens: "",
+        movies: "",
+        status: "Active",
+        posterUrl: "",
+      });
+    }
+  }, [editingTheatre]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,16 +83,26 @@ export default function AddTheatre() {
     };
 
     try {
-      const res = await axios.post("http://localhost:8080/theatres", payload, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      let res;
+      if (editingTheatre) {
+        // Update
+        res = await axios.put(
+          `http://localhost:8080/theatres/${editingTheatre.ID}`,
+          payload,
+          { headers: { "Content-Type": "application/json" } }
+        );
+        console.log("Theatre updated:", res.data);
+      } else {
+        // Add new
+        res = await axios.post("http://localhost:8080/theatres", payload, {
+          headers: { "Content-Type": "application/json" },
+        });
+        console.log("Theatre added:", res.data);
+      }
 
-      console.log("Theatre added:", res.data);
       navigate("/listT");
     } catch (error) {
-      console.error("Failed to add theatre:", error);
+      console.error("Failed to save theatre:", error);
       alert(error.response?.data?.error || "Something went wrong.");
     }
   };
@@ -84,111 +111,21 @@ export default function AddTheatre() {
     navigate("/listT");
   };
 
-  const styles = {
-    container: {},
-    breadcrumb: {
-      display: "flex",
-      alignItems: "center",
-      gap: "0.5rem",
-      marginLeft: "2rem",
-    },
-    breadcrumbActive: {
-      fontWeight: "bold",
-    },
-    formWrapper: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    },
-    formBox: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "1rem",
-      maxWidth: "600px",
-      width: "100%",
-    },
-    label: {
-      fontWeight: "600",
-      fontSize: "1.4rem",
-    },
-    input: {
-      height: "2.5rem",
-      padding: "1rem",
-      border: "0.1rem #A1A2A4 solid",
-      borderRadius: "0.3rem",
-      fontSize: "1rem",
-    },
-    selectRow: {
-      display: "flex",
-      justifyContent: "space-between",
-      marginLeft: "2rem",
-      marginRight: "2rem",
-    },
-    select: {
-      padding: "0.6rem",
-      border: "0.1rem #A1A2A4 solid",
-      borderRadius: "0.3rem",
-      fontSize: "1rem",
-      backgroundColor: "white",
-      width: "15rem",
-    },
-    posterSection: {
-      fontWeight: "600",
-    },
-    posterUpload: {
-      width: "9rem",
-      height: "6rem",
-      border: "0.1rem #5A5A61 dotted",
-      borderRadius: "1rem",
-      overflow: "hidden",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      cursor: "pointer",
-      position: "relative",
-    },
-    buttonsRow: {
-      display: "flex",
-      gap: "20px",
-      marginTop: "1rem",
-    },
-    addButton: {
-      backgroundColor: "#FF5295",
-      color: "#fff",
-      fontWeight: "600",
-      width: "6rem",
-      height: "2.5rem",
-      border: "solid 0.1rem white",
-      borderRadius: "0.3rem",
-      cursor: "pointer",
-    },
-    cancelButton: {
-      backgroundColor: "#fff",
-      color: "black",
-      fontWeight: "600",
-      width: "6rem",
-      height: "2.5rem",
-      border: "solid 0.1rem #FF5295",
-      borderRadius: "0.3rem",
-      cursor: "pointer",
-    },
-  };
-
   return (
     <div>
-      <div>
-        <Head2 />
-        <div style={styles.breadcrumb}>
-          <a href="/home" style={{ color: "grey", textDecoration: "none" }}>
-            <p>Home</p>
-          </a>
-          <p> / </p>
-          <a href="/listT" style={{ color: "grey", textDecoration: "none" }}>
-            <p>Theatre Management</p>
-          </a>
-          <p> / </p>
-          <p style={styles.breadcrumbActive}>Add New Theatre</p>
-        </div>
+      <Head2 />
+      <div style={styles.breadcrumb}>
+        <a href="/home" style={{ color: "grey", textDecoration: "none" }}>
+          <p>Home</p>
+        </a>
+        <p> / </p>
+        <a href="/listT" style={{ color: "grey", textDecoration: "none" }}>
+          <p>Theatre Management</p>
+        </a>
+        <p> / </p>
+        <p style={styles.breadcrumbActive}>
+          {editingTheatre ? "Edit Theatre" : "Add New Theatre"}
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} style={styles.container}>
@@ -290,7 +227,7 @@ export default function AddTheatre() {
 
             <div style={styles.buttonsRow}>
               <button type="submit" style={styles.addButton}>
-                Add
+                {editingTheatre ? "Update" : "Add"}
               </button>
               <button
                 type="button"
@@ -306,3 +243,93 @@ export default function AddTheatre() {
     </div>
   );
 }
+
+const styles = {
+  container: {},
+  breadcrumb: {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    marginLeft: "2rem",
+  },
+  breadcrumbActive: {
+    fontWeight: "bold",
+  },
+  formWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  formBox: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
+    maxWidth: "600px",
+    width: "100%",
+  },
+  label: {
+    fontWeight: "600",
+    fontSize: "1.4rem",
+  },
+  input: {
+    height: "2.5rem",
+    padding: "1rem",
+    border: "0.1rem #A1A2A4 solid",
+    borderRadius: "0.3rem",
+    fontSize: "1rem",
+  },
+  selectRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    marginLeft: "2rem",
+    marginRight: "2rem",
+  },
+  select: {
+    padding: "0.6rem",
+    border: "0.1rem #A1A2A4 solid",
+    borderRadius: "0.3rem",
+    fontSize: "1rem",
+    backgroundColor: "white",
+    width: "15rem",
+  },
+  posterSection: {
+    fontWeight: "600",
+  },
+  posterUpload: {
+    width: "9rem",
+    height: "6rem",
+    border: "0.1rem #5A5A61 dotted",
+    borderRadius: "1rem",
+    overflow: "hidden",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer",
+    position: "relative",
+  },
+  buttonsRow: {
+    display: "flex",
+    gap: "20px",
+    marginTop: "1rem",
+  },
+  addButton: {
+    backgroundColor: "#FF5295",
+    color: "#fff",
+    fontWeight: "600",
+    width: "6rem",
+    height: "2.5rem",
+    border: "solid 0.1rem white",
+    borderRadius: "0.3rem",
+    cursor: "pointer",
+  },
+  cancelButton: {
+    backgroundColor: "#fff",
+    color: "black",
+    fontWeight: "600",
+    width: "6rem",
+    height: "2.5rem",
+    border: "solid 0.1rem #FF5295",
+    borderRadius: "0.3rem",
+    cursor: "pointer",
+  },
+};

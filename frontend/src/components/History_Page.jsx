@@ -8,6 +8,7 @@ export default function History_Page() {
   return (
     <div style={{ padding: "1.5rem" }}>
       <HeadProfile />
+      <br />
       <ProfileHistory />
       <h2>Upcoming Movies</h2>
       <BookedForCard />

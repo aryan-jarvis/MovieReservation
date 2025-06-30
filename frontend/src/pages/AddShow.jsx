@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Head2 from "../components/Head2";
 import axios from "axios";
 import LanguageDropdown from "../components/LanguageDropdown";
 
 export default function AddShow() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const editingShow = location.state?.show;
 
   const [movieName, setMovieName] = useState("");
   const [theatreName, setTheatreName] = useState("");
@@ -17,20 +19,26 @@ export default function AddShow() {
   const [poster, setPoster] = useState("");
 
   useEffect(() => {
-    setMovieName("");
-    setTheatreName("");
-    setLanguages([]);
-    setTimings([]);
-    setPoster("");
-    setDate("");
-  }, []);
-
-  // const handleLanguageChange = (e) => {
-  //   const selected = Array.from(e.target.selectedOptions).map(
-  //     (opt) => opt.value
-  //   );
-  //   setLanguages(selected);
-  // };
+    if (editingShow) {
+      setMovieName(editingShow.movie || "");
+      setTheatreName(editingShow.theatre || "");
+      setDate(editingShow.date || "");
+      setLanguages(editingShow.languages || []);
+      setTimings(
+        editingShow.showtime
+          ? editingShow.showtime.split(",").map((s) => s.trim())
+          : []
+      );
+      setPoster(editingShow.posterImage || "");
+    } else {
+      setMovieName("");
+      setTheatreName("");
+      setDate("");
+      setLanguages([]);
+      setTimings([]);
+      setPoster("");
+    }
+  }, [editingShow]);
 
   const handleTimingAdd = () => {
     if (startTime && endTime) {
@@ -56,106 +64,29 @@ export default function AddShow() {
       movie: movieName,
       theatre: theatreName,
       date,
-      languages,
-      showtime: timings.join(", "),
-      posterImage: poster,
+      languages: Array.isArray(languages) ? languages : [],
+      showtime: timings.length > 0 ? timings.join(", ") : "",
+      posterImage: poster || "",
     };
 
+    console.log("Submitting this show:", newShow);
+
     try {
-      await axios.post("http://localhost:8080/showAdmin", newShow);
+      if (editingShow) {
+        await axios.put(
+          `http://localhost:8080/showAdmin/${editingShow.ID}`,
+          newShow
+        );
+      } else {
+        await axios.post("http://localhost:8080/showAdmin", newShow);
+      }
       navigate("/listS");
     } catch (err) {
-      console.error("Failed to add show:", err);
+      console.error("Failed to save show:", err);
     }
   };
 
   const cancelClick = () => navigate("/listS");
-
-  const styles = {
-    container: {},
-    breadcrumb: {
-      display: "flex",
-      alignItems: "center",
-      gap: "0.5rem",
-      marginLeft: "2rem",
-    },
-    formWrapper: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    },
-    formBox: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "1rem",
-    },
-    label: {
-      fontWeight: "600",
-      fontSize: "1.4rem",
-    },
-    input: {
-      height: "0.35rem",
-      padding: "1rem",
-      border: "0.1rem #A1A2A4 solid",
-      borderRadius: "0.3rem",
-      fontSize: "1rem",
-    },
-    select: {
-      height: "2.5rem",
-      padding: "0.6rem",
-      border: "0.1rem #A1A2A4 solid",
-      borderRadius: "0.3rem",
-      fontSize: "1rem",
-      backgroundColor: "white",
-    },
-    selectRow: {
-      display: "flex",
-      justifyContent: "space-between",
-      gap: "2rem",
-    },
-    posterSection: {
-      fontWeight: "600",
-    },
-    posterUpload: {
-      width: "9rem",
-      height: "6rem",
-      border: "0.1rem #5A5A61 dotted",
-      borderRadius: "1rem",
-      paddingTop: "1rem",
-      textAlign: "center",
-      position: "relative",
-      overflow: "hidden",
-    },
-    posterImage: {
-      width: "100%",
-      height: "100%",
-      objectFit: "cover",
-      borderRadius: "1rem",
-    },
-    buttonsRow: {
-      display: "flex",
-      gap: "20px",
-      marginTop: "1rem",
-    },
-    addButton: {
-      backgroundColor: "#FF5295",
-      color: "#fff",
-      fontWeight: "600",
-      width: "6rem",
-      height: "2.5rem",
-      border: "solid 0.1rem white",
-      borderRadius: "0.3rem",
-    },
-    cancelButton: {
-      backgroundColor: "#fff",
-      color: "black",
-      fontWeight: "600",
-      width: "6rem",
-      height: "2.5rem",
-      border: "solid 0.1rem #FF5295",
-      borderRadius: "0.3rem",
-    },
-  };
 
   return (
     <div>
@@ -169,7 +100,9 @@ export default function AddShow() {
           <p>Showtime Scheduling</p>
         </a>
         <p> / </p>
-        <p style={{ color: "#000" }}>Add New Showtime</p>
+        <p style={{ color: "#000" }}>
+          {editingShow ? "Edit Showtime" : "Add New Showtime"}
+        </p>
       </span>
 
       <div style={styles.container}>
@@ -201,21 +134,6 @@ export default function AddShow() {
                 onChange={(e) => setDate(e.target.value)}
               />
 
-              {/* <select
-                multiple
-                value={languages}
-                onChange={handleLanguageChange}
-                style={{ ...styles.select, width: "50%" }}
-              >
-                <option value="English">English</option>
-                <option value="Hindi">Hindi</option>
-                <option value="Marathi">Marathi</option>
-                <option value="Telugu">Telugu</option>
-                <option value="Punjabi">Punjabi</option>
-                <option value="Spanish">Spanish</option>
-                <option value="French">French</option>
-                <option value="German">German</option>
-              </select> */}
               <LanguageDropdown
                 selected={languages}
                 setSelected={setLanguages}
@@ -278,98 +196,9 @@ export default function AddShow() {
               </div>
             </div>
 
-            {/* <div>
-              Poster Upload (PNG only):
-              <div
-                style={{
-                  ...styles.posterUpload,
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  position: "relative",
-                }}
-              >
-                <input
-                  type="file"
-                  accept="image/png"
-                  onChange={handlePosterUpload}
-                  style={{
-                    opacity: 0,
-                    position: "absolute",
-                    width: "100%",
-                    height: "100%",
-                    cursor: "pointer",
-                  }}
-                />
-                {poster ? (
-                  <img
-                    src={poster}
-                    alt="Poster"
-                    style={{
-                      ...styles.posterImage,
-                      objectFit: "contain",
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                    }}
-                  />
-                ) : (
-                  <>
-                    <img
-                      src="../src/assets/images/upload.png"
-                      alt="Upload"
-                      style={{ width: "3rem", height: "3rem" }}
-                    />
-                    <p
-                      style={{
-                        fontSize: "12px",
-                        color: "#6B7280",
-                        textAlign: "center",
-                      }}
-                    >
-                      Upload file here
-                    </p>
-                  </>
-                )}
-              </div>
-            </div> */}
-
-            {/* <p style={styles.posterSection}>Upload Poster</p>
-            <div style={styles.posterUpload}>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handlePosterUpload}
-                style={{
-                  opacity: 0,
-                  position: "absolute",
-                  width: "100%",
-                  height: "100%",
-                  cursor: "pointer",
-                }}
-              />
-              {posterImage ? (
-                <img
-                  src={posterImage}
-                  alt="Poster"
-                  style={styles.posterImage}
-                />
-              ) : (
-                <>
-                  <img
-                    src="../src/assets/images/upload.png"
-                    alt="Upload"
-                    style={{ width: "2rem" }}
-                  />
-                  <p style={{ fontSize: "12px", color: "#6B7280" }}>
-                    Upload file here
-                  </p>
-                </>
-              )}
-            </div> */}
-
             <div style={styles.buttonsRow}>
               <button style={styles.addButton} onClick={handleAddShow}>
-                Add
+                {editingShow ? "Update" : "Add"}
               </button>
               <button style={styles.cancelButton} onClick={cancelClick}>
                 Cancel
@@ -381,3 +210,89 @@ export default function AddShow() {
     </div>
   );
 }
+
+const styles = {
+  container: {},
+  breadcrumb: {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    marginLeft: "2rem",
+  },
+  formWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  formBox: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
+  },
+  label: {
+    fontWeight: "600",
+    fontSize: "1.4rem",
+  },
+  input: {
+    height: "0.35rem",
+    padding: "1rem",
+    border: "0.1rem #A1A2A4 solid",
+    borderRadius: "0.3rem",
+    fontSize: "1rem",
+  },
+  select: {
+    height: "2.5rem",
+    padding: "0.6rem",
+    border: "0.1rem #A1A2A4 solid",
+    borderRadius: "0.3rem",
+    fontSize: "1rem",
+    backgroundColor: "white",
+  },
+  selectRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: "2rem",
+  },
+  posterSection: {
+    fontWeight: "600",
+  },
+  posterUpload: {
+    width: "9rem",
+    height: "6rem",
+    border: "0.1rem #5A5A61 dotted",
+    borderRadius: "1rem",
+    paddingTop: "1rem",
+    textAlign: "center",
+    position: "relative",
+    overflow: "hidden",
+  },
+  posterImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    borderRadius: "1rem",
+  },
+  buttonsRow: {
+    display: "flex",
+    gap: "20px",
+    marginTop: "1rem",
+  },
+  addButton: {
+    backgroundColor: "#FF5295",
+    color: "#fff",
+    fontWeight: "600",
+    width: "6rem",
+    height: "2.5rem",
+    border: "solid 0.1rem white",
+    borderRadius: "0.3rem",
+  },
+  cancelButton: {
+    backgroundColor: "#fff",
+    color: "black",
+    fontWeight: "600",
+    width: "6rem",
+    height: "2.5rem",
+    border: "solid 0.1rem #FF5295",
+    borderRadius: "0.3rem",
+  },
+};

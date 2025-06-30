@@ -1,4 +1,13 @@
+import { useNavigate } from "react-router-dom";
+
 export default function ProfileHistory() {
+  const navigate = useNavigate();
+  const nP = () => {
+    navigate("/profile");
+  };
+  const nH = () => {
+    navigate("/history");
+  };
   return (
     <div
       style={{
@@ -9,8 +18,13 @@ export default function ProfileHistory() {
         alignItems: "center",
       }}
     >
-      <p style={{ marginLeft: "1rem" }}>Profile</p>
-      <p>History</p>
+      &nbsp;
+      <p style={{ cursor: "pointer" }} onClick={nP}>
+        Profile
+      </p>
+      <p style={{ cursor: "pointer" }} onClick={nH}>
+        History
+      </p>
     </div>
   );
 }

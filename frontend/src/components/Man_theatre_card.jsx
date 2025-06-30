@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Man_theatre_card({ theatre, getTheatresList }) {
   const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
 
   const handleDelete = async (id) => {
     try {
@@ -13,10 +15,6 @@ export default function Man_theatre_card({ theatre, getTheatresList }) {
         throw new Error("Failed to delete theatre");
       } else {
         getTheatresList();
-      }
-
-      if (onDelete) {
-        onDelete(id);
       }
     } catch (error) {
       console.error("Delete error:", error);
@@ -71,7 +69,6 @@ export default function Man_theatre_card({ theatre, getTheatresList }) {
                   <span>No Movies</span>
                 )}
               </div>
-
               <div style={styles.showAdded}>{theatre.screens} Screens</div>
             </div>
           </div>
@@ -83,16 +80,17 @@ export default function Man_theatre_card({ theatre, getTheatresList }) {
             <span>⋮</span>
             {showDropdown && (
               <div style={styles.dropdown}>
-                <div style={styles.dropdownItem}>
+                <div
+                  style={styles.dropdownItem}
+                  onClick={() => navigate("/addT", { state: { theatre } })}
+                >
                   <span style={styles.dropdownText}>Edit</span>
                 </div>
-                <div style={styles.dropdownItem}>
-                  <span
-                    style={styles.dropdownText}
-                    onClick={() => handleDelete(theatre?.ID)}
-                  >
-                    Delete
-                  </span>
+                <div
+                  style={styles.dropdownItem}
+                  onClick={() => handleDelete(theatre?.ID)}
+                >
+                  <span style={styles.dropdownText}>Delete</span>
                 </div>
               </div>
             )}

@@ -1,52 +1,186 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import HeadProfile from "./HeadProfile";
+import ProfileHistory from "./ProfileHistory";
 
 export default function ProfilePage() {
+  const [username, setUsername] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [originalUsername, setOriginalUsername] = useState(null);
+
+  // useEffect(() => {
+  //   const storedUser = localStorage.getItem("username");
+  //   const storedEmail = localStorage.getItem("email");
+  //   if (storedUser) setUsername(storedUser);
+  //   if (storedEmail) setEmail(storedEmail);
+  // }, []);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("username");
+    const storedEmail = localStorage.getItem("email");
+    if (storedUser) {
+      setUsername(storedUser);
+      setOriginalUsername(storedUser);
+    }
+    if (storedEmail) setEmail(storedEmail);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("username");
+    localStorage.removeItem("loginPopupClosed");
+    localStorage.removeItem("email");
+    localStorage.removeItem("token");
+    setUsername(null);
+    setEmail(null);
+    window.location.href = "http://localhost:5173/";
+  };
+
+  // const handleSave = async () => {
+  //   try {
+  //     const userId = localStorage.getItem("userId");
+  //     if (!userId) {
+  //       alert("User ID not found.");
+  //       return;
+  //     }
+
+  //     // const res = await fetch(`http://localhost:8080/users/${userId}`, {
+  //     //   method: "PUT",
+  //     //   headers: {
+  //     //     "Content-Type": "application/json",
+  //     //   },
+  //     //   body: JSON.stringify({
+  //     //     name: username,
+  //     //     email: email,
+  //     //   }),
+  //     // });
+
+  //     const res = await fetch(`http://localhost:8080/users/${username}`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         name: username,
+  //         email: email,
+  //       }),
+  //     });
+
+  //     if (!res.ok) {
+  //       const error = await res.json();
+  //       alert(`Error updating profile: ${error.message}`);
+  //       return;
+  //     }
+
+  //     const updatedUser = await res.json();
+  //     alert("Profile updated successfully!");
+
+  //     localStorage.setItem("username", updatedUser.Name);
+  //     localStorage.setItem("email", updatedUser.Email);
+  //   } catch (err) {
+  //     console.error("Update failed:", err);
+  //     alert("Something went wrong.");
+  //   }
+  // };
+
+  const handleSave = async () => {
+    try {
+      if (!username) {
+        alert("Username not found.");
+        return;
+      }
+
+      const res = await fetch(
+        `http://localhost:8080/users/${originalUsername}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: username,
+            email: email,
+          }),
+        }
+      );
+
+      if (!res.ok) {
+        const error = await res.json();
+        alert(`Error updating profile: ${error.message}`);
+        return;
+      }
+
+      const updatedUser = await res.json();
+      alert("Profile updated successfully!");
+
+      localStorage.setItem("username", updatedUser.name);
+      localStorage.setItem("email", updatedUser.email);
+      setOriginalUsername(updatedUser.name);
+    } catch (err) {
+      console.error("Update failed:", err);
+      alert("Something went wrong.");
+    }
+  };
+
   return (
-    <div>
-      <div style={styles.profileContainer}>
-        <div style={styles.detailsSection}>
-          <div style={styles.banner}>
-            <div style={styles.bannerContent}>
-              <span style={styles.profilePic}>
-                <img
-                  src="../src/assets/images/camera.png"
-                  alt="Camera"
-                  style={styles.cameraIcon}
+    <div style={{ padding: "1.5rem" }}>
+      <HeadProfile />
+      <br />
+      <ProfileHistory />
+      <div>
+        <div style={styles.profileContainer}>
+          <div style={styles.detailsSection}>
+            <div style={styles.banner}>
+              <div style={styles.bannerContent}>
+                <span style={styles.profilePic}>
+                  <img
+                    src="../src/assets/images/camera.png"
+                    alt="Camera"
+                    style={styles.cameraIcon}
+                  />
+                </span>
+                <p style={styles.greetingText}>
+                  {username ? `Hi, ${username}` : "Hi, Guest"}
+                </p>
+              </div>
+            </div>
+
+            <div style={styles.detailsContainer}>
+              <h2 style={styles.detailsHeading}>Personal Details</h2>
+
+              <span style={styles.inputGroup}>
+                <p style={styles.label}>Name</p>
+                <input
+                  type="text"
+                  placeholder="Enter name here"
+                  style={styles.input}
+                  value={username || ""}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </span>
-              <p style={styles.greetingText}>Hi, Guest</p>
+
+              <span style={styles.inputGroup}>
+                <p style={styles.label}>Email Address</p>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  style={styles.input}
+                  value={email || ""}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </span>
             </div>
-          </div>
 
-          <div style={styles.detailsContainer}>
-            <h2 style={styles.detailsHeading}>Personal Details</h2>
-
-            <span style={styles.inputGroup}>
-              <p style={styles.label}>Name</p>
-              <input
-                type="text"
-                placeholder="Enter name here"
-                style={styles.input}
-              />
-            </span>
-
-            <span style={styles.inputGroup}>
-              <p style={styles.label}>Email Address</p>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                style={styles.input}
-              />
-            </span>
-          </div>
-
-          <div style={styles.buttonGroup}>
-            <span style={styles.logoutButton}>
-              <p style={styles.logoutText}>Log out</p>
-            </span>
-            <span style={styles.saveButton}>
-              <p style={styles.saveText}>Save</p>
-            </span>
+            <div style={styles.buttonGroup}>
+              <span style={styles.logoutButton}>
+                <p style={styles.logoutText} onClick={handleLogout}>
+                  Log out
+                </p>
+              </span>
+              <span style={styles.saveButton}>
+                <p style={styles.saveText} onClick={handleSave}>
+                  Save
+                </p>
+              </span>
+            </div>
           </div>
         </div>
       </div>

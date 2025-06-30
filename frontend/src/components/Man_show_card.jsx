@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Man_show_card({ show, getShowsList }) {
   const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDropdown = () => setShowDropdown((prev) => !prev);
 
@@ -15,10 +17,6 @@ export default function Man_show_card({ show, getShowsList }) {
         throw new Error("Failed to delete show");
       } else {
         getShowsList();
-      }
-
-      if (onDelete) {
-        onDelete(id);
       }
     } catch (error) {
       console.error("Delete error:", error);
@@ -54,7 +52,24 @@ export default function Man_show_card({ show, getShowsList }) {
             />
             {showDropdown && (
               <div style={styles.dropdown}>
-                <div style={styles.dropdownItem}>
+                <div
+                  style={styles.dropdownItem}
+                  onClick={() =>
+                    navigate("/addS", {
+                      state: {
+                        show: {
+                          ID: show.ID,
+                          movie: show.name,
+                          theatre: show.theatre,
+                          date: show.date,
+                          languages: show.languages,
+                          showtime: show.timings ? show.timings.join(", ") : "",
+                          posterImage: show.poster,
+                        },
+                      },
+                    })
+                  }
+                >
                   <img
                     src="../src/assets/images/pencil_icon.png"
                     alt="Edit"
@@ -62,18 +77,16 @@ export default function Man_show_card({ show, getShowsList }) {
                   />
                   <span style={styles.dropdownText}>Edit</span>
                 </div>
-                <div style={styles.dropdownItem}>
+                <div
+                  style={styles.dropdownItem}
+                  onClick={() => handleDelete(show?.ID)}
+                >
                   <img
                     src="../src/assets/images/delete_icon.png"
                     alt="Delete"
                     style={styles.dropdownIcon}
                   />
-                  <span
-                    style={styles.dropdownText}
-                    onClick={() => handleDelete(show?.ID)}
-                  >
-                    Delete
-                  </span>
+                  <span style={styles.dropdownText}>Delete</span>
                 </div>
               </div>
             )}

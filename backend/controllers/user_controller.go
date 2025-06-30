@@ -47,6 +47,55 @@ func GetUserByID(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, user)
 }
 
+func UpdateUserByName(c *gin.Context) {
+	var user models.User
+	originalName := c.Param("name")
+
+	if err := models.DB.Where("name = ?", originalName).First(&user).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "user not found"})
+		return
+	}
+
+	var updatedData map[string]string
+	if err := c.BindJSON(&updatedData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "invalid request"})
+		return
+	}
+
+	newName, hasName := updatedData["name"]
+	newEmail, hasEmail := updatedData["email"]
+
+	if hasName && newName != user.Name {
+		var existing models.User
+		if err := models.DB.Where("name = ?", newName).First(&existing).Error; err == nil {
+			c.JSON(http.StatusConflict, gin.H{"message": "a user with this name already exists"})
+			return
+		}
+	}
+
+	if hasEmail && newEmail != user.Email {
+		var existing models.User
+		if err := models.DB.Where("email = ?", newEmail).First(&existing).Error; err == nil {
+			c.JSON(http.StatusConflict, gin.H{"message": "a user with this email already exists"})
+			return
+		}
+	}
+
+	if hasName {
+		user.Name = newName
+	}
+	if hasEmail {
+		user.Email = newEmail
+	}
+
+	if err := models.DB.Save(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "could not update user"})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
+}
+
 func Register(c *gin.Context) {
 	var input struct {
 		Name     string `json:"name"`

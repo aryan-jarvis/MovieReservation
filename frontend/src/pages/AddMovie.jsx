@@ -1,20 +1,22 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import Head2 from "../components/Head2";
 import LanguageDropdown from "../components/LanguageDropdown";
 
 export default function AddMovie() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const editMovie = location.state?.movie;
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [genre, setGenre] = useState("");
-  const [languages, setLanguages] = useState([]);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [status, setStatus] = useState("Now Showing");
-  const [posterImage, setPosterImage] = useState("");
+  const [title, setTitle] = useState(editMovie?.title || "");
+  const [description, setDescription] = useState(editMovie?.description || "");
+  const [genre, setGenre] = useState(editMovie?.genre || "");
+  const [languages, setLanguages] = useState(editMovie?.languages || []);
+  const [startDate, setStartDate] = useState(editMovie?.startDate || "");
+  const [endDate, setEndDate] = useState(editMovie?.endDate || "");
+  const [status, setStatus] = useState(editMovie?.status || "Now Showing");
+  const [posterImage, setPosterImage] = useState(editMovie?.posterImage || "");
 
   const handlePosterUpload = (e) => {
     const file = e.target.files[0];
@@ -27,7 +29,7 @@ export default function AddMovie() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const movie = {
+    const movieData = {
       title,
       description,
       genre,
@@ -39,11 +41,23 @@ export default function AddMovie() {
     };
 
     try {
-      await axios.post("http://localhost:8080/cinemas", movie, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      if (editMovie) {
+        await axios.put(
+          `http://localhost:8080/cinemas/${editMovie.ID}`,
+          movieData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      } else {
+        await axios.post("http://localhost:8080/cinemas", movieData, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+      }
       navigate("/listM");
     } catch (err) {
       console.error("Failed to submit movie:", err);
@@ -53,105 +67,6 @@ export default function AddMovie() {
 
   const cancelClick = () => {
     navigate("/listM");
-  };
-
-  const styles = {
-    container: {},
-    breadcrumb: {
-      display: "flex",
-      alignItems: "center",
-      gap: "0.5rem",
-      marginLeft: "2rem",
-    },
-    formWrapper: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    },
-    formBox: {
-      display: "flex",
-      flexDirection: "column",
-      gap: "1rem",
-    },
-    label: {
-      fontWeight: "600",
-      fontSize: "1.4rem",
-    },
-    input: {
-      height: "2.5rem",
-      padding: "1rem",
-      border: "0.1rem #A1A2A4 solid",
-      borderRadius: "0.3rem",
-      fontSize: "1rem",
-    },
-    textarea: {
-      height: "8rem",
-      padding: "1rem",
-      border: "0.1rem #A1A2A4 solid",
-      borderRadius: "0.3rem",
-      fontSize: "1rem",
-    },
-    _selectRow: {
-      display: "flex",
-      justifyContent: "space-between",
-      gap: "2rem",
-    },
-    get selectRow() {
-      return this._selectRow;
-    },
-    set selectRow(value) {
-      this._selectRow = value;
-    },
-    select: {
-      height: "2.5rem",
-      padding: "0.6rem",
-      border: "0.1rem #A1A2A4 solid",
-      borderRadius: "0.3rem",
-      fontSize: "1rem",
-      backgroundColor: "white",
-    },
-    posterSection: {
-      fontWeight: "600",
-    },
-    posterUpload: {
-      width: "9rem",
-      height: "6rem",
-      border: "0.1rem #5A5A61 dotted",
-      borderRadius: "1rem",
-      paddingTop: "1rem",
-      textAlign: "center",
-      position: "relative",
-      overflow: "hidden",
-    },
-    posterImage: {
-      width: "100%",
-      height: "100%",
-      objectFit: "cover",
-      borderRadius: "1rem",
-    },
-    buttonsRow: {
-      display: "flex",
-      gap: "20px",
-      marginTop: "1rem",
-    },
-    addButton: {
-      backgroundColor: "#FF5295",
-      color: "#fff",
-      fontWeight: "600",
-      width: "6rem",
-      height: "2.5rem",
-      border: "solid 0.1rem white",
-      borderRadius: "0.3rem",
-    },
-    cancelButton: {
-      backgroundColor: "#fff",
-      color: "black",
-      fontWeight: "600",
-      width: "6rem",
-      height: "2.5rem",
-      border: "solid 0.1rem #FF5295",
-      borderRadius: "0.3rem",
-    },
   };
 
   return (
@@ -166,7 +81,9 @@ export default function AddMovie() {
           <p>Movie Management</p>
         </a>
         <p> / </p>
-        <p style={{ color: "#000" }}>Add New Movie</p>
+        <p style={{ color: "#000" }}>
+          {editMovie ? "Edit Movie" : "Add New Movie"}
+        </p>
       </span>
 
       <form onSubmit={handleSubmit} style={styles.container}>
@@ -279,7 +196,7 @@ export default function AddMovie() {
 
             <div style={styles.buttonsRow}>
               <button type="submit" style={styles.addButton}>
-                Add
+                {editMovie ? "Update" : "Add"}
               </button>
               <button
                 type="button"
@@ -295,3 +212,102 @@ export default function AddMovie() {
     </div>
   );
 }
+
+const styles = {
+  container: {},
+  breadcrumb: {
+    display: "flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    marginLeft: "2rem",
+  },
+  formWrapper: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  formBox: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "1rem",
+  },
+  label: {
+    fontWeight: "600",
+    fontSize: "1.4rem",
+  },
+  input: {
+    height: "2.5rem",
+    padding: "1rem",
+    border: "0.1rem #A1A2A4 solid",
+    borderRadius: "0.3rem",
+    fontSize: "1rem",
+  },
+  textarea: {
+    height: "8rem",
+    padding: "1rem",
+    border: "0.1rem #A1A2A4 solid",
+    borderRadius: "0.3rem",
+    fontSize: "1rem",
+  },
+  _selectRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    gap: "2rem",
+  },
+  get selectRow() {
+    return this._selectRow;
+  },
+  set selectRow(value) {
+    this._selectRow = value;
+  },
+  select: {
+    height: "2.5rem",
+    padding: "0.6rem",
+    border: "0.1rem #A1A2A4 solid",
+    borderRadius: "0.3rem",
+    fontSize: "1rem",
+    backgroundColor: "white",
+  },
+  posterSection: {
+    fontWeight: "600",
+  },
+  posterUpload: {
+    width: "9rem",
+    height: "6rem",
+    border: "0.1rem #5A5A61 dotted",
+    borderRadius: "1rem",
+    paddingTop: "1rem",
+    textAlign: "center",
+    position: "relative",
+    overflow: "hidden",
+  },
+  posterImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+    borderRadius: "1rem",
+  },
+  buttonsRow: {
+    display: "flex",
+    gap: "20px",
+    marginTop: "1rem",
+  },
+  addButton: {
+    backgroundColor: "#FF5295",
+    color: "#fff",
+    fontWeight: "600",
+    width: "6rem",
+    height: "2.5rem",
+    border: "solid 0.1rem white",
+    borderRadius: "0.3rem",
+  },
+  cancelButton: {
+    backgroundColor: "#fff",
+    color: "black",
+    fontWeight: "600",
+    width: "6rem",
+    height: "2.5rem",
+    border: "solid 0.1rem #FF5295",
+    borderRadius: "0.3rem",
+  },
+};
