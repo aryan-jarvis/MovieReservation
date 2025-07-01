@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const buttonStyle = {
   width: "10.3125rem",
@@ -14,6 +15,7 @@ const buttonStyle = {
 };
 
 export default function SelectShow() {
+  const { id: movieId } = useParams();
   const [shows, setShows] = useState([]);
 
   useEffect(() => {
@@ -76,7 +78,7 @@ export default function SelectShow() {
                   key={index}
                   href={`http://localhost:5173/seatselect?showId=${
                     show.ID
-                  }&time=${encodeURIComponent(time.trim())}`}
+                  }&time=${encodeURIComponent(time.trim())}&movieId=${movieId}`}
                   style={{ textDecoration: "none" }}
                 >
                   <button style={buttonStyle}>{time.trim()}</button>

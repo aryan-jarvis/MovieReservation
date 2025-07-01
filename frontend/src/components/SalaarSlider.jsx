@@ -94,9 +94,7 @@ export default function SalaarSlider() {
         <h1 style={{ fontSize: "5rem" }}>Redefined Movie Experience !</h1>
         <h2 style={{ fontSize: "2rem" }}>At PVR Superplex Mall of India</h2>
       </div>
-      <a href="http://localhost:5173/description">
-        <button style={buttonStyle}>Book Now</button>
-      </a>
+      <button style={buttonStyle}>Book Now</button>
       <img
         src={salaarImage}
         alt="Salaar"

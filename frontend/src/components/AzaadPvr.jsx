@@ -5,35 +5,49 @@ export default function MovieCard() {
   const [searchParams] = useSearchParams();
   const showId = searchParams.get("showId");
   const time = searchParams.get("time");
+  const movieId = searchParams.get("movieId");
 
   const [show, setShow] = useState(null);
+  const [movie, setMovie] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8080/showAdmin")
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch shows");
-        return res.json();
-      })
+    if (!showId || !movieId) {
+      setError("Missing showId or movieId in URL.");
+      return;
+    }
+
+    // Fetch show details
+    fetch(`http://localhost:8080/showAdmin`)
+      .then((res) => res.json())
       .then((data) => {
         const found = data.data?.find((s) => String(s.ID) === String(showId));
         if (!found) throw new Error("Show not found");
         setShow(found);
       })
       .catch((err) => {
-        console.error("Error loading show:", err);
+        console.error(err);
         setError("Could not load show details.");
       });
-  }, [showId]);
+
+    // Fetch movie details
+    fetch(`http://localhost:8080/cinemas/${movieId}`)
+      .then((res) => res.json())
+      .then((data) => setMovie(data.data))
+      .catch((err) => {
+        console.error(err);
+        setError("Could not load movie details.");
+      });
+  }, [showId, movieId]);
 
   if (error) return <div style={{ color: "red" }}>{error}</div>;
-  if (!show) return <div>Loading...</div>;
+  if (!show || !movie) return <div>Loading...</div>; // Wait for both fetches
 
   return (
     <div style={styles.card}>
-      <img src={show.posterImage} alt={show.movie} style={styles.image} />
+      <img src={movie.posterImage} alt={movie.title} style={styles.image} />
       <div style={styles.content}>
-        <div style={styles.title}>{show.movie}</div>
+        <div style={styles.title}>{movie.title}</div>
         <div style={styles.subtitle}>
           {show.theatre} | {time}
         </div>
