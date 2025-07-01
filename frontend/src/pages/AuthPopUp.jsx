@@ -1,9 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const API = "http://localhost:8080";
 
 export default function AuthPopUp() {
+  const navigate = useNavigate();
   const [isRegister, setIsRegister] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -28,7 +30,7 @@ export default function AuthPopUp() {
       localStorage.setItem("username", name);
       localStorage.setItem("loginPopUpClosed", "true");
 
-      window.location.href = `/home/?user=${encodeURIComponent(name)}`;
+      navigate(`/home/?user=${encodeURIComponent(name)}`);
       setIsOpen(false);
     } catch (error) {
       // console.error(
@@ -51,7 +53,7 @@ export default function AuthPopUp() {
       localStorage.setItem("username", res.data.name);
       localStorage.setItem("loginPopUpClosed", "true");
 
-      window.location.href = `/home/?user=${encodeURIComponent(email)}`;
+      navigate(`/home/?user=${encodeURIComponent(email)}`);
       setIsOpen(false);
     } catch (error) {
       // console.error(

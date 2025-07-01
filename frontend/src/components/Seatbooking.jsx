@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { useNavigate } from "react-router-dom";
 
 class Seatbooking extends Component {
   constructor() {
@@ -110,8 +111,7 @@ class Seatbooking extends Component {
         if (data.bookedSeats) {
           this.setState({ seatSelected: data.bookedSeats });
         }
-
-        window.location.href = "/payment";
+        this.props.navigate("/payment");
       });
   };
 
@@ -271,5 +271,9 @@ class Seatbooking extends Component {
     );
   }
 }
+function SeatbookingWithNavigate(props) {
+  const navigate = useNavigate();
+  return <Seatbooking {...props} navigate={navigate} />;
+}
 
-export default Seatbooking;
+export default SeatbookingWithNavigate;

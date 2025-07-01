@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import SearchDropDown from "./SearchDropDown";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Head2() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
 
   useEffect(() => {
@@ -18,7 +19,7 @@ export default function Head2() {
     localStorage.removeItem("email");
     localStorage.removeItem("token");
     setUsername("");
-    window.location.href = "/auth";
+    navigate("/auth");
   };
 
   const styles = {
