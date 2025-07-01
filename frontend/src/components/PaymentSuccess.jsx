@@ -1,11 +1,30 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function PaymentSuccess() {
+  const navigate = useNavigate();
+  const clickT = () => {
+    navigate("/ticket");
+  };
   return (
     <div style={{ padding: "2rem", textAlign: "center" }}>
       <h1>Payment Successful 🎉</h1>
       <p>Your tickets have been booked successfully.</p>
-      {/* <a href="/">Go to Home</a> */}
+      <button
+        style={{
+          marginTop: "2rem",
+          fontSize: "1.3rem",
+          padding: "1rem",
+          borderRadius: "0.8rem",
+          border: "0.1rem white solid",
+          backgroundColor: "#ff5295",
+          color: "white",
+          height: "4rem",
+        }}
+        onClick={clickT}
+      >
+        View your ticket
+      </button>
     </div>
   );
 }

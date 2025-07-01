@@ -131,7 +131,7 @@ func Register(c *gin.Context) {
 	}
 
 	// return token
-	token := utils.GenerateJWT(user.Name)
+	token := utils.GenerateJWT(user.Email)
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 

@@ -1,55 +1,83 @@
-import * as React from "react";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
+import React from "react";
 
 export default function MovieCard() {
   return (
-    <Card
-      sx={{}}
-      style={{
-        display: "flex",
-        border: "solid 0.1rem #e0dfdf",
-        backgroundColor: "ffffff",
-        height: "8.68rem",
-        alignItems: "center",
-        borderRadius: "1rem",
-      }}
-    >
-      <CardMedia
-        component="img"
-        alt="green iguana"
-        image="../src/assets/images/harrypotter.png"
-        style={{ width: "8rem", height: "8.68rem" }}
+    <div style={styles.card}>
+      <img
+        src="../src/assets/images/harrypotter.png"
+        alt="Movie Poster"
+        style={styles.image}
       />
-      <CardContent>
-        <p style={{ fontSize: "1rem" }}>Booked for:</p>
-        <Typography style={{ fontSize: "1rem" }}>
-          Alice in Wonderland
-        </Typography>
-        <Typography style={{ fontSize: "0.8rem" }}>
-          Cinepolis: Pacific NSP2, Delhi
-        </Typography>
-        <p style={{ fontSize: "0.8rem" }}>2 hours ago</p>
-      </CardContent>
-      <CardActions style={{ marginLeft: "75rem" }}>
+      <div style={styles.content}>
+        <p style={styles.label}>Booked for:</p>
+        <p style={styles.title}>Alice in Wonderland</p>
+        <p style={styles.location}>Cinepolis: Pacific NSP2, Delhi</p>
+        <p style={styles.time}>2 hours ago</p>
+      </div>
+      <div style={styles.actions}>
         <a href="http://localhost:5173/ticket">
-          <Button
-            size="small"
-            style={{
-              backgroundColor: "#ff5295",
-              color: "white",
-              height: "3rem",
-              width: "8.5rem",
-            }}
-          >
-            View Ticket
-          </Button>
+          <button style={styles.button}>View Ticket</button>
         </a>
-      </CardActions>
-    </Card>
+      </div>
+    </div>
   );
 }
+
+const styles = {
+  card: {
+    display: "flex",
+    alignItems: "center",
+    border: "0.1rem solid #e0dfdf",
+    backgroundColor: "#ffffff",
+    height: "8.68rem",
+    borderRadius: "1rem",
+    padding: "0.5rem",
+    boxSizing: "border-box",
+    position: "relative",
+    width: "100%",
+    margin: "0.2rem auto",
+  },
+  image: {
+    width: "8rem",
+    height: "8.68rem",
+    objectFit: "cover",
+    borderRadius: "0.5rem",
+  },
+  content: {
+    marginLeft: "1rem",
+    flexGrow: 1,
+  },
+  label: {
+    fontSize: "1rem",
+    margin: 0,
+  },
+  title: {
+    fontSize: "1rem",
+    fontWeight: "bold",
+    margin: "0.2rem 0",
+  },
+  location: {
+    fontSize: "0.8rem",
+    color: "#555",
+    margin: "0.2rem 0",
+  },
+  time: {
+    fontSize: "0.8rem",
+    color: "#888",
+    margin: "0.2rem 0",
+  },
+  actions: {
+    marginLeft: "auto",
+    paddingRight: "1rem",
+  },
+  button: {
+    backgroundColor: "#ff5295",
+    color: "white",
+    height: "3rem",
+    width: "8.5rem",
+    border: "none",
+    borderRadius: "0.5rem",
+    cursor: "pointer",
+    fontSize: "1rem",
+  },
+};

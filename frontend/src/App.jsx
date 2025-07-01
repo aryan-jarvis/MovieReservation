@@ -25,6 +25,7 @@ import AddTheatre from "./pages/AddTheatre";
 import Head2 from "./components/Head2";
 import AzaadDates from "./components/AzaadDates";
 import ProfilePage from "./components/ProfilePage";
+import MovieCard from "./components/AzaadPvr";
 
 export default function App() {
   return (
@@ -59,6 +60,7 @@ export default function App() {
         <Route path="/theatre/:id" element={<Theatre_Selection_Page />} />
         <Route path="/movie/:id/dates" element={<AzaadDates />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/moviecard/:id" element={<MovieCard />} />
       </Routes>
     </div>
   );
