@@ -26,12 +26,12 @@ import Head2 from "./components/Head2";
 import AzaadDates from "./components/AzaadDates";
 import ProfilePage from "./components/ProfilePage";
 import MovieCard from "./components/AzaadPvr";
+import NotFound from "./components/NotFound";
 
 export default function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="*" element={<Navigate to="/" replace />} />
         <Route path="/" element={<Home_Page />} />
         <Route path="/movies" element={<Movie_List_Page />} />
         <Route path="/description" element={<Movie_Description_Page />} />
@@ -45,7 +45,7 @@ export default function App() {
         <Route path="/payment-response" element={<PayUResponseHandler />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         <Route path="/payment-failure" element={<PaymentFailure />} />
-        <Route path="/payment-response" element={<PaymentResponse />} />
+        {/* <Route path="/payment-response" element={<PaymentResponse />} /> */}
         <Route path="/auth" element={<LoginPage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/listM" element={<ListMovie />} />
@@ -61,6 +61,7 @@ export default function App() {
         <Route path="/movie/:id/dates" element={<AzaadDates />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/moviecard/:id" element={<MovieCard />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );
