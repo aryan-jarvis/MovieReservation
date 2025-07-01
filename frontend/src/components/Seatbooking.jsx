@@ -111,7 +111,7 @@ class Seatbooking extends Component {
           this.setState({ seatSelected: data.bookedSeats });
         }
 
-        window.location.href = "http://localhost:5173/payment";
+        window.location.href = "/payment";
       });
   };
 
@@ -251,7 +251,7 @@ class Seatbooking extends Component {
 
           <div className="screen-side">
             <img
-              src="../src/assets/images/screen.png"
+              src="/images/screen.png"
               alt="Screen"
               style={{ maxWidth: "400px", width: "100%" }}
             />

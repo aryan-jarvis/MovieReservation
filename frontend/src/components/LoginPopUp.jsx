@@ -1,9 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const API = "http://localhost:8080";
 
 export default function LoginPopUp() {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,9 +31,8 @@ export default function LoginPopUp() {
       localStorage.setItem("email", email);
       localStorage.setItem("loginPopupClosed", "true");
 
-      window.location.href = `http://localhost:5173/?user=${encodeURIComponent(
-        name
-      )}`;
+      navigate(`/?user=${encodeURIComponent(name)}`);
+
       setIsOpen(false);
     } catch (error) {
       const message =
@@ -54,9 +55,8 @@ export default function LoginPopUp() {
       localStorage.setItem("email", email);
       localStorage.setItem("loginPopupClosed", "true");
 
-      window.location.href = `http://localhost:5173/?user=${encodeURIComponent(
-        email
-      )}`;
+      navigate(`/?user=${encodeURIComponent(email)}`);
+
       setIsOpen(false);
     } catch (error) {
       const message =

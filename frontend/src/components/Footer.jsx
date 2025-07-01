@@ -11,11 +11,7 @@ export default function Footer() {
       }}
     >
       <div>
-        <img
-          className="logo"
-          src="../src/assets/images/logo.png"
-          alt="Company Logo"
-        />
+        <img className="logo" src="/images/logo.png" alt="Company Logo" />
       </div>
       <div>
         <p>Terms and Conditions</p>

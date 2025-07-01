@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const buttonStyle = {
   width: "10.3125rem",
@@ -74,15 +75,15 @@ export default function SelectShow() {
               }}
             >
               {show.showtime.split(",").map((time, index) => (
-                <a
+                <Link
                   key={index}
-                  href={`http://localhost:5173/seatselect?showId=${
-                    show.ID
-                  }&time=${encodeURIComponent(time.trim())}&movieId=${movieId}`}
+                  to={`/seatselect?showId=${show.ID}&time=${encodeURIComponent(
+                    time.trim()
+                  )}&movieId=${movieId}`}
                   style={{ textDecoration: "none" }}
                 >
                   <button style={buttonStyle}>{time.trim()}</button>
-                </a>
+                </Link>
               ))}
             </div>
           </div>

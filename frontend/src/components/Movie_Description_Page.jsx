@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import HeadProfile from "./HeadProfile";
 import Footer from "./Footer";
 import PostRating from "./PostRating";
@@ -71,7 +71,7 @@ export default function Movie_Description_Page() {
           <p>
             <strong>Show Dates:</strong> {movie.startDate} to {movie.endDate}
           </p>
-          <a href={`http://localhost:5173/theatre/${movie.ID}`}>
+          <Link to={`/theatre/${movie.ID}`}>
             <button
               style={{
                 marginLeft: "4rem",
@@ -89,7 +89,7 @@ export default function Movie_Description_Page() {
             >
               Book Now
             </button>
-          </a>
+          </Link>
         </div>
       </div>
 

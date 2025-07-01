@@ -89,11 +89,7 @@ export default function Payment_Summary_Page() {
             marginBottom: "20px",
           }}
         >
-          <img
-            src="../src/assets/images/pvr_logo.png"
-            alt="PVR Logo"
-            style={styles.logo}
-          />
+          <img src="/images/pvr_logo.png" alt="PVR Logo" style={styles.logo} />
           <div>
             <h3 style={{ margin: 0 }}>Azaad</h3>
             <p style={{ margin: "5px 0", color: "#666" }}>

@@ -6,6 +6,7 @@ import HeadProfile from "./HeadProfile";
 import LoginPopUp from "./LoginPopUp";
 import SalaarSlider from "./SalaarSlider";
 import MovieCard from "./MovieCard";
+import { Link } from "react-router-dom";
 
 export default function Home_Page() {
   const [movies, setMovies] = useState([]);
@@ -33,12 +34,9 @@ export default function Home_Page() {
         }}
       >
         <h2>{title}</h2>
-        <a
-          href="http://localhost:5173/movies"
-          style={{ textDecoration: "none", color: "#FF5295" }}
-        >
+        <Link to="/movies" style={{ textDecoration: "none", color: "#FF5295" }}>
           <p>See All</p>
-        </a>
+        </Link>
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
         {data.length > 0 ? (

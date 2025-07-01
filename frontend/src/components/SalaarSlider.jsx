@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-import salaarImage from "../assets/images/salaar.png";
-import sikandarImage from "../assets/images/sikandar.png";
-import moanaImage from "../assets/images/moana.png";
+import salaarImage from "/images/salaar.png";
+import sikandarImage from "/images/sikandar.png";
+import moanaImage from "/images/moana.png";
 
 const textStyle = {
   position: "absolute",

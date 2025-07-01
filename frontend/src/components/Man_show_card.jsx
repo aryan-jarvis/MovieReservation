@@ -45,7 +45,7 @@ export default function Man_show_card({ show, getShowsList }) {
 
           <div style={styles.menuWrapper}>
             <img
-              src="../src/assets/images/dots_icon.png"
+              src="/images/dots_icon.png"
               alt="Options"
               style={styles.dotIcon}
               onClick={toggleDropdown}
@@ -71,7 +71,7 @@ export default function Man_show_card({ show, getShowsList }) {
                   }
                 >
                   <img
-                    src="../src/assets/images/pencil_icon.png"
+                    src="/images/pencil_icon.png"
                     alt="Edit"
                     style={styles.dropdownIcon}
                   />
@@ -82,7 +82,7 @@ export default function Man_show_card({ show, getShowsList }) {
                   onClick={() => handleDelete(show?.ID)}
                 >
                   <img
-                    src="../src/assets/images/delete_icon.png"
+                    src="/images/delete_icon.png"
                     alt="Delete"
                     style={styles.dropdownIcon}
                   />

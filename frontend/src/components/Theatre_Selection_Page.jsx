@@ -2,6 +2,7 @@ import AzaadDates from "./AzaadDates";
 import HeadProfile from "./HeadProfile";
 import SelectShow from "./SelectShow";
 import Footer from "./Footer";
+import { Link } from "react-router-dom";
 
 export default function Theatre_Selection_Page() {
   return (
@@ -9,19 +10,16 @@ export default function Theatre_Selection_Page() {
       <HeadProfile />
       <br />
       <div style={{ display: "flex" }}>
-        <a
-          href="http://localhost:5173/"
-          style={{ color: "black", textDecoration: "none" }}
-        >
+        <Link to="/" style={{ color: "black", textDecoration: "none" }}>
           <p>Home</p>
-        </a>
+        </Link>
         &nbsp;
-        <a
-          href="http://localhost:5173/description"
+        <Link
+          to="/description"
           style={{ color: "black", textDecoration: "none" }}
         >
           <p>/ Movie</p>
-        </a>
+        </Link>
         &nbsp;
         <p>/ Show Time</p>
       </div>

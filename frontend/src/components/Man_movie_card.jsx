@@ -34,7 +34,7 @@ export default function Man_movie_card({ movie, getMoviesList }) {
       <div style={styles.card}>
         <div style={styles.imageWrapper}>
           <img
-            src={movie?.posterImage || "../src/assets/images/inception.png"}
+            src={movie?.posterImage || "/images/inception.png"}
             alt="Movie Poster"
             style={styles.image}
           />
@@ -58,7 +58,7 @@ export default function Man_movie_card({ movie, getMoviesList }) {
 
           <div style={styles.menuWrapper}>
             <img
-              src="../src/assets/images/dots_icon.png"
+              src="/images/dots_icon.png"
               alt="Options"
               onClick={toggleDropdown}
             />
@@ -66,7 +66,7 @@ export default function Man_movie_card({ movie, getMoviesList }) {
               <div style={styles.dropdown}>
                 <div style={styles.dropdownItem} onClick={handleEdit}>
                   <img
-                    src="../src/assets/images/pencil_icon.png"
+                    src="/images/pencil_icon.png"
                     alt="Edit"
                     style={styles.dropdownIcon}
                   />
@@ -77,7 +77,7 @@ export default function Man_movie_card({ movie, getMoviesList }) {
                   onClick={() => handleDelete(movie?.ID)}
                 >
                   <img
-                    src="../src/assets/images/delete_icon.png"
+                    src="/images/delete_icon.png"
                     alt="Delete"
                     style={styles.dropdownIcon}
                   />

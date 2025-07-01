@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import SearchDropDown from "./SearchDropDown";
+import { Link } from "react-router-dom";
 
 export default function Head2() {
   const [username, setUsername] = useState("");
@@ -82,13 +83,9 @@ export default function Head2() {
   return (
     <div style={styles.header}>
       <div style={styles.leftSection}>
-        <a href="http://localhost:5173/home">
-          <img
-            style={styles.logo}
-            src="../src/assets/images/logo.png"
-            alt="Company Logo"
-          />
-        </a>
+        <Link to="/home">
+          <img style={styles.logo} src="/images/logo.png" alt="Company Logo" />
+        </Link>
         <div style={styles.searchContainer}>
           <input
             type="text"
@@ -96,7 +93,7 @@ export default function Head2() {
             style={styles.searchInput}
           />
           <img
-            src="../src/assets/images/search_icon.png"
+            src="/images/search_icon.png"
             alt="Search Icon"
             style={styles.searchIcon}
           />
@@ -106,7 +103,7 @@ export default function Head2() {
         <SearchDropDown />
         <img
           style={styles.logo}
-          src="../src/assets/images/user_logo.png"
+          src="/images/user_logo.png"
           alt="User Profile Logo"
         />
         <p style={styles.greeting}>Hi, {username || "Guest"}</p>

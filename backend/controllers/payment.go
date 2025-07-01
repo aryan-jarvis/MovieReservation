@@ -188,7 +188,7 @@ func PaymentSuccessHandler(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusFound, "http://localhost:5173/payment-success")
+	c.Redirect(http.StatusFound, "/payment-success")
 }
 
 func PaymentFailureHandler(c *gin.Context) {
@@ -217,5 +217,5 @@ func PaymentFailureHandler(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusFound, "http://localhost:5173/payment-failure")
+	c.Redirect(http.StatusFound, "/payment-failure")
 }

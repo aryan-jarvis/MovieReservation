@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import SearchDropDown from "./SearchDropDown";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function HeadProfile() {
   const [username, setUsername] = useState(null);
@@ -21,7 +21,7 @@ export default function HeadProfile() {
     localStorage.removeItem("token");
     // localStorage.clear();
     setUsername(null);
-    window.location.href = "http://localhost:5173/";
+    navigate("/");
   };
 
   return (
@@ -37,13 +37,9 @@ export default function HeadProfile() {
         className="Left-Profile-Section"
         style={{ display: "flex", gap: "3rem" }}
       >
-        <a href="http://localhost:5173/">
-          <img
-            className="logo"
-            src="../src/assets/images/logo.png"
-            alt="Company Logo"
-          />
-        </a>
+        <Link to="/">
+          <img className="logo" src="/images/logo.png" alt="Company Logo" />
+        </Link>
       </div>
       <div
         className="Right-Profile-Section"
@@ -59,7 +55,7 @@ export default function HeadProfile() {
             </span>
             <img
               className="logo"
-              src="../src/assets/images/user_logo.png"
+              src="/images/user_logo.png"
               alt="User Profile Logo"
               style={{
                 width: "40px",

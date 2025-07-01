@@ -77,7 +77,7 @@ export default function HomePage() {
 
   const cardData = [
     {
-      img: "../src/assets/images/img1.png",
+      img: "/images/img1.png",
       alt: "Movie Management",
       title: "Movie Management",
       desc: "Add or update movies, posters and metadata",
@@ -85,7 +85,7 @@ export default function HomePage() {
       path: "/listM",
     },
     {
-      img: "../src/assets/images/img2.png",
+      img: "/images/img2.png",
       alt: "Theatre Management",
       title: "Theatre Management",
       desc: "Manage theatre details, screens and locations",
@@ -93,7 +93,7 @@ export default function HomePage() {
       path: "/listT",
     },
     {
-      img: "../src/assets/images/img3.png",
+      img: "/images/img3.png",
       alt: "Showtime Scheduling",
       title: "Showtime Scheduling",
       desc: "Assign movies to screens and schedule showtimes.",

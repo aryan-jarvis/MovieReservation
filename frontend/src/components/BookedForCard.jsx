@@ -1,10 +1,11 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function MovieCard() {
   return (
     <div style={styles.card}>
       <img
-        src="../src/assets/images/harrypotter.png"
+        src="/images/harrypotter.png"
         alt="Movie Poster"
         style={styles.image}
       />
@@ -15,9 +16,9 @@ export default function MovieCard() {
         <p style={styles.time}>2 hours ago</p>
       </div>
       <div style={styles.actions}>
-        <a href="http://localhost:5173/ticket">
+        <Link to="/ticket">
           <button style={styles.button}>View Ticket</button>
-        </a>
+        </Link>
       </div>
     </div>
   );

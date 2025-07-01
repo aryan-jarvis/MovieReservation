@@ -1,32 +1,27 @@
 import HeadProfile from "./HeadProfile";
 import Seatbooking from "./Seatbooking";
 import AzaadPvr from "./AzaadPvr";
+import { Link } from "react-router-dom";
 
 export default function ShowBooking_Page() {
   return (
     <div style={{ padding: "1.5rem" }}>
       <HeadProfile />
       <div style={{ display: "flex" }}>
-        <a
-          href="http://localhost:5173/"
-          style={{ color: "black", textDecoration: "none" }}
-        >
+        <Link to="/" style={{ color: "black", textDecoration: "none" }}>
           <p>Home</p>
-        </a>
+        </Link>
         &nbsp;
-        <a
-          href="http://localhost:5173/description"
+        <Link
+          to="/description"
           style={{ color: "black", textDecoration: "none" }}
         >
           <p>/ Movie</p>
-        </a>
+        </Link>
         &nbsp;
-        <a
-          href="http://localhost:5173/theatre"
-          style={{ color: "black", textDecoration: "none" }}
-        >
+        <Link to="/theatre" style={{ color: "black", textDecoration: "none" }}>
           <p>/ Show Time</p>
-        </a>
+        </Link>
         &nbsp;
         <a>
           <p>/ Show Booking</p>

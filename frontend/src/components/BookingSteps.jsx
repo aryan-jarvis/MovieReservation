@@ -9,7 +9,7 @@ export default function BookingSteps() {
         </p>
       </div>
       <div>
-        <img src="../src/assets/images/booking_steps.png" alt="Company Logo" />
+        <img src="/images/booking_steps.png" alt="Company Logo" />
       </div>
       <div
         style={{

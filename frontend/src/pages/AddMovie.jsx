@@ -183,7 +183,7 @@ export default function AddMovie() {
               ) : (
                 <>
                   <img
-                    src="../src/assets/images/upload.png"
+                    src="/images/upload.png"
                     alt="Upload"
                     style={{ width: "2rem" }}
                   />

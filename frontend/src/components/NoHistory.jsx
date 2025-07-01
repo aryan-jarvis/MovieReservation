@@ -8,7 +8,7 @@ export default function NoHistory() {
       <HeadProfile />
       <ProfileHistory />
       <div style={{ padding: "5.6rem", textAlign: "center" }}>
-        <img src="../src/assets/images/no_history.png" alt="alt" />
+        <img src="/images/no_history.png" alt="alt" />
         <h2>You have no booking history !</h2>
       </div>
       <Footer />

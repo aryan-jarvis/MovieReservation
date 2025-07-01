@@ -69,7 +69,7 @@ export default function LoginPage() {
       <div className="main-div" style={styles.mainDiv}>
         <div className="text-left" style={styles.textLeft}>
           <div className="logo" style={styles.logo}>
-            <img src="../src/assets/images/logo.png" alt="company logo" />
+            <img src="/images/logo.png" alt="company logo" />
           </div>
           <div className="center-text" style={styles.centerText}>
             <h1 style={styles.txt}>Welcome 👋</h1>
@@ -77,7 +77,7 @@ export default function LoginPage() {
             <div>
               <button style={styles.button}>
                 <img
-                  src="../src/assets/images/google_icon.png"
+                  src="/images/google_icon.png"
                   alt="Google icon"
                   width="24"
                   height="24"
@@ -89,7 +89,7 @@ export default function LoginPage() {
             <div>
               <button style={styles.button} onClick={handleClick}>
                 <img
-                  src="../src/assets/images/mail_icon.png"
+                  src="/images/mail_icon.png"
                   alt="Email icon"
                   width="24"
                   height="24"
@@ -116,7 +116,7 @@ export default function LoginPage() {
 
         <div className="image-right" style={styles.imageRight}>
           <div>
-            <img src="../src/assets/images/theatre.png" alt="theatre" />
+            <img src="/images/theatre.png" alt="theatre" />
           </div>
         </div>
       </div>

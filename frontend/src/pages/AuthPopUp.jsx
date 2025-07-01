@@ -28,9 +28,7 @@ export default function AuthPopUp() {
       localStorage.setItem("username", name);
       localStorage.setItem("loginPopUpClosed", "true");
 
-      window.location.href = `http://localhost:5173/home/?user=${encodeURIComponent(
-        name
-      )}`;
+      window.location.href = `/home/?user=${encodeURIComponent(name)}`;
       setIsOpen(false);
     } catch (error) {
       // console.error(
@@ -53,9 +51,7 @@ export default function AuthPopUp() {
       localStorage.setItem("username", res.data.name);
       localStorage.setItem("loginPopUpClosed", "true");
 
-      window.location.href = `http://localhost:5173/home/?user=${encodeURIComponent(
-        email
-      )}`;
+      window.location.href = `/home/?user=${encodeURIComponent(email)}`;
       setIsOpen(false);
     } catch (error) {
       // console.error(

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import HeadProfile from "./HeadProfile";
 import ProfileHistory from "./ProfileHistory";
+import { useNavigate } from "react-router-dom";
 
 export default function ProfilePage() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState(null);
   const [email, setEmail] = useState(null);
   const [originalUsername, setOriginalUsername] = useState(null);
@@ -31,7 +33,7 @@ export default function ProfilePage() {
     localStorage.removeItem("token");
     setUsername(null);
     setEmail(null);
-    window.location.href = "http://localhost:5173/";
+    navigate("/");
   };
 
   // const handleSave = async () => {
@@ -132,7 +134,7 @@ export default function ProfilePage() {
               <div style={styles.bannerContent}>
                 <span style={styles.profilePic}>
                   <img
-                    src="../src/assets/images/camera.png"
+                    src="/images/camera.png"
                     alt="Camera"
                     style={styles.cameraIcon}
                   />

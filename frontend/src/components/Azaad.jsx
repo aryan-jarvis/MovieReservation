@@ -1,9 +1,11 @@
+import { Link } from "react-router-dom";
+
 export default function Azaad() {
   return (
     <>
       <div className="Azaad" style={{ display: "flex" }}>
         <div>
-          <img src="../src/assets/images/azaad.png" alt="Company Logo" />
+          <img src="/images/azaad.png" alt="Company Logo" />
         </div>
         <div style={{ margin: "100px" }}>
           <h1>Azaad</h1>
@@ -17,7 +19,7 @@ export default function Azaad() {
             animal becomes a journey of courage, awakening him to his own power
             amidst the country's fight for freedom.
           </p>
-          <a href="http://localhost:5173/theatre">
+          <Link to="/theatre">
             <button
               style={{
                 margin: "5px",
@@ -34,7 +36,7 @@ export default function Azaad() {
             >
               Book Now
             </button>
-          </a>
+          </Link>
         </div>
       </div>
     </>

@@ -8,8 +8,8 @@ export default function PrevNext() {
         justifyContent: "center",
       }}
     >
-      <img src="../src/assets/images/prev_page.png" alt="Company Logo" />
-      <img src="../src/assets/images/next_page.png" alt="Company Logo" />
+      <img src="/images/prev_page.png" alt="Company Logo" />
+      <img src="/images/next_page.png" alt="Company Logo" />
     </div>
   );
 }
