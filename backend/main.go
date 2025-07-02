@@ -27,12 +27,7 @@ func init() {
 		"PAYU_MERCHANT_SALT",
 		"PAYU_BASE_URL",
 
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=require TimeZone=UTC",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
-		os.Getenv("DB_PORT"),
+		// "host=dpg-d1iba1ripnbc73beqntg-a.oregon-postgres.render.com user=moviedb_et2q_user password=2xHxOTQ40oy0KLVQiJPqf9VWK471619V dbname=moviedb_et2q port=5432 sslmode=require TimeZone=UTC",
 	}
 	for _, key := range requiredEnv {
 		if os.Getenv(key) == "" {
