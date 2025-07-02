@@ -8,7 +8,7 @@ export default function ListMovie() {
   const [movies, setMovies] = useState([]);
 
   const getMoviesList = () => {
-    fetch("http://localhost:8080/cinemas")
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/cinemas`)
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch movies");

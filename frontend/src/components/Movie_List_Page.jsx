@@ -10,7 +10,7 @@ export default function Movie_List_Page() {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/cinemas")
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/cinemas`)
       .then((res) => res.json())
       .then((response) => {
         console.log(response.data);

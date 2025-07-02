@@ -15,9 +15,12 @@ export default function Man_movie_card({ movie, getMoviesList }) {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/cinemas/${id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/cinemas/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete cinema");

@@ -26,18 +26,21 @@ export default function Payment_Summary_Page() {
         return;
       }
 
-      const res = await fetch("http://localhost:8080/api/payment/initiate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        },
-        body: JSON.stringify({
-          amount: totalAmount,
-          show_id: showId,
-          seats: selectedSeats.join(","),
-        }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/payment/initiate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify({
+            amount: totalAmount,
+            show_id: showId,
+            seats: selectedSeats.join(","),
+          }),
+        }
+      );
 
       const html = await res.text();
 

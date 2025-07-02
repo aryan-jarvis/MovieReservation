@@ -43,7 +43,7 @@ export default function AddMovie() {
     try {
       if (editMovie) {
         await axios.put(
-          `http://localhost:8080/cinemas/${editMovie.ID}`,
+          `${import.meta.env.VITE_API_BASE_URL}/cinemas/${editMovie.ID}`,
           movieData,
           {
             headers: {
@@ -52,11 +52,15 @@ export default function AddMovie() {
           }
         );
       } else {
-        await axios.post("http://localhost:8080/cinemas", movieData, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/cinemas`,
+          movieData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
       }
       navigate("/listM");
     } catch (err) {

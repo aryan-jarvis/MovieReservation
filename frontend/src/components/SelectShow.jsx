@@ -20,7 +20,7 @@ export default function SelectShow() {
   const [shows, setShows] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/showAdmin")
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/showAdmin`)
       .then((response) => {
         if (!response.ok) throw new Error("Network response was not ok");
         return response.json();

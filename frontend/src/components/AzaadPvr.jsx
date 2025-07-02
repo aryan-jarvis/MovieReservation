@@ -18,7 +18,7 @@ export default function MovieCard() {
     }
 
     // Fetch show details
-    fetch(`http://localhost:8080/showAdmin`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/showAdmin`)
       .then((res) => res.json())
       .then((data) => {
         const found = data.data?.find((s) => String(s.ID) === String(showId));
@@ -31,7 +31,7 @@ export default function MovieCard() {
       });
 
     // Fetch movie details
-    fetch(`http://localhost:8080/cinemas/${movieId}`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/cinemas/${movieId}`)
       .then((res) => res.json())
       .then((data) => setMovie(data.data))
       .catch((err) => {

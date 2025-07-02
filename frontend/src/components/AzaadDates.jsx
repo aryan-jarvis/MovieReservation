@@ -18,7 +18,7 @@ export default function AzaadDates() {
   ];
 
   useEffect(() => {
-    fetch(`http://localhost:8080/cinemas/${id}`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/cinemas/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Movie not found");
         return res.json();

@@ -8,7 +8,7 @@ export default function PaymentResponse() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
 
-    fetch("http://localhost:8080/api/payment/success", {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/success`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: params.toString(),

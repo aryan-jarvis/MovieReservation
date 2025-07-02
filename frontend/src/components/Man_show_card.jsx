@@ -9,9 +9,12 @@ export default function Man_show_card({ show, getShowsList }) {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/showAdmin/${id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/showAdmin/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete show");

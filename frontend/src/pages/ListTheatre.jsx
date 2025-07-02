@@ -10,7 +10,9 @@ export default function ListTheatre() {
 
   const getTheatresList = async () => {
     try {
-      const response = await fetch("http://localhost:8080/theatres");
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/theatres`
+      );
       const data = await response.json();
       setTheatres(data.data);
     } catch (error) {

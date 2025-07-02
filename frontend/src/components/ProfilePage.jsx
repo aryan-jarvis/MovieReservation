@@ -36,53 +36,6 @@ export default function ProfilePage() {
     navigate("/");
   };
 
-  // const handleSave = async () => {
-  //   try {
-  //     const userId = localStorage.getItem("userId");
-  //     if (!userId) {
-  //       alert("User ID not found.");
-  //       return;
-  //     }
-
-  //     // const res = await fetch(`http://localhost:8080/users/${userId}`, {
-  //     //   method: "PUT",
-  //     //   headers: {
-  //     //     "Content-Type": "application/json",
-  //     //   },
-  //     //   body: JSON.stringify({
-  //     //     name: username,
-  //     //     email: email,
-  //     //   }),
-  //     // });
-
-  //     const res = await fetch(`http://localhost:8080/users/${username}`, {
-  //       method: "PUT",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         name: username,
-  //         email: email,
-  //       }),
-  //     });
-
-  //     if (!res.ok) {
-  //       const error = await res.json();
-  //       alert(`Error updating profile: ${error.message}`);
-  //       return;
-  //     }
-
-  //     const updatedUser = await res.json();
-  //     alert("Profile updated successfully!");
-
-  //     localStorage.setItem("username", updatedUser.Name);
-  //     localStorage.setItem("email", updatedUser.Email);
-  //   } catch (err) {
-  //     console.error("Update failed:", err);
-  //     alert("Something went wrong.");
-  //   }
-  // };
-
   const handleSave = async () => {
     try {
       if (!username) {
@@ -91,7 +44,7 @@ export default function ProfilePage() {
       }
 
       const res = await fetch(
-        `http://localhost:8080/users/${originalUsername}`,
+        `${import.meta.env.VITE_API_BASE_URL}/users/${originalUsername}`,
         {
           method: "PUT",
           headers: {

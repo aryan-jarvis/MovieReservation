@@ -34,7 +34,7 @@ class Seatbooking extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:8080/seats")
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/seats`)
       .then((res) => res.json())
       .then((data) => {
         if (data.bookedSeats) {
@@ -77,7 +77,7 @@ class Seatbooking extends Component {
 
     for (let payload of payloads) {
       try {
-        const res = await fetch("http://localhost:8080/seat", {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/seat`, {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -105,7 +105,7 @@ class Seatbooking extends Component {
 
     this.setState({ seatReserved: [] });
 
-    fetch("http://localhost:8080/seats")
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/seats`)
       .then((res) => res.json())
       .then((data) => {
         if (data.bookedSeats) {

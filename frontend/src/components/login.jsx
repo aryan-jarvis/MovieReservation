@@ -7,7 +7,9 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
 
-  const api = axios.create({ baseURL: "http://localhost:8080" });
+  const api = axios.create({
+    baseURL: "${import.meta.env.VITE_API_BASE_URL}",
+  });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });

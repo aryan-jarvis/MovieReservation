@@ -87,16 +87,20 @@ export default function AddTheatre() {
       if (editingTheatre) {
         // Update
         res = await axios.put(
-          `http://localhost:8080/theatres/${editingTheatre.ID}`,
+          `${import.meta.env.VITE_API_BASE_URL}/theatres/${editingTheatre.ID}`,
           payload,
           { headers: { "Content-Type": "application/json" } }
         );
         console.log("Theatre updated:", res.data);
       } else {
         // Add new
-        res = await axios.post("http://localhost:8080/theatres", payload, {
-          headers: { "Content-Type": "application/json" },
-        });
+        res = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/theatres`,
+          payload,
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
         console.log("Theatre added:", res.data);
       }
 

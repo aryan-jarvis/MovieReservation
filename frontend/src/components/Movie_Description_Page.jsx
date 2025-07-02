@@ -12,7 +12,7 @@ export default function Movie_Description_Page() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8080/cinemas/${id}`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/cinemas/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Movie not found");
         return res.json();
@@ -23,7 +23,7 @@ export default function Movie_Description_Page() {
         setError("Could not load movie details.");
       });
 
-    fetch("http://localhost:8080/cinemas")
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/cinemas`)
       .then((res) => res.json())
       .then((res) => setRelatedMovies(res.data || []))
       .catch((err) => console.error("Failed to load related movies:", err));

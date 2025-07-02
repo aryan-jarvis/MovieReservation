@@ -14,14 +14,17 @@ function ReviewForm({ onSubmit, onClose }) {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/review", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-        body: JSON.stringify({ comment, rating }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/review`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify({ comment, rating }),
+        }
+      );
 
       const data = await response.json();
 
@@ -105,7 +108,9 @@ function PostRating() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await fetch("http://localhost:8080/review");
+        const response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/review`
+        );
         const result = await response.json();
         if (response.ok) {
           const sortedReviews = result.data.sort((a, b) => b.rating - a.rating);

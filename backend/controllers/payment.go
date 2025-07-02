@@ -71,8 +71,14 @@ func InitiatePayment(c *gin.Context) {
 	firstName := user.Name
 	email := user.Email
 	phone := "9999999999"
-	successURL := "http://localhost:8080/api/payment/success"
-	failureURL := "http://localhost:8080/api/payment/failure"
+	baseURL := os.Getenv("BASE_URL")
+	if baseURL == "" {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "BASE_URL is not configured"})
+		return
+	}
+
+	successURL := fmt.Sprintf("%s/api/payment/success", baseURL)
+	failureURL := fmt.Sprintf("%s/api/payment/failure", baseURL)
 
 	// payu compatible hash
 	hashString := fmt.Sprintf("%s|%s|%s|%s|%s|%s|||||||||||%s",
@@ -187,8 +193,12 @@ func PaymentSuccessHandler(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update booking status"})
 		return
 	}
+	frontendBaseURL := os.Getenv("FRONTEND_BASE_URL")
+	if frontendBaseURL == "" {
+		log.Fatal("FRONTEND_BASE_URL is not set")
+	}
 
-	c.Redirect(http.StatusFound, "/payment-success")
+	c.Redirect(http.StatusFound, frontendBaseURL+"/payment-success")
 }
 
 func PaymentFailureHandler(c *gin.Context) {
@@ -217,5 +227,10 @@ func PaymentFailureHandler(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusFound, "/payment-failure")
+	frontendBaseURL := os.Getenv("FRONTEND_BASE_URL")
+	if frontendBaseURL == "" {
+		log.Fatal("FRONTEND_BASE_URL is not set")
+	}
+
+	c.Redirect(http.StatusFound, frontendBaseURL+"/payment-failure")
 }

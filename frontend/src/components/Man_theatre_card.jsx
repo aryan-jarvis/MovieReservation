@@ -7,9 +7,12 @@ export default function Man_theatre_card({ theatre, getTheatresList }) {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/theatres/${id}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/theatres/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to delete theatre");

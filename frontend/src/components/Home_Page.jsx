@@ -12,7 +12,7 @@ export default function Home_Page() {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/cinemas")
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/cinemas`)
       .then((res) => res.json())
       .then((res) => setMovies(res.data || []))
       .catch((err) => console.error("Error fetching movies:", err));

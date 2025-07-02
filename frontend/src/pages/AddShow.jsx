@@ -74,11 +74,14 @@ export default function AddShow() {
     try {
       if (editingShow) {
         await axios.put(
-          `http://localhost:8080/showAdmin/${editingShow.ID}`,
+          `${import.meta.env.VITE_API_BASE_URL}/showAdmin/${editingShow.ID}`,
           newShow
         );
       } else {
-        await axios.post("http://localhost:8080/showAdmin", newShow);
+        await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/showAdmin`,
+          newShow
+        );
       }
       navigate("/listS");
     } catch (err) {

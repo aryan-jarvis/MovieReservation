@@ -2,8 +2,6 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const API = "http://localhost:8080";
-
 export default function LoginPopUp() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -19,11 +17,14 @@ export default function LoginPopUp() {
 
   const handleRegister = async () => {
     try {
-      const res = await axios.post(`${API}/register`, {
-        name,
-        email,
-        password,
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/register`,
+        {
+          name,
+          email,
+          password,
+        }
+      );
 
       setToken(res.data.token);
       localStorage.setItem("token", res.data.token);

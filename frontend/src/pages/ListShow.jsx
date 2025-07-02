@@ -8,7 +8,7 @@ export default function ListShow() {
   const [shows, setShows] = useState([]);
 
   const getShowsList = () => {
-    fetch("http://localhost:8080/showAdmin")
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/showAdmin`)
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch shows");
