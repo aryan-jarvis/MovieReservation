@@ -16,6 +16,10 @@ export default function LoginPopUp() {
   const [isRegister, setIsRegister] = useState(true);
 
   const handleRegister = async () => {
+    if (!name.trim() || !email.trim()) {
+      setErrorMessage("Name and email cannot be empty.");
+      return;
+    }
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/register`,
