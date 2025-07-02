@@ -47,7 +47,10 @@ export default function AuthPopUp() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post(`${API}/login`, { email, password });
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/login`,
+        { email, password }
+      );
 
       setToken(res.data.token);
       localStorage.setItem("token", res.data.token);
