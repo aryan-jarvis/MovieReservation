@@ -1,6 +1,7 @@
 import BookedForCard from "./BookedForCard";
 import Footer from "./Footer";
 import HeadProfile from "./HeadProfile";
+import NoHistory from "./NoHistory";
 import PastMoviesCollection from "./PastMoviesCollection";
 import ProfileHistory from "./ProfileHistory";
 
@@ -10,10 +11,7 @@ export default function History_Page() {
       <HeadProfile />
       <br />
       <ProfileHistory />
-      <h2>Upcoming Movies</h2>
-      <BookedForCard />
-      <h2>Past Movies</h2>
-      <PastMoviesCollection />
+      <NoHistory />
       <Footer />
     </div>
   );
