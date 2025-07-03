@@ -33,7 +33,7 @@ export default function ProfilePage() {
     localStorage.removeItem("token");
     setUsername(null);
     setEmail(null);
-    navigate("/");
+    navigate("/first");
   };
 
   const handleSave = async () => {

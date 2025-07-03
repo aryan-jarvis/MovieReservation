@@ -27,11 +27,13 @@ import AzaadDates from "./components/AzaadDates";
 import ProfilePage from "./components/ProfilePage";
 import MovieCard from "./components/AzaadPvr";
 import NotFound from "./components/NotFound";
+import FirstPage from "./pages/FirstPage";
 
 export default function App() {
   return (
     <div className="App">
       <Routes>
+        <Route path="/first" element={<FirstPage />} />
         <Route path="/" element={<Home_Page />} />
         <Route path="/movies" element={<Movie_List_Page />} />
         <Route path="/description" element={<Movie_Description_Page />} />

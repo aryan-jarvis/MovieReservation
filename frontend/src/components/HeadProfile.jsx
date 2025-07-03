@@ -21,7 +21,7 @@ export default function HeadProfile() {
     localStorage.removeItem("token");
     // localStorage.clear();
     setUsername(null);
-    navigate("/");
+    navigate("/first");
   };
 
   return (

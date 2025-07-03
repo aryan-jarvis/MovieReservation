@@ -19,7 +19,7 @@ export default function Head2() {
     localStorage.removeItem("email");
     localStorage.removeItem("token");
     setUsername("");
-    navigate("/auth");
+    navigate("/first");
   };
 
   const styles = {
