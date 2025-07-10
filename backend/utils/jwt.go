@@ -1,49 +1,44 @@
 package utils
 
 import (
-	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtKey = []byte("secret_key")
+var SecretKey = []byte("your_super_secret_key")
 
-func GenerateJWT(username string) string {
-	// signing algo - HMAC SHA-256
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		// custom claims in payload
-		"username": username,
-		"exp":      time.Now().Add(365 * 24 * time.Hour).Unix(),
-	})
-	tokenString, _ := token.SignedString(jwtKey)
-	return tokenString
+type Claims struct {
+	UserID  int    `json:"user_id"`
+	Name    string `json:"name"`
+	Email   string `json:"email"`
+	IsAdmin bool   `json:"is_admin"`
+	jwt.RegisteredClaims
 }
 
-func ValidateJWT(tokenString string) (string, error) {
-	// strip the bearer prefix
-	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+func GenerateJWT(userID int, name, email string, isAdmin bool) (string, error) {
+	expirationTime := time.Now().Add(60 * 24 * time.Hour)
+	claims := &Claims{
+		UserID:  userID,
+		Name:    name,
+		Email:   email,
+		IsAdmin: isAdmin,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(SecretKey)
+}
 
-	// parse, decode and validate the jwt including the claims (key lookup function)
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return jwtKey, nil
+func ParseJWT(tokenStr string) (*Claims, error) {
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
+		return SecretKey, nil
 	})
-
 	if err != nil || !token.Valid {
-		return "", err
+		return nil, err
 	}
-
-	// format of the claims
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return "", jwt.ErrTokenInvalidClaims
-	}
-
-	// extract username
-	username, ok := claims["username"].(string)
-	if !ok {
-		return "", jwt.ErrTokenMalformed
-	}
-
-	return username, nil
+	return claims, nil
 }

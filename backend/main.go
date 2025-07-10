@@ -4,111 +4,119 @@ import (
 	"log"
 	"os"
 
-	"backend/controllers"
-	"backend/models"
-
-	"backend/middlewares"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
+
+	"backend/controllers"
+	"backend/middlewares"
+	"backend/models"
 )
 
-func init() {
-	// Load local .env when present (for local dev)
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found. Using system environment variables.")
-	}
-
-	// These must be set (fatal if missing)
-	requiredEnv := []string{
-		"SECRET_KEY",
-		"PAYU_MERCHANT_KEY",
-		"PAYU_MERCHANT_SALT",
-		"PAYU_BASE_URL",
-
-		// "host=dpg-d1iba1ripnbc73beqntg-a.oregon-postgres.render.com user=moviedb_et2q_user password=2xHxOTQ40oy0KLVQiJPqf9VWK471619V dbname=moviedb_et2q port=5432 sslmode=require TimeZone=UTC",
-	}
-	for _, key := range requiredEnv {
-		if os.Getenv(key) == "" {
-			log.Fatalf("Environment variable %s not set", key)
-		}
-	}
-}
-
 func main() {
-	models.ConnectDatabase() // should read from DATABASE_URL
+	models.ConnectDatabase()
 
 	router := gin.Default()
 
-	// Public payment endpoints
 	router.POST("/api/payment/success", controllers.PaymentSuccessHandler)
 	router.POST("/api/payment/failure", controllers.PaymentFailureHandler)
 
-	// CORS: allow both local dev and your deployed frontend
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{
-			"http://localhost:5173",                      // your local React dev server
-			"https://moviereservation-dr3g.onrender.com", // <— replace with your actual Render URL
-		},
+		AllowOrigins:     []string{"http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
 
-	setupRoutes(router)
+	router.Use(func(c *gin.Context) {
+		c.Set("db", models.DB)
+		c.Next()
+	})
 
-	// Use Render’s PORT env var, listen on all interfaces
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080" // fallback for local dev
-	}
-	addr := "0.0.0.0:" + port
-	log.Printf("Starting server on %s...", addr)
-	router.Run(addr)
-}
-
-func setupRoutes(router *gin.Engine) {
 	router.POST("/register", controllers.Register)
 	router.POST("/login", controllers.Login)
+	router.GET("/me", middlewares.AuthMiddleware(), controllers.Me)
+	router.GET("/api/booking/:txnid", controllers.GetBookingDetails)
 
-	router.GET("/users", controllers.GetUsers)
-	router.GET("/users/:id", controllers.GetUserByID)
-	router.POST("/users", controllers.PostUsers)
-	router.PUT("/users/:name", controllers.UpdateUserByName)
+	protected := router.Group("/api")
+	protected.Use(middlewares.AuthMiddleware())
+	{
+		protected.GET("/profile", func(c *gin.Context) {
+			user, _ := c.Get("user")
+			c.JSON(200, gin.H{"user": user})
+		})
 
-	router.GET("/movies", controllers.GetMovies)
-	router.GET("/shows", controllers.GetShows)
+		// Payment initiation (requires authentication)
+		protected.POST("/payment/initiate", controllers.InitiatePayment)
+	}
 
-	router.POST("/seat", middlewares.JWTAuth(), controllers.PostSeatSelection)
+	movieRoutes := router.Group("/movies")
+	{
+		movieRoutes.POST("", controllers.CreateMovie)
+		movieRoutes.GET("", controllers.GetMovies)
+		movieRoutes.GET("/:id", controllers.GetMovieByID)
+		movieRoutes.PUT("/:id", controllers.UpdateMovie)
+		movieRoutes.DELETE("/:id", controllers.DeleteMovie)
+	}
 
-	router.GET("/seats", controllers.GetBookedSeats)
+	theatreRoutes := router.Group("/theatres")
+	{
+		theatreRoutes.POST("", controllers.CreateTheatre)
+		theatreRoutes.GET("", controllers.GetTheatres)
+		theatreRoutes.GET("/:id", controllers.GetTheatreByID)
+		theatreRoutes.PUT("/:id", controllers.UpdateTheatre)
+		theatreRoutes.DELETE("/:id", controllers.DeleteTheatre)
+	}
 
-	router.POST("/api/payment/initiate", middlewares.JWTAuth(), controllers.InitiatePayment)
+	showRoutes := router.Group("/shows")
+	{
+		showRoutes.POST("", controllers.CreateShow)
+		showRoutes.GET("", controllers.GetShows)
+		showRoutes.GET("/:id", controllers.GetShowByID)
+		showRoutes.PUT("/:id", controllers.UpdateShow)
+		showRoutes.DELETE("/:id", controllers.DeleteShow)
+	}
 
-	router.GET("/cinemas", controllers.GetCinemas)
-	router.POST("/cinemas", controllers.PostCinema)
-	router.PUT("/cinemas/:id", controllers.UpdateCinema)
-	router.DELETE("/cinemas/:id", controllers.DeleteCinema)
-	router.GET("/cinemas/:id", controllers.GetCinemaByID)
+	reviewRoutes := router.Group("/reviews")
+	{
+		reviewRoutes.POST("", controllers.CreateReview)
+		reviewRoutes.GET("", controllers.GetReviews)
+		reviewRoutes.GET("/:id", controllers.GetReviewByID)
+		reviewRoutes.PUT("/:id", controllers.UpdateReview)
+		reviewRoutes.DELETE("/:id", controllers.DeleteReview)
+	}
 
-	router.GET("/theatres", controllers.GetTheatres)
-	router.POST("/theatres", controllers.PostTheatre)
-	router.PUT("/theatres/:id", controllers.UpdateTheatre)
-	router.DELETE("/theatres/:id", controllers.DeleteTheatre)
-	router.GET("/theatres/:id", controllers.GetTheatreByID)
+	stateRoutes := router.Group("/states")
+	{
+		stateRoutes.POST("", controllers.CreateState)
+		stateRoutes.GET("", controllers.GetStates)
+		stateRoutes.GET("/:id", controllers.GetStateByID)
+		stateRoutes.PUT("/:id", controllers.UpdateState)
+		stateRoutes.DELETE("/:id", controllers.DeleteState)
+	}
 
-	router.GET("/showAdmin", controllers.GetShowAdmin)
-	router.POST("/showAdmin", controllers.PostShowAdmin)
-	router.PUT("/showAdmin/:id", controllers.UpdateShowAdmin)
-	router.DELETE("/showAdmin/:id", controllers.DeleteShowAdmin)
-	router.GET("/showAdmin/:id", controllers.GetShowAdminByID)
+	cityRoutes := router.Group("/cities")
+	{
+		cityRoutes.POST("", controllers.CreateCity)
+		cityRoutes.GET("", controllers.GetCities)
+		cityRoutes.GET("/:id", controllers.GetCityByID)
+		cityRoutes.PUT("/:id", controllers.UpdateCity)
+		cityRoutes.DELETE("/:id", controllers.DeleteCity)
+	}
 
-	router.GET("/review", controllers.GetReview)
+	seatRoutes := router.Group("/seats")
+	{
+		seatRoutes.GET("/show/:id", controllers.GetBookedSeats)
+		seatRoutes.POST("/book", controllers.BookSeat)
+	}
 
-	protected := router.Group("/")
-	protected.Use(middlewares.JWTAuth())
-	protected.GET("/profile", controllers.Profile)
-	protected.POST("/review", controllers.PostReview)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	log.Printf("Server running on port %s", port)
+	if err := router.Run(":" + port); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
 }

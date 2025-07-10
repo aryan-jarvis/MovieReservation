@@ -1,10 +1,10 @@
 CREATE TABLE transaction (
-    id SERIAL PRIMARY KEY,
-    transaction_amount FLOAT,
-    transaction_status VARCHAR(100),
-    booking_id BIGINT REFERENCES booking(id),
-    transaction_time TIMESTAMP,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP
+    transaction_id SERIAL PRIMARY KEY,
+    booking_id INTEGER NOT NULL REFERENCES booking(booking_id) ON DELETE CASCADE,
+    total_amount NUMERIC(10,2) NOT NULL,
+    payment_method VARCHAR(50),
+    transaction_time TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    payment_status VARCHAR(50),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );

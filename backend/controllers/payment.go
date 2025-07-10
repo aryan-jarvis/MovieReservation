@@ -33,19 +33,28 @@ func GenerateHash(data string) string {
 }
 
 func InitiatePayment(c *gin.Context) {
-	// get username from gin context
-	usernameRaw, exists := c.Get("username")
+	userRaw, exists := c.Get("user")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
 		return
 	}
-	username := usernameRaw.(string)
 
-	// find user by email
-	var user models.User
-	if err := models.DB.Where("email = ?", username).First(&user).Error; err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not found"})
+	userMap := userRaw.(map[string]interface{})
+	var userID int
+	switch v := userMap["user_id"].(type) {
+	case float64:
+		userID = int(v)
+	case int:
+		userID = v
+	default:
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID type"})
 		return
+	}
+
+	user := models.User{
+		UserID: userID,
+		Name:   userMap["name"].(string),
+		Email:  userMap["email"].(string),
 	}
 
 	// bind json payload to payment struct and validate
@@ -95,7 +104,7 @@ func InitiatePayment(c *gin.Context) {
 	hash := GenerateHash(hashString)
 
 	booking := models.Booking{
-		UserID: user.ID,
+		UserID: user.UserID,
 		TxnID:  transactionID,
 		Amount: int(request.Amount),
 		Status: "pending",
@@ -198,7 +207,7 @@ func PaymentSuccessHandler(c *gin.Context) {
 		log.Fatal("FRONTEND_BASE_URL is not set")
 	}
 
-	c.Redirect(http.StatusFound, frontendBaseURL+"/payment-success")
+	c.Redirect(http.StatusFound, fmt.Sprintf("%s/payment-success?txnid=%s", frontendBaseURL, txnID))
 }
 
 func PaymentFailureHandler(c *gin.Context) {
