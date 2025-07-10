@@ -1,55 +1,76 @@
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-export default function MovieCard() {
-  const [searchParams] = useSearchParams();
-  const showId = searchParams.get("showId");
-  const time = searchParams.get("time");
-  const movieId = searchParams.get("movieId");
+export default function AzaadPvr() {
+  const { showId } = useParams();
 
   const [show, setShow] = useState(null);
   const [movie, setMovie] = useState(null);
+  const [theatre, setTheatre] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!showId || !movieId) {
-      setError("Missing showId or movieId in URL.");
+    if (!showId) {
+      setError("Missing showId in URL.");
       return;
     }
 
-    // Fetch show details
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/showAdmin`)
-      .then((res) => res.json())
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/shows/${showId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch show");
+        return res.json();
+      })
       .then((data) => {
-        const found = data.data?.find((s) => String(s.ID) === String(showId));
-        if (!found) throw new Error("Show not found");
-        setShow(found);
+        const s = data.data || data;
+        setShow(s);
+
+        // 2. Fetch movie by movie_id
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/movies/${s.movie_id}`)
+          .then((res) => res.json())
+          .then((data) => setMovie(data.data || data))
+          .catch((err) => {
+            console.error(err);
+            setError("Could not load movie details.");
+          });
+
+        // 3. Fetch theatre by theatre_id
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/theatres/${s.theatre_id}`)
+          .then((res) => res.json())
+          .then((data) => setTheatre(data.data || data))
+          .catch((err) => {
+            console.error(err);
+            setError("Could not load theatre details.");
+          });
       })
       .catch((err) => {
         console.error(err);
         setError("Could not load show details.");
       });
-
-    // Fetch movie details
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/cinemas/${movieId}`)
-      .then((res) => res.json())
-      .then((data) => setMovie(data.data))
-      .catch((err) => {
-        console.error(err);
-        setError("Could not load movie details.");
-      });
-  }, [showId, movieId]);
+  }, [showId]);
 
   if (error) return <div style={{ color: "red" }}>{error}</div>;
-  if (!show || !movie) return <div>Loading...</div>; // Wait for both fetches
+  if (!show || !movie || !theatre) return <div>Loading...</div>;
 
   return (
     <div style={styles.card}>
-      <img src={movie.posterImage} alt={movie.title} style={styles.image} />
+      <img
+        src={movie.poster_url || "/placeholder.jpg"}
+        alt={movie.movie_name}
+        style={styles.image}
+      />
       <div style={styles.content}>
-        <div style={styles.title}>{movie.title}</div>
+        <div style={styles.title}>{movie.movie_name}</div>
         <div style={styles.subtitle}>
-          {show.theatre} | {time}
+          {theatre.theatre_name} |{" "}
+          {new Date(show.start_time).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}{" "}
+          -{" "}
+          {new Date(show.end_time).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </div>
       </div>
     </div>

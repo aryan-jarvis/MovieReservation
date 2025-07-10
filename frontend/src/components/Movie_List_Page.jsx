@@ -9,12 +9,37 @@ import MovieCard from "./MovieCard";
 export default function Movie_List_Page() {
   const [movies, setMovies] = useState([]);
 
+  const transformMovie = (m) => {
+    let langs = [];
+    try {
+      langs = Array.isArray(m.languages)
+        ? m.languages
+        : JSON.parse(m.languages || "[]");
+    } catch (e) {
+      langs = [];
+    }
+
+    return {
+      ID: m.movie_id,
+      title: m.movie_name,
+      description: m.movie_description,
+      genre: m.genre,
+      languages: langs,
+      posterImage: m.poster_url,
+      status: m.movie_status,
+      startDate: m.start_date,
+      endDate: m.end_date,
+      rating: m.rating,
+      duration: m.duration,
+    };
+  };
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/cinemas`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/movies`)
       .then((res) => res.json())
       .then((response) => {
-        console.log(response.data);
-        setMovies(response.data);
+        console.log("FULL RESPONSE:", response);
+        const transformed = (response || []).map(transformMovie);
+        setMovies(transformed);
       })
       .catch((err) => console.error("Error fetching movies:", err));
   }, []);
@@ -36,6 +61,8 @@ export default function Movie_List_Page() {
             genre={movie.genre}
             languages={movie.languages}
             posterImage={movie.posterImage}
+            rating={movie.rating}
+            status={movie.status}
           />
         ))}
       </div>

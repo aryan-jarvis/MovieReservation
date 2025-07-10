@@ -63,22 +63,20 @@ const MovieCard = ({
   languages = [],
   posterImage = "/fallback.jpg",
   rating = 4.5,
+  status = "",
 }) => {
   return (
     <>
       <div className="movie-card" style={styles.card}>
         <img
-          src={posterImage}
+          src={posterImage || "/fallback.jpg"}
           alt={title}
           style={styles.image}
-          onError={(e) => {
-            e.target.src = "/fallback.jpg"; // fallback image
-          }}
         />
         <div style={styles.content}>
           <h3 style={styles.title}>{title}</h3>
           <p style={styles.subtitle}>
-            {genre} | {languages.join(", ")}
+            {genre} | {(languages || []).join(", ")}
           </p>
           <p style={styles.rating}>{rating} ★★★★☆</p>
         </div>
@@ -86,7 +84,15 @@ const MovieCard = ({
           <Link
             to={`/description/${id}`}
             state={{
-              movie: { id, title, genre, languages, posterImage, rating },
+              movie: {
+                id,
+                title,
+                genre,
+                languages,
+                posterImage,
+                rating,
+                status,
+              },
             }}
             style={styles.link}
           >
@@ -118,6 +124,7 @@ MovieCard.propTypes = {
   languages: PropTypes.arrayOf(PropTypes.string),
   posterImage: PropTypes.string,
   rating: PropTypes.number,
+  status: PropTypes.string,
 };
 
 export default MovieCard;

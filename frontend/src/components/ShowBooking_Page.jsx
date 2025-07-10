@@ -1,9 +1,11 @@
+import { Link, useParams } from "react-router-dom";
 import HeadProfile from "./HeadProfile";
 import Seatbooking from "./Seatbooking";
 import AzaadPvr from "./AzaadPvr";
-import { Link } from "react-router-dom";
 
 export default function ShowBooking_Page() {
+  const { showId } = useParams();
+
   return (
     <div style={{ padding: "1.5rem" }}>
       <HeadProfile />
@@ -23,9 +25,7 @@ export default function ShowBooking_Page() {
           <p>/ Show Time</p>
         </Link>
         &nbsp;
-        <a>
-          <p>/ Show Booking</p>
-        </a>
+        <p>/ Show Booking</p>
       </div>
       <AzaadPvr />
       <div style={{ display: "flex", marginLeft: "45rem" }}>
@@ -68,7 +68,7 @@ export default function ShowBooking_Page() {
         &nbsp;&nbsp;
         <p>Sold Out</p>
       </div>
-      <Seatbooking />
+      <Seatbooking showId={showId} />
     </div>
   );
 }

@@ -11,21 +11,53 @@ export default function Movie_Description_Page() {
   const [relatedMovies, setRelatedMovies] = useState([]);
   const [error, setError] = useState(null);
 
+  const formatDate = (dateObj) => {
+    if (!dateObj) return "N/A";
+    if (typeof dateObj === "string") {
+      return new Date(dateObj).toISOString().split("T")[0];
+    }
+    const { day, month, year } = dateObj;
+    if (!day || !month || !year) return "N/A";
+    return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(
+      2,
+      "0"
+    )}`;
+  };
+
+  const transformMovie = (m) => ({
+    ID: m.movie_id,
+    title: m.movie_name,
+    description: m.movie_description,
+    genre: m.genre,
+    languages: Array.isArray(m.languages) ? m.languages : [],
+    posterImage: m.poster_url,
+    status: m.movie_status,
+    startDate: formatDate(m.start_date),
+    endDate: formatDate(m.end_date),
+  });
+
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/cinemas/${id}`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/movies/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Movie not found");
         return res.json();
       })
-      .then((data) => setMovie(data.data))
+      .then((data) => {
+        console.log("Single movie response:", data);
+        setMovie(transformMovie(data));
+      })
       .catch((err) => {
         console.error("Failed to load movie:", err);
         setError("Could not load movie details.");
       });
 
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/cinemas`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/movies`)
       .then((res) => res.json())
-      .then((res) => setRelatedMovies(res.data || []))
+      .then((res) => {
+        console.log("All movies response:", res);
+        const movies = (res || []).map(transformMovie);
+        setRelatedMovies(movies);
+      })
       .catch((err) => console.error("Failed to load related movies:", err));
   }, [id]);
 
@@ -60,7 +92,7 @@ export default function Movie_Description_Page() {
             <strong>Genre:</strong> {movie.genre}
           </p>
           <p>
-            <strong>Languages:</strong> {movie.languages?.join(", ")}
+            <strong>Languages:</strong> {movie.languages.join(", ")}
           </p>
           <p>
             <strong>Status:</strong> {movie.status}

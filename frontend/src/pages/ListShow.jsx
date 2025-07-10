@@ -8,7 +8,7 @@ export default function ListShow() {
   const [shows, setShows] = useState([]);
 
   const getShowsList = () => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/showAdmin`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/shows`)
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch shows");
@@ -16,18 +16,51 @@ export default function ListShow() {
         return res.json();
       })
       .then((data) => {
-        if (data && data.data) {
-          const formattedShows = data.data.map((item) => ({
-            ID: item.ID,
-            name: item.movie,
-            poster: item.posterImage,
-            theatre: item.theatre,
-            timings: [item.showtime],
-            languages: item.languages,
-          }));
+        if (data && Array.isArray(data)) {
+          const groupedMap = {};
+
+          data.forEach((item) => {
+            const key = [
+              item.Movie.movie_name,
+              item.Theatre.theatre_name,
+              item.Theatre.theatre_location,
+              item.date,
+              (item.languages || []).join(","),
+            ].join("|");
+
+            const timingString = `${new Date(
+              item.start_time
+            ).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })} - ${new Date(item.end_time).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}`;
+
+            if (!groupedMap[key]) {
+              groupedMap[key] = {
+                ID: item.show_id,
+                name: item.Movie.movie_name,
+                poster: item.Movie.poster_url,
+                theatre: `${item.Theatre.theatre_name}, ${item.Theatre.theatre_location}`,
+                timings: [timingString],
+                languages: item.languages,
+                date: item.date,
+                rawStartTime: item.start_time,
+                rawEndTime: item.end_time,
+              };
+            } else {
+              groupedMap[key].timings.push(timingString);
+            }
+          });
+
+          const formattedShows = Object.values(groupedMap);
+
           setShows(formattedShows);
         }
       })
+
       .catch((error) => {
         console.error("Error fetching shows:", error);
       });

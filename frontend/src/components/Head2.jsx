@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import SearchDropDown from "./SearchDropDown";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Head2() {
@@ -13,72 +12,8 @@ export default function Head2() {
     }
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem("username");
-    localStorage.removeItem("loginPopUpClosed");
-    localStorage.removeItem("email");
-    localStorage.removeItem("token");
-    setUsername("");
-    navigate("/first");
-  };
-
-  const styles = {
-    header: {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      marginLeft: "2rem",
-      marginRight: "2rem",
-      marginTop: "1rem",
-      marginBottom: "1rem",
-    },
-    leftSection: {
-      display: "flex",
-      gap: "2rem",
-      alignItems: "center",
-    },
-    rightSection: {
-      display: "flex",
-      gap: "1rem",
-      alignItems: "center",
-    },
-    logo: {
-      width: "auto",
-      cursor: "pointer",
-    },
-    searchContainer: {
-      position: "relative",
-      display: "flex",
-      alignItems: "center",
-      width: "40rem",
-    },
-    searchIcon: {
-      position: "absolute",
-      right: "1rem",
-    },
-    searchInput: {
-      padding: "0.5rem 2rem 0.5rem 1rem",
-      fontSize: "1.2rem",
-      borderRadius: "1rem",
-      border: "1px solid #ccc",
-      outline: "none",
-      width: "40rem",
-    },
-    greeting: {
-      margin: 0,
-      fontSize: "1rem",
-      fontWeight: 500,
-      color: "#333",
-    },
-    logoutButton: {
-      padding: "0.5rem 1rem",
-      fontSize: "0.9rem",
-      borderRadius: "0.5rem",
-      border: "1px solid white",
-      cursor: "pointer",
-      backgroundColor: "#FF5295",
-      color: "white",
-    },
+  const handleUser = () => {
+    navigate("/");
   };
 
   return (
@@ -101,17 +36,70 @@ export default function Head2() {
         </div>
       </div>
       <div style={styles.rightSection}>
-        <SearchDropDown />
-        <img
-          style={styles.logo}
-          src="/images/user_logo.png"
-          alt="User Profile Logo"
-        />
-        <p style={styles.greeting}>Hi, {username || "Guest"}</p>
-        <button onClick={handleLogout} style={styles.logoutButton}>
-          Logout
+        <p style={styles.greeting}>Hi, {username || "Admin"}</p>
+        <button onClick={handleUser} style={styles.homeButton}>
+          Home Page
         </button>
       </div>
     </div>
   );
 }
+
+const styles = {
+  header: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginLeft: "2rem",
+    marginRight: "2rem",
+    marginTop: "1rem",
+    marginBottom: "1rem",
+  },
+  leftSection: {
+    display: "flex",
+    gap: "2rem",
+    alignItems: "center",
+  },
+  rightSection: {
+    display: "flex",
+    gap: "1rem",
+    alignItems: "center",
+  },
+  logo: {
+    width: "auto",
+    cursor: "pointer",
+  },
+  searchContainer: {
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    width: "40rem",
+  },
+  searchIcon: {
+    position: "absolute",
+    right: "1rem",
+  },
+  searchInput: {
+    padding: "0.5rem 2rem 0.5rem 1rem",
+    fontSize: "1.2rem",
+    borderRadius: "1rem",
+    border: "1px solid #ccc",
+    outline: "none",
+    width: "40rem",
+  },
+  greeting: {
+    margin: 0,
+    fontSize: "1rem",
+    fontWeight: 700,
+    color: "#333",
+  },
+  homeButton: {
+    padding: "0.5rem 1rem",
+    fontSize: "0.9rem",
+    borderRadius: "0.5rem",
+    border: "1px solid white",
+    cursor: "pointer",
+    backgroundColor: "#FF5295",
+    color: "white",
+  },
+};

@@ -19,9 +19,8 @@ export default function HeadProfile() {
     localStorage.removeItem("loginPopupClosed");
     localStorage.removeItem("email");
     localStorage.removeItem("token");
-    // localStorage.clear();
     setUsername(null);
-    navigate("/first");
+    navigate("/");
   };
 
   return (

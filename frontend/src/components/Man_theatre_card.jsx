@@ -1,9 +1,36 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Man_theatre_card({ theatre, getTheatresList }) {
   const [showDropdown, setShowDropdown] = useState(false);
+  const [cities, setCities] = useState([]);
+  const [states, setStates] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCitiesAndStates = async () => {
+      try {
+        const [citiesRes, statesRes] = await Promise.all([
+          fetch(`${import.meta.env.VITE_API_BASE_URL}/cities`),
+          fetch(`${import.meta.env.VITE_API_BASE_URL}/states`),
+        ]);
+
+        if (!citiesRes.ok || !statesRes.ok) {
+          throw new Error("Failed to fetch cities or states");
+        }
+
+        const citiesData = await citiesRes.json();
+        const statesData = await statesRes.json();
+
+        setCities(citiesData);
+        setStates(statesData);
+      } catch (error) {
+        console.error("Error fetching cities/states:", error);
+      }
+    };
+
+    fetchCitiesAndStates();
+  }, []);
 
   const handleDelete = async (id) => {
     try {
@@ -24,13 +51,19 @@ export default function Man_theatre_card({ theatre, getTheatresList }) {
     }
   };
 
+  const cityObj = cities.find((city) => city.city_id === theatre.city_id);
+  const cityName = cityObj?.city_name || "Unknown City";
+  const stateName =
+    states.find((state) => state.state_id === cityObj?.state_id)?.state_name ||
+    "Unknown State";
+
   return (
     <div style={styles.cardContainer}>
       <div style={styles.card}>
         <div style={styles.imageWrapper}>
-          {theatre.theatreIcon ? (
+          {theatre.theatre_image ? (
             <img
-              src={theatre.theatreIcon}
+              src={theatre.theatre_image}
               alt="Theatre Poster"
               style={styles.image}
             />
@@ -54,26 +87,28 @@ export default function Man_theatre_card({ theatre, getTheatresList }) {
 
         <div style={styles.content}>
           <div style={styles.details}>
-            <h3 style={styles.title}>{theatre.name}</h3>
-            <p style={styles.genre}>
-              {theatre.address}, {theatre.city}, {theatre.state}
-            </p>
-            <div style={styles.tagsRow}>
-              <div style={styles.nowShowing}>{theatre.status}</div>
-              <div style={styles.showAdded}>
-                {Array.isArray(theatre.movies) && theatre.movies.length > 0 ? (
-                  theatre.movies.map((movie, index) => (
-                    <span key={index}>
-                      {movie}
-                      {index !== theatre.movies.length - 1 && ", "}
-                    </span>
-                  ))
-                ) : (
-                  <span>No Movies</span>
-                )}
+            <div style={styles.headerRow}>
+              <h3 style={styles.title}>{theatre.theatre_name}</h3>
+              <div
+                style={{
+                  ...styles.nowShowing,
+                  backgroundColor:
+                    theatre.theatre_status === "active" ? "#BCFFCB" : "#FFCBCB",
+                  color:
+                    theatre.theatre_status === "active" ? "#0F5132" : "#842029",
+                  marginLeft: "0.75rem",
+                }}
+              >
+                {theatre.theatre_status
+                  ? theatre.theatre_status.charAt(0).toUpperCase() +
+                    theatre.theatre_status.slice(1)
+                  : "Unknown"}
               </div>
-              <div style={styles.showAdded}>{theatre.screens} Screens</div>
             </div>
+
+            <p style={styles.genre}>
+              {theatre.theatre_location}, {cityName}, {stateName}
+            </p>
           </div>
 
           <div
@@ -91,7 +126,7 @@ export default function Man_theatre_card({ theatre, getTheatresList }) {
                 </div>
                 <div
                   style={styles.dropdownItem}
-                  onClick={() => handleDelete(theatre?.ID)}
+                  onClick={() => handleDelete(theatre?.theatre_id)}
                 >
                   <span style={styles.dropdownText}>Delete</span>
                 </div>
@@ -141,6 +176,10 @@ const styles = {
     flexDirection: "column",
     gap: "0.4rem",
     flex: 1,
+  },
+  headerRow: {
+    display: "flex",
+    alignItems: "center",
   },
   tagsRow: {
     display: "flex",

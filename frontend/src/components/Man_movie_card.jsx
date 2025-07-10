@@ -16,14 +16,14 @@ export default function Man_movie_card({ movie, getMoviesList }) {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/cinemas/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/movies/${id}`,
         {
           method: "DELETE",
         }
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete cinema");
+        throw new Error("Failed to delete movie");
       } else {
         getMoviesList();
       }
@@ -32,12 +32,53 @@ export default function Man_movie_card({ movie, getMoviesList }) {
     }
   };
 
+  const getStatusStyle = (status) => {
+    switch (status?.toLowerCase()) {
+      case "now showing":
+        return {
+          backgroundColor: "#BCFFCB",
+          color: "#065F46",
+          padding: "0.4rem",
+          borderRadius: "1rem",
+          fontSize: "0.7rem",
+          fontWeight: 600,
+        };
+      case "upcoming":
+        return {
+          backgroundColor: "#FEF3C7",
+          color: "#92400E",
+          padding: "0.4rem",
+          borderRadius: "1rem",
+          fontSize: "0.7rem",
+          fontWeight: 600,
+        };
+      case "expired":
+        return {
+          backgroundColor: "#FECACA",
+          color: "#991B1B",
+          padding: "0.4rem",
+          borderRadius: "1rem",
+          fontSize: "0.7rem",
+          fontWeight: 600,
+        };
+      default:
+        return {
+          backgroundColor: "#E5E7EB",
+          color: "#374151",
+          padding: "0.4rem",
+          borderRadius: "1rem",
+          fontSize: "0.7rem",
+          fontWeight: 600,
+        };
+    }
+  };
+
   return (
     <div style={styles.cardContainer}>
       <div style={styles.card}>
         <div style={styles.imageWrapper}>
           <img
-            src={movie?.posterImage || "/images/inception.png"}
+            src={movie?.poster_url || "/images/inception.png"}
             alt="Movie Poster"
             style={styles.image}
           />
@@ -45,10 +86,12 @@ export default function Man_movie_card({ movie, getMoviesList }) {
         <div style={styles.content}>
           <div style={styles.details}>
             <div style={styles.tagsRow}>
-              <span style={styles.nowShowing}>{movie?.status}</span>
-              <span style={styles.showAdded}>Show Added</span>
+              <span style={getStatusStyle(movie?.movie_status)}>
+                {movie?.movie_status}
+              </span>
+              <span style={styles.showAdded}>Shows Added</span>
             </div>
-            <p style={styles.title}>{movie?.title}</p>
+            <p style={styles.title}>{movie?.movie_name}</p>
             <div style={styles.languageTags}>
               {movie?.languages?.map((lang, idx) => (
                 <span key={idx} style={styles.languageTag}>
@@ -77,7 +120,7 @@ export default function Man_movie_card({ movie, getMoviesList }) {
                 </div>
                 <div
                   style={styles.dropdownItem}
-                  onClick={() => handleDelete(movie?.ID)}
+                  onClick={() => handleDelete(movie?.movie_id)}
                 >
                   <img
                     src="/images/delete_icon.png"

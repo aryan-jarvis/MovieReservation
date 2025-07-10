@@ -14,7 +14,7 @@ export default function ListTheatre() {
         `${import.meta.env.VITE_API_BASE_URL}/theatres`
       );
       const data = await response.json();
-      setTheatres(data.data);
+      setTheatres(data);
     } catch (error) {
       console.error("Error fetching theatres:", error);
     }

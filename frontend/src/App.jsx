@@ -39,7 +39,8 @@ export default function App() {
         <Route path="/description" element={<Movie_Description_Page />} />
         <Route path="/theatre" element={<Theatre_Selection_Page />} />
         <Route path="/seatselect" element={<ShowBooking_Page />} />
-        <Route path="/payment" element={<Payment_Summary_Page />} />
+        <Route path="/seatselect/:showId" element={<ShowBooking_Page />} />
+        <Route path="/payment/:showId" element={<Payment_Summary_Page />} />
         <Route path="/history" element={<History_Page />} />
         <Route path="/no_history" element={<NoHistory />} />
         <Route path="/ticket" element={<Ticket />} />
@@ -63,6 +64,7 @@ export default function App() {
         <Route path="/movie/:id/dates" element={<AzaadDates />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/moviecard/:id" element={<MovieCard />} />
+        <Route path="/showbooking/:showId" element={<ShowBooking_Page />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

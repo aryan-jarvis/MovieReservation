@@ -8,7 +8,7 @@ export default function ListMovie() {
   const [movies, setMovies] = useState([]);
 
   const getMoviesList = () => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/cinemas`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/movies`)
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch movies");
@@ -16,12 +16,20 @@ export default function ListMovie() {
         return res.json();
       })
       .then((data) => {
-        setMovies(data.data);
+        if (data && Array.isArray(data)) {
+          setMovies(data);
+        } else if (data && Array.isArray(data.data)) {
+          setMovies(data.data);
+        } else {
+          setMovies([]);
+        }
       })
+
       .catch((error) => {
         console.error("Error fetching movies:", error);
       });
   };
+
   useEffect(() => {
     getMoviesList();
   }, []);
@@ -33,40 +41,20 @@ export default function ListMovie() {
   return (
     <div>
       <Head2 />
-      <div style={{ margin: "0 2rem" }}>
-        <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-          <a href="/home" style={{ color: "grey", textDecoration: "none" }}>
+      <div style={styles.container}>
+        <div style={styles.breadcrumb}>
+          <a href="/home" style={styles.breadcrumbLink}>
             <p>Home</p>
           </a>
           <p>/</p>
-          <a href="/listM" style={{ color: "black", textDecoration: "none" }}>
+          <a href="/listM" style={styles.breadcrumbActiveLink}>
             <p>Movie Management</p>
           </a>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1rem",
-          }}
-        >
-          <h1 style={{ fontSize: "2rem", fontWeight: "bold" }}>
-            Manage Movies
-          </h1>
-          <button
-            style={{
-              padding: "1rem",
-              backgroundColor: "#fff",
-              color: "#FF5295",
-              border: "2px solid #FF5295",
-              borderRadius: "0.4rem",
-              fontSize: "1rem",
-              cursor: "pointer",
-            }}
-            onClick={handleAddMovieClick}
-          >
+        <div style={styles.header}>
+          <h1 style={styles.title}>Manage Movies</h1>
+          <button style={styles.addButton} onClick={handleAddMovieClick}>
             + Add New Movie
           </button>
         </div>
@@ -86,3 +74,41 @@ export default function ListMovie() {
     </div>
   );
 }
+
+const styles = {
+  container: {
+    margin: "0 2rem",
+  },
+  breadcrumb: {
+    display: "flex",
+    gap: "0.5rem",
+    marginBottom: "1rem",
+  },
+  breadcrumbLink: {
+    color: "grey",
+    textDecoration: "none",
+  },
+  breadcrumbActiveLink: {
+    color: "black",
+    textDecoration: "none",
+  },
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "1rem",
+  },
+  title: {
+    fontSize: "2rem",
+    fontWeight: "bold",
+  },
+  addButton: {
+    padding: "1rem",
+    backgroundColor: "#fff",
+    color: "#FF5295",
+    border: "2px solid #FF5295",
+    borderRadius: "0.4rem",
+    fontSize: "1rem",
+    cursor: "pointer",
+  },
+};

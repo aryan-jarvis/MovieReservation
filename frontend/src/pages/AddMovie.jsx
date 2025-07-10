@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
 import Head2 from "../components/Head2";
 import LanguageDropdown from "../components/LanguageDropdown";
 
@@ -9,14 +8,21 @@ export default function AddMovie() {
   const location = useLocation();
   const editMovie = location.state?.movie;
 
-  const [title, setTitle] = useState(editMovie?.title || "");
-  const [description, setDescription] = useState(editMovie?.description || "");
+  const [title, setTitle] = useState(editMovie?.movie_name || "");
+  const [description, setDescription] = useState(
+    editMovie?.movie_description || ""
+  );
   const [genre, setGenre] = useState(editMovie?.genre || "");
   const [languages, setLanguages] = useState(editMovie?.languages || []);
-  const [startDate, setStartDate] = useState(editMovie?.startDate || "");
-  const [endDate, setEndDate] = useState(editMovie?.endDate || "");
-  const [status, setStatus] = useState(editMovie?.status || "Now Showing");
-  const [posterImage, setPosterImage] = useState(editMovie?.posterImage || "");
+  const [posterImage, setPosterImage] = useState(editMovie?.poster_url || "");
+  const [duration, setDuration] = useState(
+    editMovie?.duration?.toString() || ""
+  );
+  const [startDate, setStartDate] = useState(editMovie?.start_date || "");
+  const [endDate, setEndDate] = useState(editMovie?.end_date || "");
+  const [status, setStatus] = useState(
+    editMovie?.movie_status || "Now Showing"
+  );
 
   const handlePosterUpload = (e) => {
     const file = e.target.files[0];
@@ -29,43 +35,79 @@ export default function AddMovie() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!languages || languages.length === 0) {
+      alert("Please select at least one language.");
+      return;
+    }
+
+    if (!posterImage) {
+      alert("Please upload a poster image.");
+      return;
+    }
+
+    if (!startDate || !endDate) {
+      alert("Please select both start and end dates.");
+      return;
+    }
+    const durationNumber = Number(duration);
+    if (isNaN(durationNumber) || durationNumber < 60 || durationNumber > 300) {
+      alert("Duration must be a number between 60 and 300 minutes.");
+      return;
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    if (end < start) {
+      alert("End date cannot be before start date.");
+      return;
+    }
+
+    const startDateObj = {
+      day: start.getUTCDate(),
+      month: start.getUTCMonth() + 1,
+      year: start.getUTCFullYear(),
+    };
+
+    const endDateObj = {
+      day: end.getUTCDate(),
+      month: end.getUTCMonth() + 1,
+      year: end.getUTCFullYear(),
+    };
+
     const movieData = {
-      title,
-      description,
+      movie_name: title,
+      movie_description: description,
       genre,
       languages,
-      startDate,
-      endDate,
-      status,
-      posterImage,
+      poster_url: posterImage,
+      duration: String(duration),
+      start_date: startDateObj,
+      end_date: endDateObj,
+      movie_status: status,
     };
 
     try {
-      if (editMovie) {
-        await axios.put(
-          `${import.meta.env.VITE_API_BASE_URL}/cinemas/${editMovie.ID}`,
-          movieData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      } else {
-        await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/cinemas`,
-          movieData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+      const method = editMovie ? "PUT" : "POST";
+      const url = editMovie
+        ? `http://localhost:8080/movies/${editMovie.movie_id}`
+        : "http://localhost:8080/movies";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(movieData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to save movie");
       }
+
+      const result = await response.json();
+      console.log(`${editMovie ? "Movie updated" : "Movie created"}:`, result);
       navigate("/listM");
-    } catch (err) {
-      console.error("Failed to submit movie:", err);
-      alert("Failed to submit movie. See console for details.");
+    } catch (error) {
+      console.error("Error:", error.message);
     }
   };
 
@@ -76,24 +118,24 @@ export default function AddMovie() {
   return (
     <div>
       <Head2 />
-      <span style={styles.breadcrumb}>
-        <a href="/home" style={{ color: "grey", textDecoration: "none" }}>
-          <p>Home</p>
+      <nav style={styles.breadcrumb}>
+        <a href="/home" style={styles.breadcrumbLink}>
+          Home
         </a>
-        <p> / </p>
-        <a href="/listM" style={{ color: "grey", textDecoration: "none" }}>
-          <p>Movie Management</p>
+        <span>/</span>
+        <a href="/listM" style={styles.breadcrumbLink}>
+          Movie Management
         </a>
-        <p> / </p>
-        <p style={{ color: "#000" }}>
+        <span>/</span>
+        <span style={styles.currentBreadcrumb}>
           {editMovie ? "Edit Movie" : "Add New Movie"}
-        </p>
-      </span>
+        </span>
+      </nav>
 
       <form onSubmit={handleSubmit} style={styles.container}>
         <div style={styles.formWrapper}>
           <div style={styles.formBox}>
-            <p style={styles.label}>Basic Info</p>
+            <h2 style={styles.label}>Movie Details</h2>
 
             <input
               type="text"
@@ -111,10 +153,9 @@ export default function AddMovie() {
               onChange={(e) => setDescription(e.target.value)}
               required
             />
-
             <div style={styles.selectRow}>
               <select
-                style={{ ...styles.select, width: "50%" }}
+                style={styles.select}
                 value={genre}
                 onChange={(e) => setGenre(e.target.value)}
                 required
@@ -135,48 +176,56 @@ export default function AddMovie() {
                 selected={languages}
                 setSelected={setLanguages}
               />
+
+              <select
+                style={styles.select}
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                required
+              >
+                <option value="">Status</option>
+                <option value="Now Showing">Now Showing</option>
+                <option value="Upcoming">Upcoming</option>
+                <option value="Expired">Expired</option>
+              </select>
             </div>
 
-            <div style={styles.selectRow}>
+            <input
+              type="text"
+              placeholder="Duration (minutes)"
+              style={styles.input}
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              required
+            />
+
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
               <input
                 type="date"
-                style={{ ...styles.input, width: "50%" }}
+                placeholder="Start Date"
+                style={styles.input2}
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
+                required
               />
+
               <input
                 type="date"
-                style={{ ...styles.input, width: "50%" }}
+                placeholder="End Date"
+                style={styles.input2}
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
+                required
               />
             </div>
 
-            <select
-              style={styles.select}
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              required
-            >
-              <option value="">Status</option>
-              <option>Now Showing</option>
-              <option>Expired</option>
-              <option>Upcoming</option>
-            </select>
-
-            <p style={styles.posterSection}>Upload Poster</p>
+            <p style={styles.posterSection}>Upload Poster:</p>
             <div style={styles.posterUpload}>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handlePosterUpload}
-                style={{
-                  opacity: 0,
-                  position: "absolute",
-                  width: "100%",
-                  height: "100%",
-                  cursor: "pointer",
-                }}
+                style={styles.fileInput}
               />
               {posterImage ? (
                 <img
@@ -191,9 +240,7 @@ export default function AddMovie() {
                     alt="Upload"
                     style={{ width: "2rem" }}
                   />
-                  <p style={{ fontSize: "12px", color: "#6B7280" }}>
-                    Upload file here
-                  </p>
+                  <p style={styles.uploadText}>Upload file here</p>
                 </>
               )}
             </div>
@@ -218,53 +265,73 @@ export default function AddMovie() {
 }
 
 const styles = {
-  container: {},
+  container: {
+    display: "flex",
+    justifyContent: "center",
+    padding: "2rem",
+  },
   breadcrumb: {
     display: "flex",
     alignItems: "center",
     gap: "0.5rem",
-    marginLeft: "2rem",
+    margin: "1rem 2rem",
+    fontSize: "0.95rem",
+  },
+  breadcrumbLink: {
+    color: "grey",
+    textDecoration: "none",
+  },
+  currentBreadcrumb: {
+    color: "#000",
+    fontWeight: "500",
   },
   formWrapper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    width: "100%",
+    maxWidth: "600px",
   },
   formBox: {
     display: "flex",
     flexDirection: "column",
-    gap: "1rem",
+    gap: "1.2rem",
+    background: "#f9f9f9",
+    padding: "2rem",
+    borderRadius: "0.5rem",
+    border: "1px solid #e5e7eb",
   },
   label: {
     fontWeight: "600",
     fontSize: "1.4rem",
+    marginBottom: "0.5rem",
   },
   input: {
     height: "2.5rem",
-    padding: "1rem",
+    padding: "0.75rem",
+    border: "0.1rem #A1A2A4 solid",
+    borderRadius: "0.3rem",
+    fontSize: "1rem",
+  },
+  input2: {
+    height: "2.5rem",
+    width: "13rem",
+    padding: "0.75rem",
     border: "0.1rem #A1A2A4 solid",
     borderRadius: "0.3rem",
     fontSize: "1rem",
   },
   textarea: {
-    height: "8rem",
-    padding: "1rem",
+    minHeight: "6rem",
+    padding: "0.75rem",
     border: "0.1rem #A1A2A4 solid",
     borderRadius: "0.3rem",
     fontSize: "1rem",
   },
-  _selectRow: {
+  selectRow: {
     display: "flex",
-    justifyContent: "space-between",
-    gap: "2rem",
-  },
-  get selectRow() {
-    return this._selectRow;
-  },
-  set selectRow(value) {
-    this._selectRow = value;
+    gap: "1rem",
+    flexWrap: "wrap",
   },
   select: {
+    flex: "1",
     height: "2.5rem",
     padding: "0.6rem",
     border: "0.1rem #A1A2A4 solid",
@@ -291,9 +358,21 @@ const styles = {
     objectFit: "cover",
     borderRadius: "1rem",
   },
+  fileInput: {
+    opacity: 0,
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    cursor: "pointer",
+  },
+  uploadText: {
+    fontSize: "12px",
+    color: "#6B7280",
+  },
   buttonsRow: {
     display: "flex",
-    gap: "20px",
+    gap: "1rem",
+    justifyContent: "flex-end",
     marginTop: "1rem",
   },
   addButton: {
@@ -302,8 +381,9 @@ const styles = {
     fontWeight: "600",
     width: "6rem",
     height: "2.5rem",
-    border: "solid 0.1rem white",
+    border: "none",
     borderRadius: "0.3rem",
+    cursor: "pointer",
   },
   cancelButton: {
     backgroundColor: "#fff",
@@ -311,7 +391,8 @@ const styles = {
     fontWeight: "600",
     width: "6rem",
     height: "2.5rem",
-    border: "solid 0.1rem #FF5295",
+    border: "0.1rem solid #FF5295",
     borderRadius: "0.3rem",
+    cursor: "pointer",
   },
 };

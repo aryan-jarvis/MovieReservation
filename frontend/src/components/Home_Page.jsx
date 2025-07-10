@@ -11,10 +11,24 @@ import { Link } from "react-router-dom";
 export default function Home_Page() {
   const [movies, setMovies] = useState([]);
 
+  const transformMovie = (m) => ({
+    ID: m.movie_id,
+    title: m.movie_name,
+    genre: m.genre,
+    languages: Array.isArray(m.languages) ? m.languages : [],
+    posterImage: m.poster_url,
+    rating: m.rating || 0,
+    status: m.movie_status,
+  });
+
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_BASE_URL}/cinemas`)
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/movies`)
       .then((res) => res.json())
-      .then((res) => setMovies(res.data || []))
+      .then((res) => {
+        const rawMovies = Array.isArray(res) ? res : res.data || [];
+        const transformed = rawMovies.map(transformMovie);
+        setMovies(transformed);
+      })
       .catch((err) => console.error("Error fetching movies:", err));
   }, []);
 
@@ -48,7 +62,8 @@ export default function Home_Page() {
               genre={movie.genre}
               languages={movie.languages}
               posterImage={movie.posterImage}
-              rating={movie.rating || 4.5}
+              rating={movie.rating}
+              status={movie.status}
             />
           ))
         ) : (

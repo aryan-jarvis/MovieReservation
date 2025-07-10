@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Head2 from "../components/Head2";
 import axios from "axios";
+import Select from "react-select";
 
 export default function AddTheatre() {
   const navigate = useNavigate();
@@ -9,40 +10,50 @@ export default function AddTheatre() {
   const editingTheatre = location.state?.theatre;
 
   const [form, setForm] = useState({
-    name: "",
-    address: "",
-    city: "",
-    state: "",
-    screens: "",
-    movies: "",
-    status: "Active",
-    posterUrl: "",
+    theatre_name: "",
+    theatre_location: "",
+    city_id: "",
+    total_seats: "100",
+    theatre_image: "",
+    theatre_status: "active",
   });
 
+  const [cities, setCities] = useState([]);
+  const [states, setStates] = useState([]);
+
   useEffect(() => {
+    const fetchCitiesAndStates = async () => {
+      try {
+        const [citiesRes, statesRes] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_API_BASE_URL}/cities`),
+          axios.get(`${import.meta.env.VITE_API_BASE_URL}/states`),
+        ]);
+        setCities(citiesRes.data);
+        setStates(statesRes.data);
+      } catch (error) {
+        console.error("Failed to fetch cities or states:", error);
+      }
+    };
+
+    fetchCitiesAndStates();
+
     if (editingTheatre) {
       setForm({
-        name: editingTheatre.name || "",
-        address: editingTheatre.address || "",
-        city: editingTheatre.city || "",
-        state: editingTheatre.state || "",
-        screens: editingTheatre.screens?.toString() || "",
-        movies: Array.isArray(editingTheatre.movies)
-          ? editingTheatre.movies.join(", ")
-          : "",
-        status: editingTheatre.status || "Active",
-        posterUrl: editingTheatre.theatreIcon || "",
+        theatre_name: editingTheatre.theatre_name || "",
+        theatre_location: editingTheatre.theatre_location || "",
+        city_id: editingTheatre.city_id?.toString() || "",
+        total_seats: editingTheatre.total_seats?.toString() || "",
+        theatre_image: editingTheatre.theatre_image || "",
+        theatre_status: editingTheatre.theatre_status || "active",
       });
     } else {
       setForm({
-        name: "",
-        address: "",
-        city: "",
-        state: "",
-        screens: "",
-        movies: "",
-        status: "Active",
-        posterUrl: "",
+        theatre_name: "",
+        theatre_location: "",
+        city_id: "",
+        total_seats: "",
+        theatre_image: "",
+        theatre_status: "active",
       });
     }
   }, [editingTheatre]);
@@ -53,67 +64,84 @@ export default function AddTheatre() {
   };
 
   const handleImageChange = (e) => {
-    const imageFile = e.target.files[0];
-    if (imageFile) {
+    const file = e.target.files[0];
+    if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setForm((prev) => ({ ...prev, posterUrl: reader.result }));
+        setForm((prev) => ({ ...prev, theatre_image: reader.result }));
       };
-      reader.readAsDataURL(imageFile);
+      reader.readAsDataURL(file);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const movieArray = form.movies
-      .split(",")
-      .map((m) => m.trim())
-      .filter((m) => m.length > 0);
-
+    // if (
+    //   !form.theatre_name.trim() ||
+    //   !form.theatre_location.trim() ||
+    //   !form.city_id ||
+    //   !form.total_seats ||
+    //   !form.theatre_status
+    // ) {
+    //   alert("Please fill all required fields.");
+    //   return;
+    // }
+    // if (
+    //   isNaN(parseInt(form.total_seats, 10)) ||
+    //   parseInt(form.total_seats, 10) <= 0
+    // ) {
+    //   alert("Total seats must be a positive number.");
+    //   return;
+    // }
     const payload = {
-      name: form.name,
-      address: form.address,
-      city: form.city,
-      state: form.state,
-      status: form.status,
-      screens: parseInt(form.screens, 10),
-      movies: movieArray,
-      theatreIcon: form.posterUrl,
+      theatre_name: form.theatre_name,
+      theatre_location: form.theatre_location,
+      city_id: parseInt(form.city_id, 10),
+      total_seats: 100,
+      theatre_timing: form.theatre_timing,
+      theatre_image: form.theatre_image,
+      theatre_status: form.theatre_status,
     };
 
     try {
-      let res;
       if (editingTheatre) {
-        // Update
-        res = await axios.put(
-          `${import.meta.env.VITE_API_BASE_URL}/theatres/${editingTheatre.ID}`,
+        await axios.put(
+          `${import.meta.env.VITE_API_BASE_URL}/theatres/${
+            editingTheatre.theatre_id
+          }`,
           payload,
           { headers: { "Content-Type": "application/json" } }
         );
-        console.log("Theatre updated:", res.data);
+        console.log("Theatre updated");
       } else {
-        // Add new
-        res = await axios.post(
+        await axios.post(
           `${import.meta.env.VITE_API_BASE_URL}/theatres`,
           payload,
-          {
-            headers: { "Content-Type": "application/json" },
-          }
+          { headers: { "Content-Type": "application/json" } }
         );
-        console.log("Theatre added:", res.data);
+        console.log("Theatre created");
       }
-
       navigate("/listT");
     } catch (error) {
-      console.error("Failed to save theatre:", error);
+      console.error("Error saving theatre:", error);
       alert(error.response?.data?.error || "Something went wrong.");
     }
   };
 
-  const cancelClick = () => {
-    navigate("/listT");
-  };
+  const cancelClick = () => navigate("/listT");
+
+  const selectedCity = cities.find(
+    (c) => c.city_id.toString() === form.city_id
+  );
+  const selectedState = selectedCity
+    ? states.find((s) => s.state_id === selectedCity.state_id)
+    : null;
+  const selectedStateName = selectedState ? selectedState.state_name : "";
+
+  const cityOptions = cities.map((city) => ({
+    value: city.city_id.toString(),
+    label: city.city_name,
+  }));
 
   return (
     <div>
@@ -135,99 +163,123 @@ export default function AddTheatre() {
       <form onSubmit={handleSubmit} style={styles.container}>
         <div style={styles.formWrapper}>
           <div style={styles.formBox}>
-            <p style={styles.label}>Basic Info</p>
+            <p style={styles.label}>Theatre Info</p>
 
             <input
               type="text"
-              name="name"
+              name="theatre_name"
               placeholder="Theatre Name"
-              value={form.name}
-              onChange={handleChange}
-              required
-              style={styles.input}
-            />
-            <input
-              type="text"
-              name="address"
-              placeholder="Theatre Address"
-              value={form.address}
-              onChange={handleChange}
-              required
-              style={styles.input}
-            />
-            <div style={styles.selectRow}>
-              <input
-                type="text"
-                name="city"
-                placeholder="City Name"
-                value={form.city}
-                onChange={handleChange}
-                required
-                style={styles.input}
-              />
-              <input
-                type="text"
-                name="state"
-                placeholder="State Name"
-                value={form.state}
-                onChange={handleChange}
-                required
-                style={styles.input}
-              />
-            </div>
-            <div style={styles.selectRow}>
-              <select
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-                style={styles.select}
-              >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
-              <input
-                type="number"
-                name="screens"
-                placeholder="Total Screens"
-                value={form.screens}
-                onChange={handleChange}
-                required
-                style={styles.input}
-              />
-            </div>
-            <input
-              type="text"
-              name="movies"
-              placeholder="Current Movies (comma separated)"
-              value={form.movies}
+              value={form.theatre_name}
               onChange={handleChange}
               required
               style={styles.input}
             />
 
-            <p style={styles.posterSection}>Upload Theatre Icon</p>
-            <label style={styles.posterUpload}>
-              <input
-                type="file"
-                accept="image/png"
-                onChange={handleImageChange}
-                style={{ display: "none" }}
+            <input
+              type="text"
+              name="theatre_location"
+              placeholder="Theatre Location"
+              value={form.theatre_location}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+
+            <div style={styles.selectRow}>
+              <Select
+                name="city_id"
+                value={
+                  cityOptions.find((option) => option.value === form.city_id) ||
+                  null
+                }
+                onChange={(selectedOption) => {
+                  setForm((prev) => ({
+                    ...prev,
+                    city_id: selectedOption.value,
+                  }));
+                }}
+                options={cityOptions}
+                placeholder="Select City *"
+                isSearchable
+                styles={{
+                  control: (base, state) => ({
+                    ...base,
+                    height: "2.5rem",
+                    borderRadius: "0.3rem",
+                    width: "15rem",
+                    borderColor: !form.city_id ? "red" : base.borderColor,
+                  }),
+                  menuList: (base) => ({
+                    ...base,
+                    maxHeight: "200px",
+                  }),
+                }}
               />
-              {form.posterUrl ? (
-                <img
-                  src={form.posterUrl}
-                  alt="Poster Preview"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "1rem",
-                  }}
+
+              <input
+                type="text"
+                value={selectedStateName}
+                placeholder="State"
+                disabled
+                style={styles.input}
+              />
+            </div>
+
+            <input
+              type="number"
+              name="total_seats"
+              placeholder="Total Seats"
+              value={form.total_seats || "100"}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
+
+            <select
+              name="theatre_status"
+              value={form.theatre_status}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            >
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+
+            <div style={styles.posterSection}>
+              Upload Image:
+              <br />
+              <br />
+              <label style={styles.posterUpload}>
+                <input
+                  type="file"
+                  accept="image/png, image/jpeg"
+                  onChange={handleImageChange}
+                  style={styles.fileInput}
                 />
-              ) : (
-                <p style={{ fontSize: "12px", color: "#6b7280" }}>+ Upload</p>
-              )}
-            </label>
+                {form.theatre_image ? (
+                  <img
+                    src={form.theatre_image}
+                    alt="Preview"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: "1rem",
+                    }}
+                  />
+                ) : (
+                  <>
+                    <img
+                      src="/images/upload.png"
+                      alt="Upload"
+                      style={{ width: "2rem" }}
+                    />
+                    <p style={styles.uploadText}>Upload file here</p>
+                  </>
+                )}
+              </label>
+            </div>
 
             <div style={styles.buttonsRow}>
               <button type="submit" style={styles.addButton}>
@@ -249,27 +301,38 @@ export default function AddTheatre() {
 }
 
 const styles = {
-  container: {},
+  container: {
+    display: "flex",
+    justifyContent: "center",
+    padding: "2rem",
+  },
   breadcrumb: {
     display: "flex",
     alignItems: "center",
     gap: "0.5rem",
-    marginLeft: "2rem",
+    margin: "1rem 2rem",
+    fontSize: "0.95rem",
+  },
+  breadcrumbLink: {
+    color: "grey",
+    textDecoration: "none",
   },
   breadcrumbActive: {
-    fontWeight: "bold",
+    color: "#000",
+    fontWeight: "500",
   },
   formWrapper: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    width: "100%",
+    maxWidth: "600px",
   },
   formBox: {
     display: "flex",
     flexDirection: "column",
-    gap: "1rem",
-    maxWidth: "600px",
-    width: "100%",
+    gap: "1.2rem",
+    background: "#f9f9f9",
+    padding: "2rem",
+    borderRadius: "0.5rem",
+    border: "1px solid #e5e7eb",
   },
   label: {
     fontWeight: "600",
@@ -277,43 +340,65 @@ const styles = {
   },
   input: {
     height: "2.5rem",
-    padding: "1rem",
+    padding: "0.75rem",
     border: "0.1rem #A1A2A4 solid",
     borderRadius: "0.3rem",
     fontSize: "1rem",
+    flex: "1",
+  },
+  input2: {
+    // height: "2.5rem",
+    padding: "0.75rem",
+    border: "0.1rem #A1A2A4 solid",
+    borderRadius: "0.3rem",
+    fontSize: "1rem",
+    flex: "1",
   },
   selectRow: {
     display: "flex",
-    justifyContent: "space-between",
-    marginLeft: "2rem",
-    marginRight: "2rem",
+    gap: "1rem",
+    flexWrap: "wrap",
   },
   select: {
-    padding: "0.6rem",
+    padding: "0.75rem",
     border: "0.1rem #A1A2A4 solid",
     borderRadius: "0.3rem",
     fontSize: "1rem",
     backgroundColor: "white",
-    width: "15rem",
+    flex: "1",
   },
   posterSection: {
     fontWeight: "600",
+    fontSize: "1.1rem",
   },
   posterUpload: {
     width: "9rem",
     height: "6rem",
     border: "0.1rem #5A5A61 dotted",
     borderRadius: "1rem",
+    textAlign: "center",
+    position: "relative",
     overflow: "hidden",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     cursor: "pointer",
-    position: "relative",
+  },
+  fileInput: {
+    opacity: 0,
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    cursor: "pointer",
+  },
+  uploadText: {
+    fontSize: "12px",
+    color: "#6B7280",
   },
   buttonsRow: {
     display: "flex",
-    gap: "20px",
+    gap: "1rem",
+    justifyContent: "flex-end",
     marginTop: "1rem",
   },
   addButton: {
@@ -322,7 +407,7 @@ const styles = {
     fontWeight: "600",
     width: "6rem",
     height: "2.5rem",
-    border: "solid 0.1rem white",
+    border: "none",
     borderRadius: "0.3rem",
     cursor: "pointer",
   },
@@ -332,7 +417,7 @@ const styles = {
     fontWeight: "600",
     width: "6rem",
     height: "2.5rem",
-    border: "solid 0.1rem #FF5295",
+    border: "0.1rem solid #FF5295",
     borderRadius: "0.3rem",
     cursor: "pointer",
   },

@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import HeadProfile from "./HeadProfile";
 
 export default function Payment_Summary_Page() {
+  const { showId } = useParams();
   const selectedSeats = JSON.parse(localStorage.getItem("selectedSeats")) || [];
   const numberOfTickets = selectedSeats.length;
+  const [userName, setUserName] = useState("");
+
+  const [movie, setMovie] = useState(null);
+  const [theatre, setTheatre] = useState(null);
+  const [show, setShow] = useState(null);
+  const [error, setError] = useState(null);
 
   const ticketPrice = 300;
   const bookingChargePerTicket = 30;
@@ -16,11 +24,44 @@ export default function Payment_Summary_Page() {
   const sgst = numberOfTickets * sgstPerTicket;
   const totalAmount = ticketTotal + bookingCharge + cgst + sgst;
 
+  useEffect(() => {
+    const storedName = localStorage.getItem("username");
+    if (storedName) {
+      setUserName(storedName);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!showId) {
+      setError("Missing showId in URL.");
+      return;
+    }
+
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/shows/${showId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch show");
+        return res.json();
+      })
+      .then((data) => {
+        const s = data.data || data;
+        setShow(s);
+
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/movies/${s.movie_id}`)
+          .then((res) => res.json())
+          .then((data) => setMovie(data.data || data))
+          .catch(() => setError("Failed to load movie"));
+
+        fetch(`${import.meta.env.VITE_API_BASE_URL}/theatres/${s.theatre_id}`)
+          .then((res) => res.json())
+          .then((data) => setTheatre(data.data || data))
+          .catch(() => setError("Failed to load theatre"));
+      })
+      .catch(() => setError("Failed to load show"));
+  }, [showId]);
+
   const handlePayment = async () => {
     try {
       const token = localStorage.getItem("token");
-      const showId = localStorage.getItem("selectedShowId") || 1;
-
       if (!token) {
         alert("You must be logged in to proceed.");
         return;
@@ -32,20 +73,25 @@ export default function Payment_Summary_Page() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             amount: totalAmount,
-            show_id: showId,
+            show_id: parseInt(showId, 10),
             seats: selectedSeats.join(","),
           }),
         }
       );
 
-      const html = await res.text();
+      const text = await res.text();
+
+      if (!res.ok) {
+        console.error("Payment initiation failed:", text);
+        throw new Error(`Error ${res.status}: ${text}`);
+      }
 
       const div = document.createElement("div");
-      div.innerHTML = html;
+      div.innerHTML = text;
       document.body.appendChild(div);
 
       const form = document.getElementById("payuForm");
@@ -56,55 +102,51 @@ export default function Payment_Summary_Page() {
       }
     } catch (err) {
       console.error("Payment initiation failed", err);
-      alert("Something went wrong with payment initiation.");
+      alert("Something went wrong: " + err.message);
     }
   };
+
+  function parseDate(dateString) {
+    if (!dateString) return null;
+    if (dateString.includes("T")) return new Date(dateString);
+    return new Date(dateString.replace(" ", "T"));
+  }
+
+  if (error) return <div style={{ color: "red" }}>{error}</div>;
+  if (!movie || !theatre || !show) return <div>Loading...</div>;
 
   return (
     <div>
       <HeadProfile />
-      <p style={{ padding: "10px 20px", fontSize: "14px", color: "#777" }}>
-        <a href="/" style={{ color: "#777", textDecoration: "none" }}>
-          Home
-        </a>{" "}
-        /{" "}
-        <a href="/movies" style={{ color: "#777", textDecoration: "none" }}>
-          Movie
-        </a>{" "}
-        /{" "}
-        <a
-          href="/description"
-          style={{ color: "#777", textDecoration: "none" }}
-        >
-          Show time
-        </a>{" "}
-        /{" "}
-        <a href="/theatre" style={{ color: "#777", textDecoration: "none" }}>
-          Show booking
-        </a>
-      </p>
-
       <div style={styles.container}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "20px",
-          }}
-        >
-          <img src="/images/pvr_logo.png" alt="PVR Logo" style={styles.logo} />
+        <div style={styles.header}>
+          <img
+            src={movie.poster_url || "/placeholder.jpg"}
+            alt={movie.movie_name}
+            style={styles.poster}
+          />
           <div>
-            <h3 style={{ margin: 0 }}>Azaad</h3>
+            <h3 style={{ margin: 0 }}>{movie.movie_name}</h3>
             <p style={{ margin: "5px 0", color: "#666" }}>
-              Cinepolis: Pacific NSP2, Delhi
+              {theatre.theatre_name}
+            </p>
+            <p style={{ margin: "5px 0", color: "#888" }}>
+              {new Date(show.date).toLocaleDateString()} |{" "}
+              {parseDate(show.start_time).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}{" "}
+              -{" "}
+              {parseDate(show.end_time).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </p>
           </div>
         </div>
 
-        <div style={{ marginBottom: "20px" }}>
-          <h4>Monday, May 26, 2025, 07:05 PM</h4>
-          <hr />
-          <h4>{numberOfTickets} Tickets</h4>
+        <div>
+          <h4>{numberOfTickets} Ticket(s)</h4>
           <p>{selectedSeats.join(", ")}</p>
         </div>
 
@@ -123,12 +165,11 @@ export default function Payment_Summary_Page() {
 
         <h2 style={styles.sectionTitle}>Your details</h2>
         <div style={styles.details}>
+          <p>
+            <strong>Name:</strong> {userName || "Guest"}
+          </p>
           <p>+91-9876543210</p>
           <p>Delhi-NCR</p>
-        </div>
-
-        <div style={{ marginBottom: "10px", color: "#888" }}>
-          <p>Terms and Conditions</p>
         </div>
 
         <button style={styles.button} onClick={handlePayment}>
@@ -150,43 +191,44 @@ function Row({ label, value }) {
 
 const styles = {
   container: {
-    maxWidth: "600px",
-    margin: "20px auto",
     padding: "20px",
-    fontFamily: "Arial, sans-serif",
-    backgroundColor: "#f9f9f9",
-    borderRadius: "10px",
-    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+    maxWidth: "600px",
+    margin: "auto",
+  },
+  header: {
+    display: "flex",
+    gap: "15px",
+    marginBottom: "20px",
+    alignItems: "center",
+  },
+  poster: {
+    width: "100px",
+    height: "140px",
+    borderRadius: "4px",
+    objectFit: "cover",
+  },
+  sectionTitle: {
+    marginTop: "30px",
+    marginBottom: "10px",
+  },
+  details: {
+    background: "#f5f5f5",
+    padding: "15px",
+    borderRadius: "6px",
+    marginBottom: "20px",
   },
   row: {
     display: "flex",
     justifyContent: "space-between",
-    margin: "5px 0",
-  },
-  logo: {
-    width: "60px",
-    height: "auto",
-    marginRight: "15px",
+    marginBottom: "8px",
   },
   button: {
-    width: "100%",
-    padding: "12px",
-    backgroundColor: "#FF5295",
+    padding: "10px 20px",
+    backgroundColor: "#59b200",
     color: "white",
     border: "none",
-    borderRadius: "5px",
-    fontSize: "16px",
-    cursor: "pointer",
-  },
-  sectionTitle: {
-    margin: "20px 0 10px",
-    color: "#222",
-  },
-  details: {
-    backgroundColor: "#fff",
-    padding: "10px",
     borderRadius: "6px",
-    marginBottom: "20px",
-    color: "#555",
+    cursor: "pointer",
+    fontSize: "16px",
   },
 };

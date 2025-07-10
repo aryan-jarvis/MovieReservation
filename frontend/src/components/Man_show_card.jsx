@@ -10,7 +10,7 @@ export default function Man_show_card({ show, getShowsList }) {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/showAdmin/${id}`,
+        `${import.meta.env.VITE_API_BASE_URL}/shows/${id}`,
         {
           method: "DELETE",
         }
@@ -36,6 +36,7 @@ export default function Man_show_card({ show, getShowsList }) {
           <div style={styles.details}>
             <p style={styles.title}>{show.name}</p>
             <p style={styles.genre}>{show.theatre}</p>
+
             <div style={styles.languageTags}>
               {show.timings.map((t, i) => (
                 <span key={i} style={styles.languageTag}>
@@ -43,6 +44,7 @@ export default function Man_show_card({ show, getShowsList }) {
                 </span>
               ))}
             </div>
+
             <p style={styles.genre}>{show.languages.join(", ")}</p>
           </div>
 
@@ -66,7 +68,8 @@ export default function Man_show_card({ show, getShowsList }) {
                           theatre: show.theatre,
                           date: show.date,
                           languages: show.languages,
-                          showtime: show.timings ? show.timings.join(", ") : "",
+                          startTime: show.rawStartTime,
+                          endTime: show.rawEndTime,
                           posterImage: show.poster,
                         },
                       },
@@ -133,7 +136,7 @@ const styles = {
   details: {
     display: "flex",
     flexDirection: "column",
-    gap: "0.4rem",
+    gap: "0.2rem", // Reduced gap between rows
     flex: 1,
   },
   title: {
@@ -145,25 +148,34 @@ const styles = {
   languageTags: {
     display: "flex",
     gap: "0.5rem",
+    flexWrap: "wrap",
+    marginTop: "0.1rem",
   },
   languageTag: {
-    backgroundColor: "#e5e7eb",
-    color: "#374151",
-    fontSize: "0.75rem",
-    padding: "0.1rem 1rem",
-    borderRadius: "0.5rem",
-    fontWeight: 500,
+    backgroundColor: "#fef2f2",
+    color: "#9b2c2c",
+    fontSize: "0.8rem",
+    padding: "0.3rem 0.75rem",
+    borderRadius: "0.75rem",
+    fontWeight: 600,
+    border: "1px solid #fbd5d5",
+    boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
   },
+
   genre: {
     fontSize: "0.8rem",
     color: "black",
-    marginTop: "0.2rem",
+    marginTop: "0.1rem",
     fontWeight: 500,
   },
   menuWrapper: {
     position: "relative",
     cursor: "pointer",
     right: "1rem",
+  },
+  dotIcon: {
+    width: "1.5rem",
+    height: "1.5rem",
   },
   dropdown: {
     position: "absolute",
