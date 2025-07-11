@@ -6,14 +6,22 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 
 	"backend/controllers"
 	"backend/middlewares"
 	"backend/models"
 )
 
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+}
+
 func main() {
 	models.ConnectDatabase()
+	models.SeedAdminUsers()
 
 	router := gin.Default()
 
@@ -46,7 +54,6 @@ func main() {
 			c.JSON(200, gin.H{"user": user})
 		})
 
-		// Payment initiation (requires authentication)
 		protected.POST("/payment/initiate", controllers.InitiatePayment)
 	}
 
@@ -79,11 +86,13 @@ func main() {
 
 	reviewRoutes := router.Group("/reviews")
 	{
-		reviewRoutes.POST("", controllers.CreateReview)
 		reviewRoutes.GET("", controllers.GetReviews)
 		reviewRoutes.GET("/:id", controllers.GetReviewByID)
-		reviewRoutes.PUT("/:id", controllers.UpdateReview)
-		reviewRoutes.DELETE("/:id", controllers.DeleteReview)
+		reviewRoutes.GET("/review/movie/:movie_id", controllers.GetReviewsByMovie)
+
+		reviewRoutes.POST("", middlewares.AuthMiddleware(), controllers.CreateReview)
+		reviewRoutes.PUT("/:id", middlewares.AuthMiddleware(), controllers.UpdateReview)
+		reviewRoutes.DELETE("/:id", middlewares.AuthMiddleware(), controllers.DeleteReview)
 	}
 
 	stateRoutes := router.Group("/states")

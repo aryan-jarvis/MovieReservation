@@ -28,6 +28,7 @@ import ProfilePage from "./components/ProfilePage";
 import MovieCard from "./components/AzaadPvr";
 import NotFound from "./components/NotFound";
 import FirstPage from "./pages/FirstPage";
+import PostRating from "./components/PostRating";
 
 export default function App() {
   return (
@@ -65,6 +66,7 @@ export default function App() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/moviecard/:id" element={<MovieCard />} />
         <Route path="/showbooking/:showId" element={<ShowBooking_Page />} />
+        <Route path="/description/:movieId" element={<PostRating />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>

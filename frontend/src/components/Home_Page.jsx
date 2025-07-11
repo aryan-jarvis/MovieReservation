@@ -10,7 +10,9 @@ import { Link } from "react-router-dom";
 
 export default function Home_Page() {
   const [movies, setMovies] = useState([]);
+  const [search, setSearch] = useState("");
 
+  const [movieCollection, setMovieCollection] = useState([]);
   const transformMovie = (m) => ({
     ID: m.movie_id,
     title: m.movie_name,
@@ -27,10 +29,15 @@ export default function Home_Page() {
       .then((res) => {
         const rawMovies = Array.isArray(res) ? res : res.data || [];
         const transformed = rawMovies.map(transformMovie);
+        setMovieCollection(rawMovies);
         setMovies(transformed);
       })
       .catch((err) => console.error("Error fetching movies:", err));
   }, []);
+
+  const filteredMovies = movieCollection.filter((movie) =>
+    movie.movie_name?.toLowerCase().includes(search.toLowerCase())
+  );
 
   const latestMovies = movies.slice(0, 6);
   const nowShowing = movies
@@ -53,7 +60,20 @@ export default function Home_Page() {
         </Link>
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
-        {data.length > 0 ? (
+        {search && filteredMovies.length > 0 ? (
+          filteredMovies.map((movie) => (
+            <MovieCard
+              key={movie.movie_id}
+              id={movie.movie_id}
+              title={movie.movie_name}
+              genre={movie.genre}
+              languages={Array.isArray(movie.languages) ? movie.languages : []}
+              posterImage={movie.poster_url}
+              rating={movie.rating || 0}
+              status={movie.movie_status}
+            />
+          ))
+        ) : data.length > 0 ? (
           data.map((movie) => (
             <MovieCard
               key={movie.ID}
@@ -77,7 +97,7 @@ export default function Home_Page() {
     <div style={{ padding: "1.5rem" }}>
       <HeadProfile />
       <br />
-      <SalaarSlider />
+      <SalaarSlider setSearch={setSearch} />
       <br />
       <LoginPopUp />
 

@@ -12,7 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
+var SecretKey = []byte(os.Getenv("JWT_SECRET"))
 
 func generateToken(userID int) (string, error) {
 	claims := jwt.MapClaims{
@@ -20,7 +20,7 @@ func generateToken(userID int) (string, error) {
 		"exp":     time.Now().Add(time.Hour * 72).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
+	return token.SignedString(SecretKey)
 }
 
 func Register(c *gin.Context) {

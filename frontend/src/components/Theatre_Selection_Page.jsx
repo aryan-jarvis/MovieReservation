@@ -3,6 +3,7 @@ import HeadProfile from "./HeadProfile";
 import SelectShow from "./SelectShow";
 import Footer from "./Footer";
 import { Link } from "react-router-dom";
+import MovieShowSelection from "./MovieShowSelection";
 
 export default function Theatre_Selection_Page() {
   return (
@@ -23,8 +24,9 @@ export default function Theatre_Selection_Page() {
         &nbsp;
         <p>/ Show Time</p>
       </div>
-      <AzaadDates />
-      <SelectShow />
+      {/* <AzaadDates />
+      <SelectShow /> */}
+      <MovieShowSelection />
       <Footer />
     </div>
   );

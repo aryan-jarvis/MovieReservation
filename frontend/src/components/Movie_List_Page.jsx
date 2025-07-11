@@ -8,6 +8,7 @@ import MovieCard from "./MovieCard";
 
 export default function Movie_List_Page() {
   const [movies, setMovies] = useState([]);
+  const [search, setSearch] = useState("");
 
   const transformMovie = (m) => {
     let langs = [];
@@ -33,6 +34,7 @@ export default function Movie_List_Page() {
       duration: m.duration,
     };
   };
+
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_BASE_URL}/movies`)
       .then((res) => res.json())
@@ -44,27 +46,35 @@ export default function Movie_List_Page() {
       .catch((err) => console.error("Error fetching movies:", err));
   }, []);
 
+  const filteredMovies = movies.filter((m) =>
+    m.title?.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div style={{ padding: "1.5rem" }}>
       <HeadProfile />
       <br />
-      <SalaarSlider />
+      <SalaarSlider setSearch={setSearch} />
       <br />
       <h2>Movies near you</h2>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "3rem" }}>
-        {movies.map((movie) => (
-          <MovieCard
-            key={movie.ID}
-            id={movie.ID}
-            title={movie.title}
-            genre={movie.genre}
-            languages={movie.languages}
-            posterImage={movie.posterImage}
-            rating={movie.rating}
-            status={movie.status}
-          />
-        ))}
+        {filteredMovies.length > 0 ? (
+          filteredMovies.map((movie) => (
+            <MovieCard
+              key={movie.ID}
+              id={movie.ID}
+              title={movie.title}
+              genre={movie.genre}
+              languages={movie.languages}
+              posterImage={movie.posterImage}
+              rating={movie.rating}
+              status={movie.status}
+            />
+          ))
+        ) : (
+          <p>No movies found.</p>
+        )}
       </div>
 
       <br />

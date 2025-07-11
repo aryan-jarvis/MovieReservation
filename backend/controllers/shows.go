@@ -57,16 +57,28 @@ func CreateShow(c *gin.Context) {
 	var createdShows []models.Show
 
 	for _, t := range input.Times {
-		startTimeParsed, err := time.Parse("15:04", t.StartTime)
+		parsedTime, err := time.Parse("15:04", t.StartTime)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid start_time format. Use HH:MM"})
 			return
 		}
-		endTimeParsed, err := time.Parse("15:04", t.EndTime)
+		// Merge date
+		startTimeParsed := time.Date(
+			dateParsed.Year(), dateParsed.Month(), dateParsed.Day(),
+			parsedTime.Hour(), parsedTime.Minute(), 0, 0,
+			time.Local, // Or time.UTC
+		)
+
+		parsedEndTime, err := time.Parse("15:04", t.EndTime)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid end_time format. Use HH:MM"})
 			return
 		}
+		endTimeParsed := time.Date(
+			dateParsed.Year(), dateParsed.Month(), dateParsed.Day(),
+			parsedEndTime.Hour(), parsedEndTime.Minute(), 0, 0,
+			time.Local, // Or time.UTC
+		)
 
 		show := models.Show{
 			MovieID:   input.MovieID,
@@ -165,12 +177,19 @@ func UpdateShow(c *gin.Context) {
 	}
 	startTimeParsed, err := time.Parse("15:04", input.StartTime)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid start_time format. Use HH:MM"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "Invalid start_time format. Use HH:MM",
+		})
 		return
 	}
+
 	endTimeParsed, err := time.Parse("15:04", input.EndTime)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid end_time format. Use HH:MM"})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success": false,
+			"message": "Invalid end_time format. Use HH:MM",
+		})
 		return
 	}
 	languagesJSON, err := json.Marshal(input.Languages)

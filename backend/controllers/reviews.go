@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -34,15 +35,14 @@ func CreateReview(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
-	userID := userIDRaw.(uint)
-
-	db := c.MustGet("db").(*gorm.DB)
-
-	var existing models.Review
-	if err := db.Where("user_id = ? AND movie_id = ?", userID, input.MovieID).First(&existing).Error; err == nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "You have already reviewed this movie"})
+	userIDInt, ok := userIDRaw.(int)
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID type"})
 		return
 	}
+	userID := uint(userIDInt)
+
+	db := c.MustGet("db").(*gorm.DB)
 
 	review := models.Review{
 		UserID:    userID,
@@ -54,6 +54,10 @@ func CreateReview(c *gin.Context) {
 	}
 
 	if err := db.Create(&review).Error; err != nil {
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "You have already reviewed this movie"})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -149,4 +153,22 @@ func DeleteReview(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Review deleted"})
+}
+
+func GetReviewsByMovie(c *gin.Context) {
+	db := c.MustGet("db").(*gorm.DB)
+	movieIDParam := c.Param("movie_id")
+	movieID, err := strconv.ParseUint(movieIDParam, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid movie ID"})
+		return
+	}
+
+	var reviews []models.Review
+	if err := db.Where("movie_id = ?", movieID).Find(&reviews).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, reviews)
 }

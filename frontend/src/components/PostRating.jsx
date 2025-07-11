@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
-function ReviewForm({ onSubmit, onClose }) {
+function ReviewForm({ movieId, onSubmit, onClose }) {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
 
@@ -15,21 +16,25 @@ function ReviewForm({ onSubmit, onClose }) {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/review`,
+        `${import.meta.env.VITE_API_BASE_URL}/reviews`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ comment, rating }),
+          body: JSON.stringify({
+            movie_id: movieId,
+            rating,
+            comments: comment,
+          }),
         }
       );
 
       const data = await response.json();
 
       if (response.ok) {
-        onSubmit({ comment, rating });
+        onSubmit({ movie_id: movieId, rating, comments: comment });
         setComment("");
         setRating(0);
         onClose();
@@ -96,12 +101,15 @@ function ReviewItem({ review }) {
   return (
     <div style={styles.reviewItem}>
       <div>{renderStars()}</div>
-      <p style={styles.reviewComment}>{review.comment}</p>
+      <p style={styles.reviewComment}>{review.comments}</p>
     </div>
   );
 }
 
 function PostRating() {
+  const { id } = useParams();
+  const movieId = parseInt(id, 10);
+
   const [reviews, setReviews] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -109,12 +117,12 @@ function PostRating() {
     const fetchReviews = async () => {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/review`
+          `${import.meta.env.VITE_API_BASE_URL}/reviews`
         );
         const result = await response.json();
         if (response.ok) {
-          const sortedReviews = result.data.sort((a, b) => b.rating - a.rating);
-          setReviews(sortedReviews);
+          const sortedReviews = result.sort((a, b) => b.rating - a.rating);
+          setReviews(sortedReviews.filter((r) => r.movie_id === movieId));
         } else {
           console.error("Failed to fetch reviews:", result.error);
         }
@@ -124,7 +132,7 @@ function PostRating() {
     };
 
     fetchReviews();
-  }, []);
+  }, [movieId]);
 
   const handleReviewSubmit = (newReview) => {
     setReviews((prev) =>
@@ -156,6 +164,7 @@ function PostRating() {
       {isOpen && (
         <div style={styles.container}>
           <ReviewForm
+            movieId={movieId}
             onSubmit={handleReviewSubmit}
             onClose={() => setIsOpen(false)}
           />
@@ -236,16 +245,11 @@ const styles = {
     backgroundColor: "#ffffff",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
     width: "18rem",
-    // transition: "transform 0.2s ease",
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
     cursor: "default",
     transition: "transform 0.2s ease, box-shadow 0.2s ease",
-    ":hover": {
-      transform: "translateY(-5px)",
-      boxShadow: "0 6px 12px rgba(0, 0, 0, 0.15)",
-    },
   },
   reviewComment: {
     marginTop: "1rem",

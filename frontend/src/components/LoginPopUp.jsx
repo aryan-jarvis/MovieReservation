@@ -13,12 +13,22 @@ export default function LoginPopUp() {
     return saved !== "true";
   });
   const [isRegister, setIsRegister] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
 
   axios.defaults.withCredentials = true;
+
+  function isValidEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
 
   const handleRegister = async () => {
     if (!name.trim() || !email.trim()) {
       setErrorMessage("Name and email cannot be empty.");
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setErrorMessage("Please enter a valid email address.");
       return;
     }
     if (password.length < 6) {
@@ -47,6 +57,7 @@ export default function LoginPopUp() {
       localStorage.setItem("username", res.data.name);
       localStorage.setItem("email", res.data.email);
       localStorage.setItem("id", res.data.user_id);
+      localStorage.setItem("isAdmin", res.data.is_admin);
       localStorage.setItem("loginPopupClosed", "true");
 
       window.location.href = "/";
@@ -60,6 +71,10 @@ export default function LoginPopUp() {
   const handleLogin = async () => {
     if (!email.trim()) {
       setErrorMessage("Email cannot be empty.");
+      return;
+    }
+    if (!isValidEmail(email)) {
+      setErrorMessage("Please enter a valid email address.");
       return;
     }
     if (!password) {
@@ -88,6 +103,7 @@ export default function LoginPopUp() {
       localStorage.setItem("username", res.data.name);
       localStorage.setItem("email", res.data.email);
       localStorage.setItem("id", res.data.user_id);
+      localStorage.setItem("isAdmin", res.data.is_admin);
       localStorage.setItem("loginPopupClosed", "true");
 
       window.location.href = "/";
@@ -104,7 +120,7 @@ export default function LoginPopUp() {
     <>
       <div style={styles.overlay} />
       <div style={styles.container}>
-        <h1>{isRegister ? "Register" : "Login"} 👋</h1>
+        <h1 style={styles.heading}>{isRegister ? "Register" : "Login"} 👋</h1>
 
         {errorMessage && <div style={styles.errorBox}>{errorMessage}</div>}
 
@@ -126,39 +142,42 @@ export default function LoginPopUp() {
           style={styles.input}
         />
 
-        <input
-          placeholder="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={styles.input}
-        />
-
-        <div style={{ display: "flex" }}>
-          {isRegister ? (
-            <button onClick={handleRegister} style={styles.button}>
-              Register
-            </button>
-          ) : (
-            <button onClick={handleLogin} style={styles.button}>
-              Login
-            </button>
-          )}
-        </div>
-
-        <div>
+        <div style={{ position: "relative" }}>
+          <input
+            placeholder="Password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={styles.input}
+          />
           <button
-            onClick={() => {
-              setIsRegister(!isRegister);
-              setErrorMessage("");
-            }}
-            style={styles.button}
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            style={styles.passwordToggle}
+            aria-label={showPassword ? "Hide password" : "Show password"}
           >
-            {isRegister
-              ? "Already have an account? Login"
-              : "Don't have an account? Register"}
+            {showPassword ? "🙈" : "👁️"}
           </button>
         </div>
+
+        <button
+          onClick={isRegister ? handleRegister : handleLogin}
+          style={styles.button}
+        >
+          {isRegister ? "Register" : "Login"}
+        </button>
+
+        <button
+          onClick={() => {
+            setIsRegister(!isRegister);
+            setErrorMessage("");
+          }}
+          style={styles.secondaryButton}
+        >
+          {isRegister
+            ? "Already have an account? Login"
+            : "Don't have an account? Register"}
+        </button>
       </div>
     </>
   );
@@ -171,61 +190,91 @@ const styles = {
     left: 0,
     width: "100vw",
     height: "100vh",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.6)",
     zIndex: 9,
   },
   container: {
     position: "fixed",
-    top: "9rem",
-    left: "calc(50% - 20rem)",
-    width: "40rem",
-    height: "40rem",
-    backgroundColor: "#fffffa",
-    borderRadius: "1rem",
+    top: "10%",
+    left: "50%",
+    transform: "translateX(-50%)",
+    width: "400px",
+    backgroundColor: "#ffffff",
+    borderRadius: "12px",
+    padding: "2rem",
+    boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
+    zIndex: 10,
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 10,
-    boxShadow: "0 4px 10px rgba(0,0,0,0.3)",
-    // padding: "2rem",
+    alignItems: "stretch",
   },
   closeButton: {
     position: "absolute",
-    top: "10px",
-    right: "15px",
+    top: "1rem",
+    right: "1rem",
     background: "transparent",
     border: "none",
-    fontSize: "24px",
+    fontSize: "1.5rem",
     cursor: "pointer",
+    color: "#555",
+  },
+  heading: {
+    fontSize: "1.75rem",
+    marginBottom: "1rem",
+    textAlign: "center",
     color: "#333",
   },
   input: {
-    margin: "0.4rem",
-    padding: "0.6rem",
-    fontSize: "1.2rem",
-    // width: "200px",
-    width: "20rem",
-    // backgroundColor: "green",
+    margin: "0.5rem 0",
+    padding: "0.75rem 1rem",
+    fontSize: "1rem",
+    border: "1px solid #ddd",
+    borderRadius: "6px",
+    outline: "none",
+    transition: "border-color 0.2s",
+  },
+  inputFocused: {
+    borderColor: "#FF5295",
+  },
+  passwordToggle: {
+    position: "absolute",
+    right: "12px",
+    top: "50%",
+    transform: "translateY(-50%)",
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "1rem",
+    color: "#888",
   },
   button: {
     marginTop: "1rem",
-    // padding: "10px 20px",
-    padding: "1rem",
+    padding: "0.75rem",
     fontSize: "1rem",
     cursor: "pointer",
     backgroundColor: "#FF5295",
-    color: "white",
+    color: "#fff",
     border: "none",
-    borderRadius: "0.2rem",
+    borderRadius: "6px",
+    transition: "background-color 0.2s",
+  },
+  secondaryButton: {
+    marginTop: "0.75rem",
+    padding: "0.5rem",
+    fontSize: "0.9rem",
+    cursor: "pointer",
+    backgroundColor: "transparent",
+    color: "#333",
+    border: "none",
+    textDecoration: "underline",
   },
   errorBox: {
-    color: "red",
+    color: "#b00020",
     backgroundColor: "#ffe6e6",
-    padding: "10px",
-    borderRadius: "5px",
-    marginBottom: "15px",
-    width: "80%",
+    padding: "0.75rem",
+    borderRadius: "4px",
+    marginBottom: "1rem",
     textAlign: "center",
+    fontSize: "0.95rem",
   },
 };
