@@ -2,10 +2,11 @@ import AzaadDates from "./AzaadDates";
 import HeadProfile from "./HeadProfile";
 import SelectShow from "./SelectShow";
 import Footer from "./Footer";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import MovieShowSelection from "./MovieShowSelection";
 
 export default function Theatre_Selection_Page() {
+  const { id } = useParams();
   return (
     <div style={{ padding: "1.5rem" }}>
       <HeadProfile />
@@ -16,7 +17,7 @@ export default function Theatre_Selection_Page() {
         </Link>
         &nbsp;
         <Link
-          to="/description"
+          to={`/description/${id}`}
           style={{ color: "black", textDecoration: "none" }}
         >
           <p>/ Movie</p>

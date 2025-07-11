@@ -92,6 +92,8 @@ export default function MovieShowSelection() {
   const [movies, setMovies] = useState({});
   const [theatres, setTheatres] = useState({});
   const [showsError, setShowsError] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [reviewsError, setReviewsError] = useState(null);
 
   const transformMovie = (m) => ({
     id: m.movie_id,
@@ -165,8 +167,37 @@ export default function MovieShowSelection() {
       });
   }, [id]);
 
+  // Fetch all reviews
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/reviews`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Error fetching reviews");
+        return res.json();
+      })
+      .then((data) => {
+        const allReviews = Array.isArray(data.data) ? data.data : data;
+        setReviews(allReviews);
+      })
+      .catch((err) => {
+        console.error("Error loading reviews:", err);
+        setReviewsError("Could not load reviews.");
+      });
+  }, []);
+
   if (movieError) return <div style={{ color: "red" }}>{movieError}</div>;
   if (!movie) return <div>Loading movie details...</div>;
+
+  // Calculate average rating
+  const movieReviews = reviews.filter(
+    (review) => String(review.movie_id) === String(id)
+  );
+  const averageRating =
+    movieReviews.length > 0
+      ? (
+          movieReviews.reduce((sum, r) => sum + Number(r.rating), 0) /
+          movieReviews.length
+        ).toFixed(1)
+      : "3.0";
 
   const groupedShows = shows.reduce((acc, show) => {
     const key = `${show.theatre_id}_${show.date}`;
@@ -217,10 +248,11 @@ export default function MovieShowSelection() {
         <div style={styles.movieInfo}>
           <h1>{movie.title}</h1>
           <p style={styles.metaText}>
-            {movie.runtime} min | {movie.genre} | Rating {movie.rating}/10 |{" "}
-            {movie.languages.join(", ")}
+            {movie.runtime} min | {movie.genre} | User Rating {averageRating}/5
+            | {movie.languages.join(", ")}
           </p>
           <p>{movie.description}</p>
+          {reviewsError && <p style={{ color: "red" }}>{reviewsError}</p>}
           <div style={styles.dateList}>
             {uniqueDates.map((dateObj, index) => {
               const isSelected =

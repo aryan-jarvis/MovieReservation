@@ -61,7 +61,7 @@ export default function LoginPopUp() {
       localStorage.setItem("loginPopupClosed", "true");
 
       window.location.href = "/";
-      setIsOpen(false);
+      // setIsOpen(false);
     } catch (error) {
       const message = error.response?.data?.error || "Registration failed.";
       setErrorMessage(message);
@@ -107,14 +107,14 @@ export default function LoginPopUp() {
       localStorage.setItem("loginPopupClosed", "true");
 
       window.location.href = "/";
-      setIsOpen(false);
+      // setIsOpen(false);
     } catch (error) {
       const message = error.response?.data?.error || "Login failed.";
       setErrorMessage(message);
     }
   };
 
-  if (!isOpen) return null;
+  // if (!isOpen) return null;
 
   return (
     <>
@@ -190,8 +190,8 @@ const styles = {
     left: 0,
     width: "100vw",
     height: "100vh",
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    zIndex: 9,
+    // backgroundColor: "rgba(0, 0, 0, 0.6)",
+    // zIndex: 9,
   },
   container: {
     position: "fixed",

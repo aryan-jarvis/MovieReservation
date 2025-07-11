@@ -1,0 +1,119 @@
+DROP TABLE IF EXISTS 
+    bookings,
+    cities,
+    movies,
+    reviews,
+    shows,
+    states,
+    theatres,
+    tickets,
+    transactions,
+    users
+CASCADE;
+
+
+// States
+
+curl -X POST http://localhost:8080/states \
+  -H "Content-Type: application/json" \
+  -d '{"state_name": "Maharashtra"}'
+
+curl -X POST http://localhost:8080/states \
+  -H "Content-Type: application/json" \
+  -d '{"state_name": "Karnataka"}'
+
+curl -X POST http://localhost:8080/states \
+  -H "Content-Type: application/json" \
+  -d '{"state_name": "Tamil Nadu"}'
+
+curl -X POST http://localhost:8080/states \
+  -H "Content-Type: application/json" \
+  -d '{"state_name": "Uttar Pradesh"}'
+
+curl -X POST http://localhost:8080/states \
+  -H "Content-Type: application/json" \
+  -d '{"state_name": "West Bengal"}'
+
+curl -X POST http://localhost:8080/states \
+  -H "Content-Type: application/json" \
+  -d '{"state_name": "Gujarat"}'
+
+curl -X POST http://localhost:8080/states \
+  -H "Content-Type: application/json" \
+  -d '{"state_name": "Rajasthan"}'
+
+curl -X POST http://localhost:8080/states \
+  -H "Content-Type: application/json" \
+  -d '{"state_name": "Madhya Pradesh"}'
+
+curl -X POST http://localhost:8080/states \
+  -H "Content-Type: application/json" \
+  -d '{"state_name": "Bihar"}'
+
+curl -X POST http://localhost:8080/states \
+  -H "Content-Type: application/json" \
+  -d '{"state_name": "Punjab"}'
+
+
+
+// Cities
+
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 1, "city_name": "Mumbai"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 1, "city_name": "Pune"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 1, "city_name": "Nagpur"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 1, "city_name": "Nashik"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 1, "city_name": "Thane"}'
+
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 2, "city_name": "Bangalore"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 2, "city_name": "Mysore"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 2, "city_name": "Hubli"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 2, "city_name": "Mangalore"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 2, "city_name": "Belagavi"}'
+
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 3, "city_name": "Chennai"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 3, "city_name": "Coimbatore"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 3, "city_name": "Madurai"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 3, "city_name": "Salem"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 3, "city_name": "Tiruchirappalli"}'
+
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 4, "city_name": "Lucknow"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 4, "city_name": "Kanpur"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 4, "city_name": "Agra"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 4, "city_name": "Varanasi"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 4, "city_name": "Allahabad"}'
+
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 5, "city_name": "Kolkata"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 5, "city_name": "Siliguri"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 5, "city_name": "Durgapur"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 5, "city_name": "Asansol"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 5, "city_name": "Howrah"}'
+
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 6, "city_name": "Ahmedabad"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 6, "city_name": "Surat"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 6, "city_name": "Vadodara"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 6, "city_name": "Rajkot"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 6, "city_name": "Bhavnagar"}'
+
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 7, "city_name": "Jaipur"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 7, "city_name": "Udaipur"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 7, "city_name": "Jodhpur"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 7, "city_name": "Kota"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 7, "city_name": "Ajmer"}'
+
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 8, "city_name": "Indore"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 8, "city_name": "Bhopal"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 8, "city_name": "Gwalior"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 8, "city_name": "Jabalpur"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 8, "city_name": "Ujjain"}'
+
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 9, "city_name": "Patna"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 9, "city_name": "Gaya"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 9, "city_name": "Bhagalpur"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 9, "city_name": "Muzaffarpur"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 9, "city_name": "Munger"}'
+
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 10, "city_name": "Chandigarh"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 10, "city_name": "Ludhiana"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 10, "city_name": "Amritsar"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 10, "city_name": "Jalandhar"}'
+curl -X POST http://localhost:8080/cities -H "Content-Type: application/json" -d '{"state_id": 10, "city_name": "Patiala"}'

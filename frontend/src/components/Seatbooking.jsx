@@ -15,6 +15,7 @@ const Seatbooking = ({ showId }) => {
   const [seatSelected, setSeatSelected] = useState([]);
 
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_BASE_URL}/seats/show/${showId}`)
@@ -145,10 +146,25 @@ const Seatbooking = ({ showId }) => {
       </div>
 
       <button
-        style={styles.confirmButton}
-        onClick={handleSubmited}
-        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4ea000")}
-        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#59b200")}
+        style={{
+          ...styles.confirmButton,
+          backgroundColor: !token ? "#aaa" : "#59b200",
+          cursor: !token ? "not-allowed" : "pointer",
+        }}
+        onClick={() => {
+          if (!token) {
+            alert("You must be logged in to confirm booking.");
+            return;
+          }
+          handleSubmited();
+        }}
+        disabled={!token}
+        onMouseOver={(e) => {
+          if (token) e.currentTarget.style.backgroundColor = "#4ea000";
+        }}
+        onMouseOut={(e) => {
+          if (token) e.currentTarget.style.backgroundColor = "#59b200";
+        }}
       >
         Confirm Booking
       </button>

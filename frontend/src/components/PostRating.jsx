@@ -112,6 +112,7 @@ function PostRating() {
 
   const [reviews, setReviews] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -147,15 +148,22 @@ function PostRating() {
         <button
           style={{
             padding: "10px 20px",
-            backgroundColor: "#ff5295",
+            backgroundColor: !token ? "#aaa" : "#ff5295",
             color: "white",
             fontSize: 20,
             border: "none",
             borderRadius: "0.5rem",
-            cursor: "pointer",
+            cursor: !token ? "not-allowed" : "pointer",
             width: "10rem",
           }}
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            if (!token) {
+              alert("You must be logged in to rate this movie.");
+              return;
+            }
+            setIsOpen(true);
+          }}
+          disabled={!token}
         >
           Rate Now
         </button>

@@ -4,13 +4,13 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function HeadProfile() {
   const [username, setUsername] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false); // <-- new state
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("username");
-    const storedIsAdmin = localStorage.getItem("isAdmin"); // Capital A here!
+    const storedIsAdmin = localStorage.getItem("isAdmin");
 
     if (storedUser) {
       setUsername(storedUser);
@@ -24,14 +24,7 @@ export default function HeadProfile() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("username");
-    localStorage.removeItem("loginPopupClosed");
-    localStorage.removeItem("email");
-    localStorage.removeItem("token");
-    localStorage.removeItem("is_admin");
     localStorage.clear();
-    setUsername(null);
-    setIsAdmin(false);
     window.location.href = "/";
   };
 
@@ -63,7 +56,22 @@ export default function HeadProfile() {
         {/* <div>
           <SearchDropDown />
         </div> */}
-
+        {!username && (
+          <button
+            style={{
+              padding: "12px 24px",
+              backgroundColor: "#FF5295",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              fontSize: "16px",
+            }}
+            onClick={() => navigate("/authenticate")}
+          >
+            Login
+          </button>
+        )}
         {username && (
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
             {isAdmin && (

@@ -99,7 +99,7 @@ export default function Home_Page() {
       <br />
       <SalaarSlider setSearch={setSearch} />
       <br />
-      <LoginPopUp />
+      {/* <LoginPopUp /> */}
 
       {renderSection("Watch Latest Movie", latestMovies)}
       {renderSection("Now Showing in Theatres", nowShowing)}

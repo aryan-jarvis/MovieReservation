@@ -9,7 +9,8 @@ export default function ShowBooking_Page() {
   return (
     <div style={{ padding: "1.5rem" }}>
       <HeadProfile />
-      <div style={{ display: "flex" }}>
+      <br />
+      {/* <div style={{ display: "flex" }}>
         <Link to="/" style={{ color: "black", textDecoration: "none" }}>
           <p>Home</p>
         </Link>
@@ -26,7 +27,7 @@ export default function ShowBooking_Page() {
         </Link>
         &nbsp;
         <p>/ Show Booking</p>
-      </div>
+      </div> */}
       <AzaadPvr />
       <div style={{ display: "flex", marginLeft: "45rem" }}>
         <p

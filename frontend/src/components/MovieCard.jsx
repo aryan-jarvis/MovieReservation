@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
@@ -62,9 +62,43 @@ const MovieCard = ({
   genre = "Unknown",
   languages = [],
   posterImage = "/fallback.jpg",
-  rating = 4.5,
+  rating: initialRating = 4.5,
   status = "",
 }) => {
+  const [averageRating, setAverageRating] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_BASE_URL}/reviews`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch reviews");
+        return res.json();
+      })
+      .then((data) => {
+        const reviews = Array.isArray(data.data) ? data.data : data;
+
+        const movieReviews = reviews.filter(
+          (review) => String(review.movie_id) === String(id)
+        );
+
+        if (movieReviews.length === 0) {
+          setAverageRating(3);
+        } else {
+          const sum = movieReviews.reduce(
+            (acc, review) => acc + Number(review.rating || 0),
+            0
+          );
+          const avg = sum / movieReviews.length;
+          setAverageRating(Number(avg.toFixed(1)));
+        }
+      })
+      .catch((err) => {
+        console.error("Error fetching reviews:", err);
+        setError("Could not load rating");
+        setAverageRating(3);
+      });
+  }, [id]);
+
   return (
     <>
       <div className="movie-card" style={styles.card}>
@@ -78,7 +112,13 @@ const MovieCard = ({
           <p style={styles.subtitle}>
             {genre} | {(languages || []).join(", ")}
           </p>
-          <p style={styles.rating}>{rating} ★★★★☆</p>
+          <p style={styles.rating}>
+            {error
+              ? error
+              : averageRating !== null
+              ? `${"★".repeat(Math.round(averageRating))} (${averageRating})`
+              : "Loading..."}
+          </p>
         </div>
         <div style={styles.actions}>
           <Link
@@ -90,7 +130,7 @@ const MovieCard = ({
                 genre,
                 languages,
                 posterImage,
-                rating,
+                rating: averageRating !== null ? averageRating : initialRating,
                 status,
               },
             }}

@@ -27,13 +27,8 @@ export default function ProfilePage() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("username");
-    localStorage.removeItem("loginPopupClosed");
-    localStorage.removeItem("email");
-    localStorage.removeItem("token");
-    setUsername(null);
-    setEmail(null);
-    navigate("/");
+    localStorage.clear();
+    window.location.href = "/";
   };
 
   const handleSave = async () => {
